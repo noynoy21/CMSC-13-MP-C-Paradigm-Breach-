@@ -1,0 +1,50 @@
+.terminal-root {
+    -fx-background-image: url("../images/desktop_wallpaper_hex.png");   /* relative to the CSS file */
+    -fx-background-size: cover;
+    -fx-background-color: rgba(12, 12, 12, 0.6);   
+}
+
+.text-area, .text-field {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 15px;
+    -fx-text-fill: #33ff33;
+    -fx-highlight-fill: #f5ff33;
+    -fx-highlight-text-fill: #0c0c0c;
+}
+
+
+/* .text-area .content {
+    -fx-fill: #9e9e9e;
+} */
+
+/* TextArea's visible background is on its inner "content" node */
+.text-area,
+.text-area .scroll-pane,
+.text-area .viewport,
+.text-area .content {
+    /* -fx-background-color: rgba(12, 12, 12, 0.1); */
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 4;
+    -fx-prompt-text-fill: #1f7a1f;
+}
+
+.text-area, .text-field:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.prompt {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 15px;
+    -fx-text-fill: #33ff33;
+}
+
+.terminal-root .scroll-bar { -fx-background-color: #0c0c0c; }
+.terminal-root .scroll-bar .thumb { -fx-background-color: #1f7a1f; }

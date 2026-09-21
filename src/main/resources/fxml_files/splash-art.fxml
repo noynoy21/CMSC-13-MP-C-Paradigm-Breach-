@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" styleClass="root-background" stylesheets="@../css_files/splashArt.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.SplashArtController">
+   <children>
+      <ImageView fx:id="ParadigmBreachTitle" fitHeight="233.0" fitWidth="715.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+         <image>
+            <Image url="@../images/splash_arts/ascii-art-text.png" />
+         </image>
+      </ImageView>
+   </children>
+</StackPane>
