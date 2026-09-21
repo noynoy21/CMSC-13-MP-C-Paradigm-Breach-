@@ -16,6 +16,7 @@ public enum Screen {
         this.width = width;
         this.height = height;
         this.singleInstance = singleInstance;
+        // testign
     }
 
     public String getFxmlPath() { return fxmlPath; }
