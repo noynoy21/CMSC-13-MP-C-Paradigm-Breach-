@@ -1,6 +1,5 @@
 package cmsc13.ParadigmBreach.view;
 
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -19,6 +18,7 @@ public class CommandLineController {
     @FXML 
     private TextField input;
 
+    // nnote
     @FXML
     private void initialize() {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
