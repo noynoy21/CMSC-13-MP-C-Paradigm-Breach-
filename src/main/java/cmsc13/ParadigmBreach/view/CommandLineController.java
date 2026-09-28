@@ -19,6 +19,7 @@ public class CommandLineController {
     private TextField input;
 
     // nnote
+    //w
     @FXML
     private void initialize() {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
