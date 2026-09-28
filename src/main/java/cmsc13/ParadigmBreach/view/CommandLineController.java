@@ -35,7 +35,7 @@ public class CommandLineController {
         output.appendText("> " + cmd + "\n");
         output.appendText(handle(cmd) + "\n");
     }
-    //ee
+    //e
 
     private String handle(String cmd) {
         switch (cmd.toLowerCase()) {
