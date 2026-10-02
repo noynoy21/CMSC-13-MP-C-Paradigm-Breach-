@@ -18,8 +18,6 @@ public class CommandLineController {
     @FXML 
     private TextField input;
 
-    // nnote
-    //w
     @FXML
     private void initialize() {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
@@ -35,7 +33,6 @@ public class CommandLineController {
         output.appendText("> " + cmd + "\n");
         output.appendText(handle(cmd) + "\n");
     }
-    //e
 
     private String handle(String cmd) {
         switch (cmd.toLowerCase()) {
