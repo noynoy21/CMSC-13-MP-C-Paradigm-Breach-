@@ -2,7 +2,7 @@ package cmsc13.ParadigmBreach.ui;
 
 public enum Screen {
     DESKTOP ("/fxml_files/desktop.fxml",      "ParadigmBreach", 1000, 600, true),
-    TERMINAL("/fxml_files/command-line.fxml", "Terminal",        800, 500, false),
+    TERMINAL("/fxml_files/command-line.fxml", "Terminal",        950, 500, false),
     READMETUTORIAL("/fxml_files/readme-md-tutorial.fxml", "README Tutorial", 600, 750, true),
     SPLASHART("/fxml_files/splash-art.fxml", "Splash Art", 800, 400, true);
 
