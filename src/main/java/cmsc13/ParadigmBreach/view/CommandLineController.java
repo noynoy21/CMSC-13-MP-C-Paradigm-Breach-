@@ -39,6 +39,10 @@ public class CommandLineController {
             case "help" ->  {return helpCommandOutput;}
             case "clear" -> {output.clear(); return "";}
             case "exit" -> {output.getScene().getWindow().hide(); return "";}
+            // case "start" -> {
+            //     startHacking();
+            //     return "";
+            // }
             default -> {return "Unknown command: " + cmd;}
         }
     }
