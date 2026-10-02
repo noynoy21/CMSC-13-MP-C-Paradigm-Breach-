@@ -41,13 +41,13 @@ The application starts at the splash screen. Press a key or click to continue, t
 ## On branch names with git
 
 When adding a feature:
-- feature/<feature-name>
+- feature/{feature-name}
 
 When fixing a bug:
-- fix/<bug-fix>
+- fix/{bug-fix}
 
 When adding/editing documentation:
-- docs/<documentation-edit>
+- docs/{documentation-edit}
 
 When cleaning up code (no code behaviour change):
-- refactor/<code-cleanup>
+- refactor/{code-cleanup}
