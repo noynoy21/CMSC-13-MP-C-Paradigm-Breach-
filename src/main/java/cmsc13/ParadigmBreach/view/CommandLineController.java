@@ -18,8 +18,6 @@ public class CommandLineController {
     @FXML 
     private TextField input;
 
-    // nnote
-    //w
     @FXML
     private void initialize() {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
@@ -41,6 +39,10 @@ public class CommandLineController {
             case "help" ->  {return helpCommandOutput;}
             case "clear" -> {output.clear(); return "";}
             case "exit" -> {output.getScene().getWindow().hide(); return "";}
+            // case "start" -> {
+            //     startHacking();
+            //     return "";
+            // }
             default -> {return "Unknown command: " + cmd;}
         }
     }

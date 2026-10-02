@@ -28,11 +28,18 @@
     -fx-background-radius: 0;
 }
 
+/* ADDED: border on the TextArea's outer node only */
+.text-area {
+    -fx-border-color: #1d90ce;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+}
+
 .text-field {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 4;
-    -fx-prompt-text-fill: #1f7a1f;
+    -fx-prompt-text-fill: #1f7a1f;    
 }
 
 .text-area, .text-field:focused {

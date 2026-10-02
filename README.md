@@ -37,3 +37,17 @@ The application starts at the splash screen. Press a key or click to continue, t
 - `src/main/resources/fxml_files` - JavaFX layouts
 - `src/main/resources/css_files` - interface styles
 - `src/main/resources/images` - game artwork and desktop icons
+
+## On branch names with git
+
+When adding a feature:
+- feature/<feature-name>
+
+When fixing a bug:
+- fix/<bug-fix>
+
+When adding/editing documentation:
+- docs/<documentation-edit>
+
+When cleaning up code (no code behaviour change):
+- refactor/<code-cleanup>
