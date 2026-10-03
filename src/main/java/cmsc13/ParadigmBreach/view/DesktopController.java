@@ -4,10 +4,8 @@ import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
-import javafx.stage.Stage;
 
 public class DesktopController {
-    private Stage primaryStage;
     // private App mainApp;
 
     @FXML 
@@ -20,10 +18,6 @@ public class DesktopController {
             new DesktopIcon("Files",    "/images/desktop_icons/files.png",    this::openFiles),
             new DesktopIcon("Files",    "/images/desktop_icons/files.png",    this::openFiles)
         );
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     private void openTerminal() {
