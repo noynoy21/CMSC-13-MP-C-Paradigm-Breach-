@@ -55,6 +55,10 @@ public class CommandLineController {
                     return "No more questions to ask!";
                 }
             }
+            case "shuffle" -> {
+                stage3Questions.shuffleQuestions();
+                return "";
+            }
             default -> {return "Unknown command: " + cmd;}
         }
     }
