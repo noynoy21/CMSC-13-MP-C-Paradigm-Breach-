@@ -2,8 +2,8 @@ package cmsc13.ParadigmBreach.view;
 
 import java.util.List;
 
+import cmsc13.ParadigmBreach.model.GameStageManager;
 import cmsc13.ParadigmBreach.model.questionBank.Question;
-import cmsc13.ParadigmBreach.model.questionBank.Stage3Questions;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -23,13 +23,13 @@ public class CommandLineController {
     @FXML 
     private TextField input;
 
-    private Stage3Questions stage3Questions;
+    private GameStageManager gsManager;
 
     @FXML
     private void initialize() {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
-        stage3Questions = new Stage3Questions();
+        gsManager = new GameStageManager(output, input);
     }
 
     @FXML
@@ -43,28 +43,26 @@ public class CommandLineController {
     }
 
     private String handle(String cmd) {
-        switch (cmd.toLowerCase()) {
+        switch (cmd.toLowerCase().split(" ")[0]) {
             case "help" ->  {return helpCommandOutput;}
             case "clear" -> {output.clear(); return "";}
             case "exit" -> {output.getScene().getWindow().hide(); return "";}
             case "ask" -> {
-                try {
-                    Question question = stage3Questions.askQuestion();
-                    return buildQuestion(question);
-                } catch (IllegalStateException e) {
-                    return "No more questions to ask!";
-                }
+                return gsManager.handleAsk();
             }
-            case "shuffle" -> {
-                stage3Questions.shuffleQuestions();
-                return "";
-            }
+            // case -> "ans" {
+
+            // }
+            // case "shuffle" -> {
+            //     stage3Questions.shuffleQuestions();
+            //     return "";
+            // }
             default -> {return "Unknown command: " + cmd;}
         }
     }
 
     private String buildQuestion(Question q) {
-        List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
+        List<String> letterChoices = List.of("[a]", "[b]", "[c]", "[c]");
         StringBuilder sb = new StringBuilder();
         String question = q.prompt();
         sb.append("Q: " + question);
