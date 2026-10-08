@@ -5,5 +5,10 @@ import java.util.List;
 public record Question(
     String prompt,
     List<String> choices,
-    int correctChoiceIndx
-) {}
+    int correctChoiceIndx,
+    boolean isAnswered
+) {
+    public Question(String prompt, List<String> choices, int correctChoiceIndx) {
+        this(prompt, choices, correctChoiceIndx, false);
+    }
+}

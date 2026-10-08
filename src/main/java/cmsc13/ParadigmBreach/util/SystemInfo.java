@@ -1,12 +1,12 @@
-package cmsc13.ParadigmBreach.util;
+// package cmsc13.ParadigmBreach.util;
 
-public class SystemInfo {
+// public class SystemInfo {
 
-    public static String javaVersion() {
-        return System.getProperty("java.version");
-    }
+//     public static String javaVersion() {
+//         return System.getProperty("java.version");
+//     }
 
-    public static String javafxVersion() {
-        return System.getProperty("javafx.version");
-    }
-}
+//     public static String javafxVersion() {
+//         return System.getProperty("javafx.version");
+//     }
+// }

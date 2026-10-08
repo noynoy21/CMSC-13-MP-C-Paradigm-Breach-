@@ -22,4 +22,6 @@ public class QuestionBank {
         if (shuffledQuestions.isEmpty()) throw new IllegalStateException("All questions were already asked!");
         return shuffledQuestions.remove(0);
     }
+
+    public List<Question> getShuffledQuestions() { return this. shuffledQuestions; }
 }
