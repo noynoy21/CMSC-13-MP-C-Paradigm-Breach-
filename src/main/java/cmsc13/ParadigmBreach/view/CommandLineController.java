@@ -30,6 +30,7 @@ public class CommandLineController {
         output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
         gsManager = new GameStageManager(output, input);
+        
     }
 
     @FXML
