@@ -3,9 +3,9 @@ package cmsc13.ParadigmBreach.model;
 import java.util.Iterator;
 import java.util.List;
 
+import cmsc13.ParadigmBreach.model.questionBank.OOPStage;
 import cmsc13.ParadigmBreach.model.questionBank.Question;
 import cmsc13.ParadigmBreach.model.questionBank.QuestionBank;
-import cmsc13.ParadigmBreach.model.questionBank.Stage1Questions;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -18,15 +18,25 @@ public class GameStageManager {
 
     private Question currQuestion;
 
+    private List<Question> qList;
+    private Iterator<Question> qIterator;
+
     public GameStageManager(TextArea output, TextField input) {
         this.output = output;
         this.input = input;
-        currStageQuestions = new Stage1Questions();
+        currStageQuestions = new OOPStage();
     }
 
     public String handleAsk() {
-        List<Question> qList = currStageQuestions.getShuffledQuestions();
-        Iterator<Question> qIterator = qList.iterator();
+        if (qList == null) {
+            qList = currStageQuestions.getShuffledQuestions();
+            qIterator = qList.iterator();
+        }
+
+        if (!qIterator.hasNext()) {
+            return "No question left in current stage.";
+        }
+
         while (qIterator.hasNext()) {
             if (currQuestion == null || !currQuestion.isAnswered()) {
                 currQuestion = qIterator.next();
