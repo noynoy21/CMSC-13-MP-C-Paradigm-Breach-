@@ -3,6 +3,8 @@ package cmsc13.ParadigmBreach.model;
 import java.util.Iterator;
 import java.util.List;
 
+import cmsc13.ParadigmBreach.audio.AudioManager;
+import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.model.questionBank.OOPStage;
 import cmsc13.ParadigmBreach.model.questionBank.Question;
 import cmsc13.ParadigmBreach.model.questionBank.QuestionBank;
@@ -57,6 +59,7 @@ public class GameStageManager {
             if (!currQuestion.hasBeenAsked()) {
                 output.clear();
                 out = buildQuestion(currQuestion);
+                AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
             } else if (!currQuestion.isAnswered()) {
                 out = "Answer current question first";
             } else {

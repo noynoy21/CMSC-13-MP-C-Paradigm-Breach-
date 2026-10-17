@@ -55,7 +55,7 @@ public class SplashArtController {
         });
 
         
-        AudioManager.get().playAudio(MusicTrack.SPLASH_SCREEN);
+        AudioManager.get().playMusic(MusicTrack.SPLASH_SCREEN);
     }
 
     private void attach(Scene scene) {
@@ -111,24 +111,6 @@ public class SplashArtController {
         tl.play();
         animations.add(tl);
     }
-
-    // /** Eyes stay open for a random 1.5-4.5s, close for 120ms, repeat. */
-    // private void scheduleEyeBlink() {
-    //     if (stopped) return;
-    //     blinkWait = new PauseTransition(Duration.seconds(1.5 + Math.random() * 3));
-    //     blinkWait.setOnFinished(e -> {
-    //         eyes.setVisible(false);
-    //         PauseTransition closed = new PauseTransition(Duration.millis(120));
-    //         closed.setOnFinished(ev -> {
-    //             eyes.setVisible(true);
-    //             scheduleEyeBlink();
-    //         });
-    //         closed.play();
-    //     });
-    //     blinkWait.play();
-    // }
-
-    // ---------- helper ----------
 
     private Image load(String path) {
         URL url = SplashArtController.class.getResource(path);

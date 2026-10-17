@@ -1,5 +1,7 @@
 package cmsc13.ParadigmBreach.view;
 
+import cmsc13.ParadigmBreach.audio.AudioManager;
+import cmsc13.ParadigmBreach.audio.MusicTrack;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.fxml.FXML;
@@ -18,6 +20,8 @@ public class DesktopController {
             new DesktopIcon("Files",    "/images/desktop_icons/files.png",    this::openFiles),
             new DesktopIcon("Files",    "/images/desktop_icons/files.png",    this::openFiles)
         );
+
+        AudioManager.get().playMusic(MusicTrack.DESKTOP);
     }
 
     private void openTerminal() {
