@@ -55,3 +55,95 @@
 
 .terminal-root .scroll-bar { -fx-background-color: #0c0c0c; }
 .terminal-root .scroll-bar .thumb { -fx-background-color: #1f7a1f; }
+
+
+/* ------------------------------------------------------- */
+/* ---------- Futuristic scroll bars (TextArea) ---------- */
+/* ------------------------------------------------------- */
+
+.text-area .scroll-bar:vertical   { -fx-pref-width: 12px; }
+.text-area .scroll-bar:horizontal { -fx-pref-height: 12px; }
+
+.text-area .scroll-bar {
+    -fx-background-color: rgba(12, 12, 12, 0.55);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+
+/* Track: thin center rail, with dashed "tick marks" down both edges */
+.text-area .scroll-bar:vertical .track {
+    -fx-background-color: rgba(51, 255, 51, 0.35);
+    -fx-background-insets: 0 5 0 5;              /* top right bottom left -> 2px rail */
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(51, 255, 51, 0.35);
+    -fx-border-style: segments(2, 5);
+    -fx-border-width: 0 1 0 1;
+}
+.text-area .scroll-bar:horizontal .track {
+    -fx-background-color: rgba(51, 255, 51, 0.35);
+    -fx-background-insets: 5 0 5 0;
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(51, 255, 51, 0.35);
+    -fx-border-style: segments(2, 5);
+    -fx-border-width: 1 0 1 0;
+}
+
+/* Thumb: cut-corner (octagonal) slab with a neon glow */
+.text-area .scroll-bar .thumb {
+    -fx-background-color: rgba(51, 255, 51, 0.85);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(gaussian, rgba(51, 255, 51, 0.8), 7, 0.25, 0, 0);
+}
+.text-area .scroll-bar:vertical .thumb {
+    -fx-shape: "M 0 3 L 3 0 L 7 0 L 10 3 L 10 97 L 7 100 L 3 100 L 0 97 Z";
+}
+.text-area .scroll-bar:horizontal .thumb {
+    -fx-shape: "M 3 0 L 97 0 L 100 3 L 100 7 L 97 10 L 3 10 L 0 7 L 0 3 Z";
+}
+.text-area .scroll-bar .thumb:hover   { -fx-background-color: #7dff7d; }
+.text-area .scroll-bar .thumb:pressed { -fx-background-color: #ffffff; }
+
+/* Arrow buttons: square outline with a triangle inside */
+.text-area .scroll-bar .increment-button,
+.text-area .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(51, 255, 51, 0.6);
+    -fx-border-width: 1;
+    -fx-padding: 3;
+}
+.text-area .scroll-bar .increment-button:hover,
+.text-area .scroll-bar .decrement-button:hover {
+    -fx-background-color: rgba(51, 255, 51, 0.25);
+}
+
+.text-area .scroll-bar .increment-arrow,
+.text-area .scroll-bar .decrement-arrow {
+    -fx-background-color: #33ff33;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+.text-area .scroll-bar:vertical .decrement-arrow {
+    -fx-padding: 3 4 3 4;
+    -fx-shape: "M 0 4 L 4 0 L 8 4 Z";           /* up */
+}
+.text-area .scroll-bar:vertical .increment-arrow {
+    -fx-padding: 3 4 3 4;
+    -fx-shape: "M 0 0 L 8 0 L 4 4 Z";           /* down */
+}
+.text-area .scroll-bar:horizontal .decrement-arrow {
+    -fx-padding: 4 3 4 3;
+    -fx-shape: "M 4 0 L 0 4 L 4 8 Z";           /* left */
+}
+.text-area .scroll-bar:horizontal .increment-arrow {
+    -fx-padding: 4 3 4 3;
+    -fx-shape: "M 0 0 L 4 4 L 0 8 Z";           /* right */
+}
+
+/* Square where the two bars meet */
+.text-area .corner {
+    -fx-background-color: rgba(51, 255, 51, 0.15);
+}
