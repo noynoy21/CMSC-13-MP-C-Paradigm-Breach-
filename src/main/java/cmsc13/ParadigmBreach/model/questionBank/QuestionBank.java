@@ -6,7 +6,7 @@ import java.util.List;
 
 public class QuestionBank {
     protected List<Question> listOfQuestions; // set of initial questions
-    protected List<Question> shuffledQuestions;
+    protected List<Question> shuffledQuestions; // shuffled questions
 
     public QuestionBank(List<Question> list) {
         listOfQuestions = list;
