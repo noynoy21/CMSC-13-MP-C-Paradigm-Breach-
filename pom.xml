@@ -17,6 +17,11 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>27</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>27</version>
         </dependency>
@@ -44,6 +49,7 @@
                             <mainClass>cmsc13.ParadigmBreach.App</mainClass>
                             <options>
                                 <option>--enable-native-access=javafx.graphics</option>
+                                <option>--enable-native-access=javafx.media</option>
                             </options>
                         </configuration>
                     </execution>

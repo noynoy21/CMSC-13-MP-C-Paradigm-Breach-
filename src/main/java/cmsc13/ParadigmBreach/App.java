@@ -1,12 +1,8 @@
 package cmsc13.ParadigmBreach;
 
+import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.ui.SceneManager;
-import cmsc13.ParadigmBreach.view.DesktopController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 
@@ -15,8 +11,6 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
     private Stage primaryStage;
-    private BorderPane rootLayout;
-    private BorderPane commandLineLayout;
 
     @Override
     public void start(Stage primaryStage) {
@@ -24,6 +18,7 @@ public class App extends Application {
         this.primaryStage.setTitle("ParadigmBreach");
 
         SceneManager.init(primaryStage);
+        AudioManager.init();
         SceneManager.get().showSplashArt();
     }
 
