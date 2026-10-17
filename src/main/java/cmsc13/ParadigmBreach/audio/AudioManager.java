@@ -1,7 +1,11 @@
 package cmsc13.ParadigmBreach.audio;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -10,6 +14,10 @@ public final class AudioManager {
     private static AudioManager instance;
 
     private MediaPlayer musicPlayer;
+
+    // cached audioclips for each sound effect audio files
+    private final Map<SoundEffect, AudioClip> soundClips =
+        new EnumMap<>(SoundEffect.class);
 
     private AudioManager() {}
 
@@ -26,11 +34,28 @@ public final class AudioManager {
         return instance;
     }
 
-    public void playAudio(AudioAsset audioAsset) {
-        playMusic(audioAsset.resourcePath());
+    public void playSFX(SoundEffect sfx) {
+        AudioClip clip = soundClips.get(sfx);
+
+        if (clip == null) {
+            var url = AudioManager.class.getResource(sfx.resourcePath());
+            if (url == null) {
+                throw new IllegalArgumentException(
+                    "Audio resource not found: " + sfx.resourcePath()
+                );
+            }
+
+            clip = new AudioClip(url.toExternalForm());
+            soundClips.put(sfx, clip);
+        }
+
+        double volume = Math.max(0.0, Math.min(1.0, sfx.volume()));
+        clip.play(volume);
     }
 
-    private void playMusic(String resourcePath) {
+    public void playMusic(MusicTrack music) {
+        String resourcePath = music.resourcePath();
+
         stopMusic();
 
         var url = AudioManager.class.getResource(resourcePath);
@@ -41,6 +66,8 @@ public final class AudioManager {
         musicPlayer = new MediaPlayer(new Media(url.toExternalForm()));
         musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         musicPlayer.play();
+
+        setMusicVolume(music.volume());
     }
 
     public void stopMusic() {
