@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import cmsc13.ParadigmBreach.audio.AudioManager;
+import cmsc13.ParadigmBreach.audio.MusicTrack;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -51,6 +53,9 @@ public class SplashArtController {
         root.sceneProperty().addListener((obs, oldScene, scene) -> {
             if (scene != null) attach(scene);
         });
+
+        
+        AudioManager.get().playAudio(MusicTrack.SPLASH_SCREEN);
     }
 
     private void attach(Scene scene) {
@@ -61,6 +66,8 @@ public class SplashArtController {
     }
 
     private void leave() {
+        double fadeoutDur = 0.6;
+
         if (leaving) return;
         leaving = true;
 
@@ -68,13 +75,15 @@ public class SplashArtController {
         scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
         scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
 
-        FadeTransition out = new FadeTransition(Duration.seconds(0.6), root);
+        FadeTransition out = new FadeTransition(Duration.seconds(fadeoutDur), root);
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
             SceneManager.get().showDesktop();
         });
         out.play();
+
+        AudioManager.get().fadeOutMusic(fadeoutDur);
     }
 
     private void stopAll() {
