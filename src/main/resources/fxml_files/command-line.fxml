@@ -7,24 +7,27 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="950.0" styleClass="terminal-root" stylesheets="@../css_files/terminalLook.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.CommandLineController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="950.0" styleClass="terminal-root" stylesheets="@../css_files/terminalLook.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.CommandLineController">
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="content" BorderPane.alignment="CENTER">
          <center>
-            <TextArea fx:id="output" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" wrapText="true" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="quesArea" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" wrapText="true" BorderPane.alignment="CENTER" />
          </center>
          <bottom>
-            <HBox prefHeight="9.0" prefWidth="600.0" styleClass="terminal-root" BorderPane.alignment="CENTER">
+            <HBox prefHeight="10.0" prefWidth="520.0" styleClass="terminal-root" BorderPane.alignment="CENTER">
                <children>
                   <Label styleClass="prompt" text="&gt;" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="input" onAction="#onEnter" prefHeight="0.0" prefWidth="240.0" styleClass="text-field" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="input" onAction="#onEnter" prefHeight="51.0" prefWidth="511.0" styleClass="text-field" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
          </bottom>
       </BorderPane>
    </center>
    <right>
-      <VBox prefHeight="500.0" prefWidth="211.0" styleClass="text-area" BorderPane.alignment="CENTER" />
+      <VBox prefHeight="400.0" prefWidth="238.0" styleClass="text-area" BorderPane.alignment="CENTER">
+         <children>
+            <TextArea fx:id="summaryArea" editable="false" prefHeight="398.0" prefWidth="226.0" wrapText="true" VBox.vgrow="ALWAYS" />
+         </children></VBox>
    </right>
    <left>
       <VBox prefHeight="500.0" prefWidth="219.0" BorderPane.alignment="CENTER">

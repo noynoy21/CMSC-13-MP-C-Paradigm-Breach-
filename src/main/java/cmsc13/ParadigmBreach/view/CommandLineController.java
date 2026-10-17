@@ -1,9 +1,6 @@
 package cmsc13.ParadigmBreach.view;
 
-import java.util.List;
-
 import cmsc13.ParadigmBreach.model.GameStageManager;
-import cmsc13.ParadigmBreach.model.questionBank.Question;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -13,13 +10,16 @@ public class CommandLineController {
     private final String helpCommandOutput = """
                                              Commands:
                                              HELP       Prints out available commands.
-                                             CLEAR      Clears the current texts in the command-line.
                                              EXIT       Closes the command-line terminal.
                                              ASK        Ask a test question.
                                              """;
+                                            //  CLEAR      Clears the current texts in the command-line.
+
  
     @FXML 
-    private TextArea output;
+    private TextArea quesArea;
+    @FXML 
+    private TextArea summaryArea;
     @FXML 
     private TextField input;
 
@@ -27,9 +27,11 @@ public class CommandLineController {
 
     @FXML
     private void initialize() {
-        output.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
+        quesArea.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
+        summaryArea.appendText("Stage: ");
+        summaryArea.appendText("\nProgress:");
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
-        gsManager = new GameStageManager(output, input);
+        gsManager = new GameStageManager(quesArea, summaryArea, input);
         
     }
 
@@ -39,42 +41,19 @@ public class CommandLineController {
         input.clear();
         if (cmd.isEmpty()) return;
 
-        output.appendText("> " + cmd + "\n");
-        output.appendText(handle(cmd) + "\n");
+        quesArea.appendText("> " + cmd + "\n");
+        quesArea.appendText(handle(cmd) + "\n");
     }
 
     private String handle(String cmd) {
         switch (cmd.toLowerCase().split(" ")[0]) {
             case "help" ->  {return helpCommandOutput;}
-            case "clear" -> {output.clear(); return "";}
-            case "exit" -> {output.getScene().getWindow().hide(); return "";}
-            case "ask" -> {
-                return gsManager.handleAsk();
+            // case "clear" -> {quesArea.clear(); return "";}
+            case "exit" -> {quesArea.getScene().getWindow().hide(); return "";}
+            case "ask", "ans" -> {
+                return gsManager.handleQnaInput(cmd);
             }
-            // case -> "ans" {
-
-            // }
-            // case "shuffle" -> {
-            //     stage3Questions.shuffleQuestions();
-            //     return "";
-            // }
             default -> {return "Unknown command: " + cmd;}
         }
-    }
-
-    private String buildQuestion(Question q) {
-        List<String> letterChoices = List.of("[a]", "[b]", "[c]", "[c]");
-        StringBuilder sb = new StringBuilder();
-        String question = q.prompt();
-        sb.append("Q: " + question);
-        sb.append("\n");
-
-        sb.append("Choices:\n");
-        for (int i = 0; i < 4; i++) {
-            sb.append(letterChoices.get(i) + ": " + q.choices().get(i));
-            sb.append("\n");
-        }
-
-        return sb.toString();
     }
 }
