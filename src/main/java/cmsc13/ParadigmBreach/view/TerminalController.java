@@ -55,29 +55,21 @@ public class TerminalController {
         input.clear();
         if (cmd.isEmpty()) return;
 
-        terminalOut.append("> " + cmd + "\n", OutputKind.COMMAND);
-        terminalOut.append(handle(cmd) + "\n", OutputKind.RESPONSE);
-        // appendOutput("> " + cmd, "command");
-        // appendOutput("Unknown command: " + cmd, "error");   
-    }
+        terminalOut.append("\n> " + cmd + "\n", OutputKind.COMMAND);
 
-    private String handle(String cmd) {
         switch (cmd.toLowerCase().split(" ")[0]) {
-            case "help" ->  {return helpCommandOutput;}
-            // case "clear" -> {quesArea.clear(); return "";}
-            case "exit" -> {outputScroll.getScene().getWindow().hide(); return "";}
             case "ask", "ans" -> {
-                return gsManager.handleQnaInput(cmd);
+                gsManager.handleQnaInput(cmd);
             }
-            default -> {return "Unknown command: " + cmd;}
-        }
+            case "help" ->  {
+                terminalOut.append(helpCommandOutput, OutputKind.RESPONSE);
+            }
+            case "exit" -> {
+                outputScroll.getScene().getWindow().hide();
+            }
+            default -> {
+                terminalOut.append("Unknown command: " + cmd, OutputKind.ERROR);
+            }
+        } 
     }
-
-    // private void appendOutput(String message, String styleClass) {
-    //     Text text = new Text(message + "\n");
-    //     text.getStyleClass().add(styleClass);
-    //     outputFlow.getChildren().add(text);
-
-    //     Platform.runLater(() -> outputScroll.setVvalue(1.0));
-    // }
 }
