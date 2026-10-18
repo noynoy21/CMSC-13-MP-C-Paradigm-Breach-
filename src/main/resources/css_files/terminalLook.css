@@ -12,6 +12,17 @@
     -fx-highlight-text-fill: #0c0c0c;
 }
 
+.terminal-output {
+    -fx-padding: 8;
+    -fx-font-family: "Cascadia Mono";
+    -fx-font-size: 13.5px;
+}
+
+.terminal-output .command  { -fx-fill: #33ff33; }
+.terminal-output .question { -fx-fill: #55c8ff; }
+.terminal-output .response { -fx-fill: #ffae00; }
+.terminal-output .error    { -fx-fill: #ff5555; }
+
 
 /* .text-area .content {
     -fx-fill: #9e9e9e;
