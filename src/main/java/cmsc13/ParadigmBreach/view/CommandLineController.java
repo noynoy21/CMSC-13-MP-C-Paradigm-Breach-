@@ -1,10 +1,12 @@
 package cmsc13.ParadigmBreach.view;
 
 import cmsc13.ParadigmBreach.model.GameStageManager;
+import cmsc13.ParadigmBreach.util.OutputKind;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.text.TextFlow;
 
 public class CommandLineController {
     private final String helpCommandOutput = """
@@ -17,21 +19,33 @@ public class CommandLineController {
 
  
     @FXML 
-    private TextArea quesArea;
+    private TextFlow outputFlow;
+    @FXML
+    private ScrollPane outputScroll;
     @FXML 
-    private TextArea summaryArea;
+    private TextFlow summaryFlow;
+    @FXML
+    private ScrollPane summaryScroll;
+
     @FXML 
     private TextField input;
 
     private GameStageManager gsManager;
+    private TerminalOutput terminalOut; // centralize the control of terminal outputs
 
     @FXML
     private void initialize() {
-        quesArea.appendText("ParadigmBreach v1.0\nType 'help' for commands.\n\n");
-        summaryArea.appendText("Stage: ");
-        summaryArea.appendText("\nProgress:");
+        terminalOut = new TerminalOutput(outputFlow, outputScroll, summaryFlow, summaryScroll);
+
+        terminalOut.append(
+            "ParadigmBreach v1.0\nType 'help' for commands.",
+            OutputKind.COMMAND
+        );
+        terminalOut.appendSummary("Stage: ", OutputKind.RESPONSE);
+        terminalOut.appendSummary("Progress:", OutputKind.RESPONSE);
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
-        gsManager = new GameStageManager(quesArea, summaryArea, input);
+
+        gsManager = new GameStageManager(terminalOut);
         
     }
 
@@ -41,19 +55,29 @@ public class CommandLineController {
         input.clear();
         if (cmd.isEmpty()) return;
 
-        quesArea.appendText("> " + cmd + "\n");
-        quesArea.appendText(handle(cmd) + "\n");
+        terminalOut.append("> " + cmd + "\n", OutputKind.COMMAND);
+        terminalOut.append(handle(cmd) + "\n", OutputKind.RESPONSE);
+        // appendOutput("> " + cmd, "command");
+        // appendOutput("Unknown command: " + cmd, "error");   
     }
 
     private String handle(String cmd) {
         switch (cmd.toLowerCase().split(" ")[0]) {
             case "help" ->  {return helpCommandOutput;}
             // case "clear" -> {quesArea.clear(); return "";}
-            case "exit" -> {quesArea.getScene().getWindow().hide(); return "";}
+            case "exit" -> {outputScroll.getScene().getWindow().hide(); return "";}
             case "ask", "ans" -> {
                 return gsManager.handleQnaInput(cmd);
             }
             default -> {return "Unknown command: " + cmd;}
         }
     }
+
+    // private void appendOutput(String message, String styleClass) {
+    //     Text text = new Text(message + "\n");
+    //     text.getStyleClass().add(styleClass);
+    //     outputFlow.getChildren().add(text);
+
+    //     Platform.runLater(() -> outputScroll.setVvalue(1.0));
+    // }
 }
