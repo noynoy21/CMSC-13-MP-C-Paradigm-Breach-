@@ -8,7 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.text.TextFlow;
 
-public class CommandLineController {
+public class TerminalController {
     private final String helpCommandOutput = """
                                              Commands:
                                              HELP       Prints out available commands.
