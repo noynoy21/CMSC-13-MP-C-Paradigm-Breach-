@@ -19,8 +19,8 @@
 }
 
 .terminal-output .command  { -fx-fill: #33ff33; }
-.terminal-output .question { -fx-fill: #55c8ff; }
-.terminal-output .response { -fx-fill: #ffae00; }
+.terminal-output .question { -fx-fill: #e0e957; }
+.terminal-output .response { -fx-fill: #ffbe31; }
 .terminal-output .error    { -fx-fill: #ff5555; }
 
 
@@ -33,8 +33,8 @@
 .text-area .scroll-pane,
 .text-area .viewport,
 .text-area .content {
-    /* -fx-background-color: rgba(12, 12, 12, 0.1); */
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(12, 12, 12, 0.5);
+    /* -fx-background-color: transparent; */
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
