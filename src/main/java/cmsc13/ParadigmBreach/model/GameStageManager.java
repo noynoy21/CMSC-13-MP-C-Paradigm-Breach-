@@ -8,14 +8,11 @@ import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.model.questionBank.OOPStage;
 import cmsc13.ParadigmBreach.model.questionBank.Question;
 import cmsc13.ParadigmBreach.model.questionBank.QuestionBank;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import cmsc13.ParadigmBreach.util.OutputKind;
+import cmsc13.ParadigmBreach.view.TerminalOutput;
 
 public class GameStageManager {
-
-    private TextArea output;
-    private TextArea summaryArea;
-    private TextField input;
+    private TerminalOutput terminalOut;
 
     private QuestionBank currStageQuestions;
     private Question currQuestion;
@@ -25,10 +22,8 @@ public class GameStageManager {
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
-    public GameStageManager(TextArea output, TextArea summaryArea, TextField input) {
-        this.output = output;
-        this.summaryArea = summaryArea;
-        this.input = input;
+    public GameStageManager(TerminalOutput terminalOut) {
+        this.terminalOut = terminalOut;
         currStageQuestions = new OOPStage();
     }
 
@@ -57,7 +52,7 @@ public class GameStageManager {
             }
 
             if (!currQuestion.hasBeenAsked()) {
-                output.clear();
+                terminalOut.clear();
                 out = buildQuestion(currQuestion);
                 AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
             } else if (!currQuestion.isAnswered()) {
@@ -79,7 +74,7 @@ public class GameStageManager {
             currQuestion.setAnswered(true);
             answeredQuestions++;
 
-            summaryArea.appendText("\nQuestion no." + answeredQuestions + ": answered.");
+            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": answered.", OutputKind.RESPONSE);
 
             return "Question answered.";
         }
