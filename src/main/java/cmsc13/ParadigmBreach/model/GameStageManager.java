@@ -27,20 +27,19 @@ public class GameStageManager {
         currStageQuestions = new OOPStage();
     }
 
-    public String handleQnaInput(String input) {
+    public void handleQnaInput(String input) {
         switch (input.toLowerCase().split(" ")[0]) {
             case "ask" -> {
-                return handleAsk();
+                handleAsk();
             }
             case "ans" -> {
-                return handleAns(input);
+                handleAns(input);
             }
-            default -> {return "Unknown command: " + input;}
+            default -> { terminalOut.append("Unknown command: " + input, OutputKind.ERROR); }
         }
     }
 
-    private String handleAsk() {
-        String out;
+    private void handleAsk() {
         // initialize the iterator
         if (qIterator == null) {
             qIterator = currStageQuestions.getShuffledQuestions().iterator();
@@ -53,30 +52,30 @@ public class GameStageManager {
 
             if (!currQuestion.hasBeenAsked()) {
                 terminalOut.clear();
-                out = buildQuestion(currQuestion);
+                String questionStr = buildQuestion(currQuestion);
+                terminalOut.append(questionStr, OutputKind.QUESTION);
                 AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
             } else if (!currQuestion.isAnswered()) {
-                out = "Answer current question first";
-            } else {
-                out = "";
-            }
+                terminalOut.append("Answer current question first", OutputKind.ERROR);
+            } 
         } else {
-            out = "No question left in current stage.";
+            terminalOut.append("No question left in current stage.", OutputKind.ERROR);
         }
-
-        return out;
     }
 
-    private String handleAns(String input) {
-        if (currQuestion.isAnswered()) {
-            return "Question already answered.";
+    private void handleAns(String input) {
+        if (currQuestion == null) {
+            terminalOut.append("No question has been asked.", OutputKind.ERROR);
+            terminalOut.append("Try the command: ask", OutputKind.ERROR);
+        } else if (currQuestion.isAnswered()) {
+            terminalOut.append("Question already answered.", OutputKind.ERROR);
         } else {
             currQuestion.setAnswered(true);
             answeredQuestions++;
 
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": answered.", OutputKind.RESPONSE);
 
-            return "Question answered.";
+            terminalOut.append("Question answered.", OutputKind.RESPONSE);
         }
     }
 
