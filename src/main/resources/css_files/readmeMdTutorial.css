@@ -20,7 +20,7 @@
     -fx-background-color: rgba(12, 12, 12, 0.7);
     -fx-border-color: rgba(51, 255, 51, 0.55);
     -fx-border-width: 1;
-    -fx-padding: 18;
+    -fx-padding: 8;
 }
 
 .tutorial-nav {
