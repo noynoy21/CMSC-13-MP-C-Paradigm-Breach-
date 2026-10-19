@@ -1,16 +1,18 @@
 package cmsc13.ParadigmBreach.view;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 public class TutorialReadmeController {
     @FXML 
@@ -21,19 +23,41 @@ public class TutorialReadmeController {
     private Button nextButton;
     @FXML 
     private Label pageLabel;
+    private final List<String> pagePaths = List.of(
+        "/fxml_files/tutorial_pages/terminal.fxml",
+        "/fxml_files/tutorial_pages/desktop.fxml"
+    );
 
-    private final List<Node> pages = new ArrayList<>();
+    private final List<Parent> pages = new ArrayList<>();
     private int currPageIdx = 0;
 
     @FXML 
     private void initialize() {
+        loadPages();
         
         showPage(0);
     }
 
+    private void loadPages() {
+        try {
+            for (String path : pagePaths) {
+                URL url = getClass().getResource(path);
+                if (url == null) {
+                    throw new IllegalArgumentException("Tutorial page not found: " + path);
+                }
+
+                pages.add(new FXMLLoader(url).load());
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load tutorial pages", e);
+        }
+    }
+
     private void showPage(int index) {
         currPageIdx = index;
-        stackPane.getChildren().setAll(pages.get(currPageIdx));
+        Parent page = pages.get(currPageIdx);
+        stackPane.getChildren().setAll(page);
+        StackPane.setAlignment(page, Pos.CENTER);
 
         pageLabel.setText(
             "Page " + (currPageIdx + 1) + " of " + pages.size()
@@ -55,17 +79,4 @@ public class TutorialReadmeController {
             showPage(currPageIdx - 1);
         }
     }
-
-    private Node createPage(String title, String body) {
-        Label heading = new Label(title);
-
-        TextArea text = new TextArea(body);
-        text.setEditable(false);
-        text.setWrapText(true);
-
-        VBox page = new VBox(12, heading, text);
-        VBox.setVgrow(text, Priority.ALWAYS);
-        return page;
-    }
-
 }
