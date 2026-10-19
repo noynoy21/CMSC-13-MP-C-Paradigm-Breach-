@@ -7,21 +7,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root-background" stylesheets="@../css_files/readmeMdTutorial.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.TutorialReadmeController">
    <center>
-      <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" styleClass="tutorial-page-host" BorderPane.alignment="CENTER" />
+      <StackPane fx:id="stackPane" alignment="TOP_LEFT" prefHeight="150.0" prefWidth="200.0" styleClass="tutorial-page-host" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="579.0" spacing="15.0" styleClass="tutorial-nav" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" styleClass="tutorial-button" text="Back" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#prevPage" styleClass="tutorial-button" text="Back" />
             <Label fx:id="pageLabel" alignment="CENTER" prefWidth="125.0" text="Label">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Label>
-            <Button fx:id="nextButton" mnemonicParsing="false" styleClass="tutorial-button" text="Next" />
+            <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextPage" styleClass="tutorial-button" text="Next" />
          </children>
          <BorderPane.margin>
             <Insets />

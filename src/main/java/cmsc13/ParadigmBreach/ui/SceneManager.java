@@ -59,7 +59,7 @@ public class SceneManager {
         primaryStage.setScene(new Scene(zippedDesktop.root, Screen.DESKTOP.getWidth(), Screen.DESKTOP.getHeight()));
         primaryStage.setMaximized(true);
         primaryStage.show();
-        openWindow(Screen.READMETUTORIAL);
+        openWindow(Screen.TUTORIALREADME);
     }
 
     /** Opens a screen in its own window, owned by the desktop. Returns its controller. */
