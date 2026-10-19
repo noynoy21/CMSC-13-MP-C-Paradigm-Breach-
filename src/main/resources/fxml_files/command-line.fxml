@@ -13,7 +13,7 @@
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="content" BorderPane.alignment="CENTER">
          <bottom>
-            <HBox prefHeight="10.0" prefWidth="520.0" styleClass="terminal-root" BorderPane.alignment="CENTER">
+            <HBox prefHeight="10.0" prefWidth="520.0" styleClass="text-area" BorderPane.alignment="CENTER">
                <children>
                   <Label styleClass="prompt" text="&gt;" HBox.hgrow="ALWAYS" />
                   <TextField fx:id="input" onAction="#onEnter" prefHeight="51.0" prefWidth="511.0" styleClass="text-field" HBox.hgrow="ALWAYS" />
