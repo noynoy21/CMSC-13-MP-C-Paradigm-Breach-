@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root-background" stylesheets="@../css_files/readmeMdTutorial.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.TutorialReadmeController">
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="tutorial-page-host" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="579.0" spacing="15.0" styleClass="tutorial-nav" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" styleClass="tutorial-button" text="Back" />
+            <Label text="Label" />
+            <Button mnemonicParsing="false" styleClass="tutorial-button" text="Next" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>
