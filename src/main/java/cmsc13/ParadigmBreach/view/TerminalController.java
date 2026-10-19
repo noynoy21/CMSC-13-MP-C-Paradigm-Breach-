@@ -46,7 +46,6 @@ public class TerminalController {
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
 
         gsManager = new GameStageManager(terminalOut);
-        
     }
 
     @FXML

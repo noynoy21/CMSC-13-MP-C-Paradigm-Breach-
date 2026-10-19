@@ -43,6 +43,9 @@ The application starts at the splash screen. Press a key or click to continue, t
 When adding a feature:
 - feature/{feature-name}
 
+When editing the aesthetics of a component/s:
+- looks/{component-name}
+
 When fixing a bug:
 - fix/{bug-fix}
 
