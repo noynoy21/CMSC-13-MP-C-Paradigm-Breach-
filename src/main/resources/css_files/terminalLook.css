@@ -19,8 +19,8 @@
 }
 
 .terminal-output .command  { -fx-fill: #33ff33; }
-.terminal-output .question { -fx-fill: #e0e957; }
-.terminal-output .response { -fx-fill: #ffbe31; }
+.terminal-output .question { -fx-fill: #f4ff5e; }
+.terminal-output .response { -fx-fill: #ffffff; }
 .terminal-output .error    { -fx-fill: #ff5555; }
 
 
