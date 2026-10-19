@@ -41,7 +41,7 @@
 
 /* ADDED: border on the TextArea's outer node only */
 .text-area {
-    -fx-border-color: #1d90ce;
+    -fx-border-color: rgba(51, 255, 51, 0.55);
     -fx-border-width: 1;
     -fx-border-radius: 0;
 }
