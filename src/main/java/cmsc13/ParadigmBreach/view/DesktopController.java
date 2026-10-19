@@ -28,6 +28,6 @@ public class DesktopController {
         SceneManager.get().openWindow(Screen.TERMINAL);
     }
     private void openFiles()    {
-        SceneManager.get().openWindow(Screen.READMETUTORIAL);
+        SceneManager.get().openWindow(Screen.TUTORIALREADME);
     }
 }

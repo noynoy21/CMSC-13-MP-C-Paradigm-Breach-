@@ -16,6 +16,52 @@
     -fx-background-radius: 0;
 }
 
+.tutorial-page-host {
+    -fx-background-color: rgba(12, 12, 12, 0.7);
+    -fx-border-color: rgba(51, 255, 51, 0.55);
+    -fx-border-width: 1;
+    -fx-padding: 18;
+}
+
+.tutorial-nav {
+    -fx-alignment: center;
+    -fx-spacing: 12;
+    -fx-padding: 12;
+    -fx-background-color: rgba(12, 12, 12, 0.82);
+    -fx-border-color: rgba(51, 255, 51, 0.45);
+    -fx-border-width: 1 0 0 0;
+}
+
+.tutorial-nav .label {
+    -fx-text-fill: #33ff33;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+}
+
+.tutorial-button {
+    -fx-background-color: rgba(12, 12, 12, 0.85);
+    -fx-text-fill: #33ff33;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-border-color: rgba(51, 255, 51, 0.65);
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-padding: 7 16;
+}
+
+.tutorial-button:hover {
+    -fx-background-color: rgba(51, 255, 51, 0.2);
+}
+
+.tutorial-button:pressed {
+    -fx-background-color: rgba(51, 255, 51, 0.4);
+}
+
+.tutorial-button:disabled {
+    -fx-opacity: 0.4;
+}
+
+
 /* ---------- Futuristic scroll bars (TextArea) ---------- */
 
 .text-area .scroll-bar:vertical   { -fx-pref-width: 12px; }
