@@ -28,14 +28,35 @@ public class GameStageManager {
     }
 
     public void handleQnaInput(String input) {
-        switch (input.toLowerCase().split(" ")[0]) {
+        String[] inArray = input.toLowerCase().split(" ");
+        String command = inArray[0];
+
+        switch (command) {
             case "ask" -> {
+                // ask doesn't need any argument
+                if (inArray.length > 1) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("command only needs 0 argmuents: ask", OutputKind.RESPONSE);
+                    break;
+                }
+
                 handleAsk();
             }
             case "ans" -> {
+                // ask needs exactly one argmunet
+                if (inArray.length < 2) {
+                    terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+                    break;
+                } else if (inArray.length > 2) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+                    break;
+                }
+
                 handleAns(input);
             }
-            default -> { terminalOut.append("Unknown command: " + input, OutputKind.ERROR); }
+            // default -> { terminalOut.append("Unknown command: " + input, OutputKind.ERROR); }
         }
     }
 
