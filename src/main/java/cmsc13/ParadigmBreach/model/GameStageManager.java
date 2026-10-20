@@ -44,17 +44,9 @@ public class GameStageManager {
             }
             case "ans" -> {
                 // ask needs exactly one argmunet
-                if (inArray.length < 2) {
-                    terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
-                    break;
-                } else if (inArray.length > 2) {
-                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
-                    break;
+                if (canAnswer(input)) {
+                    handleAns(inArray[1].charAt(0));
                 }
-
-                handleAns(input);
             }
             // default -> { terminalOut.append("Unknown command: " + input, OutputKind.ERROR); }
         }
@@ -84,20 +76,66 @@ public class GameStageManager {
         }
     }
 
-    private void handleAns(String input) {
+    private void handleAns(char lettChoice) {
+        // input validation.
+        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())){ // correct answer
+            answeredQuestions++;
+
+            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
+
+            terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
+        } else { // wrong answer
+            answeredQuestions++;
+
+            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
+
+            terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
+        }
+
+        
+        currQuestion.setAnswered(true);
+        terminalOut.append("Question answered.", OutputKind.RESPONSE);
+    }
+
+    private boolean canAnswer(String input) {
+        String[] inArray = input.toLowerCase().split(" ");
+
+        // if currentQuestion state is valid.
         if (currQuestion == null) {
             terminalOut.append("No question has been asked.", OutputKind.ERROR);
             terminalOut.append("Try the command: ask", OutputKind.ERROR);
-        } else if (currQuestion.isAnswered()) {
+            return false;
+        } 
+        if (currQuestion.isAnswered()) {
             terminalOut.append("Question already answered.", OutputKind.ERROR);
-        } else {
-            currQuestion.setAnswered(true);
-            answeredQuestions++;
-
-            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": answered.", OutputKind.RESPONSE);
-
-            terminalOut.append("Question answered.", OutputKind.RESPONSE);
+            return false;
         }
+
+        // iif user input is valid.
+        if (inArray.length < 2) {
+            terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
+            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            return false;
+        }
+        if (inArray.length > 2) {
+            terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            return false;
+        }
+        String arg = inArray[1];
+        if (arg.length() != 1) {
+            terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
+            terminalOut.append("command argument must only be 1 letter choice.", OutputKind.RESPONSE);
+            return false;
+        }
+        if (!letterChoices.contains(arg.charAt(0))) {
+            terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
+            terminalOut.append("letter choice must be among of: a | b | c | d.", OutputKind.RESPONSE);
+            return false;
+        }
+
+        // if input passes all tests:
+        return true;
     }
 
     private String buildQuestion(Question q) {

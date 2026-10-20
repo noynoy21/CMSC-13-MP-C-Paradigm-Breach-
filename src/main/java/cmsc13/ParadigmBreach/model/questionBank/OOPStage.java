@@ -6,7 +6,7 @@ public class OOPStage extends QuestionBank {
     public OOPStage() {
         super(List.of(
             new Question(
-                "In Java, a child class is unable to inherit a parent class’s variables. What access modifier was used for these variables?", 
+                "In Java, a child class is unable to inherit a parent class's variables. What access modifier was used for these variables?", 
                 List.of("default", "public", "privtate", "protected"), 
             2
             ),
@@ -20,7 +20,7 @@ public class OOPStage extends QuestionBank {
                 0
             ),
             new Question(
-                "Which keyword in Java is essential for accessing a child class’s parent variables?",
+                "Which keyword in Java is essential for accessing a child class's parent variables?",
                 List.of("super", "static", "this", "var"),
                 0
             ),
