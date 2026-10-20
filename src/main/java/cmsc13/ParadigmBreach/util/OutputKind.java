@@ -6,6 +6,7 @@ package cmsc13.ParadigmBreach.util;
 
 public enum OutputKind {
     COMMAND("command"),
+    CORRECT("correct"),
     QUESTION("question"),
     RESPONSE("response"),
     ERROR("error");
