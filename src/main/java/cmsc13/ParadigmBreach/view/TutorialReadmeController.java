@@ -24,8 +24,9 @@ public class TutorialReadmeController {
     @FXML 
     private Label pageLabel;
     private final List<String> pagePaths = List.of(
-        "/fxml_files/tutorial_pages/terminal.fxml",
-        "/fxml_files/tutorial_pages/desktop.fxml"
+        "/fxml_files/tutorial_pages/welcome.fxml",
+        "/fxml_files/tutorial_pages/desktop.fxml",
+        "/fxml_files/tutorial_pages/terminal.fxml"
     );
 
     private final List<Parent> pages = new ArrayList<>();
