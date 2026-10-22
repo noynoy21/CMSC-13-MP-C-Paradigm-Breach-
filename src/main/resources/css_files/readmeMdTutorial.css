@@ -30,7 +30,7 @@
     -fx-padding: 8;
 }
 
-.tutorial-nav {
+.tutorial-homepage, .tutorial-nav {
     -fx-alignment: center;
     -fx-spacing: 12;
     -fx-padding: 12;
@@ -38,8 +38,11 @@
     -fx-border-color: rgba(51, 255, 51, 0.45);
     -fx-border-width: 1 0 0 0;
 }
+.tutorial-homepage {
+    -fx-border-width: 1 0 1 0;
+}
 
-.tutorial-nav .label {
+.tutorial-homepage .label, .tutorial-nav .label {
     -fx-text-fill: #33ff33;
     -fx-font-family: "Cascadia Mono";
     -fx-font-size: 13px;
