@@ -12,6 +12,6 @@
             <Image url="@../../images/tutorial_images/desktop.png" />
          </image>
       </ImageView>
-      <TextArea editable="false" prefHeight="64.0" prefWidth="600.0" styleClass="label" text="Start by clicking the Terminal app icon, this is where you will execute commands to answer questions to enable you to start hacking into Fox Silic." wrapText="true" />
+      <TextArea editable="false" prefHeight="64.0" prefWidth="600.0" styleClass="label" text="Behind this tutorial window, you are greeted with the game's desktop. You can start by clicking the 'Terminal' app icon to start the game, or discover things by clicking the other app icons." wrapText="true" />
    </children>
 </VBox>
