@@ -47,7 +47,7 @@ public class QuestionBank {
                     continue; 
                 }
 
-                String prompt = tokens.get(0);
+                String prompt = tokens.get(0).replace("\\n", "\n");
                 List<String> choices = List.of(
                     tokens.get(1).replace("\\n", "\n"), 
                     tokens.get(2).replace("\\n", "\n"), 

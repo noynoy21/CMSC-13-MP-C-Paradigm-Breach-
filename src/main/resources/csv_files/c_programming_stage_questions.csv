@@ -1,0 +1,1 @@
+"What is the expected output of the following snippet?\n\n#include <stdio.h>\n\nint main() {\n    int arr[] = {10, 20, 30, 40, 50};\n    int *ptr = arr;\n    printf(\"%d, %d\", *ptr++, *(ptr + 2));\n    return 0;\n}","10, 30","10, 40","20, 40","20, 30",1
