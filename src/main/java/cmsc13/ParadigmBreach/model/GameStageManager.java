@@ -5,9 +5,16 @@ import java.util.List;
 
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
-import cmsc13.ParadigmBreach.model.questionBank.OOPStage;
 import cmsc13.ParadigmBreach.model.questionBank.Question;
 import cmsc13.ParadigmBreach.model.questionBank.QuestionBank;
+import cmsc13.ParadigmBreach.model.questionBank.Stage0Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage1Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage2Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage3Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage4Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage5Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
+import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.view.TerminalOutput;
 
@@ -24,7 +31,7 @@ public class GameStageManager {
 
     public GameStageManager(TerminalOutput terminalOut) {
         this.terminalOut = terminalOut;
-        currStageQuestions = new OOPStage();
+        setStage("0");
     }
 
     public void handleQnaInput(String input) {
@@ -33,22 +40,26 @@ public class GameStageManager {
 
         switch (command) {
             case "ask" -> {
-                // ask doesn't need any argument
                 if (inArray.length > 1) {
                     terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("command only needs 0 argmuents: ask", OutputKind.RESPONSE);
+                    terminalOut.append("command only needs 0 arguments: ask", OutputKind.RESPONSE);
                     break;
                 }
-
                 handleAsk();
             }
             case "ans" -> {
-                // ask needs exactly one argmunet
                 if (canAnswer(input)) {
                     handleAns(inArray[1].charAt(0));
                 }
             }
-            // default -> { terminalOut.append("Unknown command: " + input, OutputKind.ERROR); }
+            case "stage" -> {
+                if (inArray.length < 2) {
+                    terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 >", OutputKind.RESPONSE);
+                    break;
+                }
+                setStage(inArray[1]);
+            }
         }
     }
 
@@ -74,6 +85,32 @@ public class GameStageManager {
         } else {
             terminalOut.append("No question left in current stage.", OutputKind.ERROR);
         }
+    }
+
+    public void setStage(String stageKey) {
+        switch (stageKey) {
+            case "0", "stage_0" -> currStageQuestions = new Stage0Questions();
+            case "1", "stage_1" -> currStageQuestions = new Stage1Questions();
+            case "2", "stage_2" -> currStageQuestions = new Stage2Questions();
+            case "3", "stage_3" -> currStageQuestions = new Stage3Questions();
+            case "4", "stage_4" -> currStageQuestions = new Stage4Questions();
+            case "5", "stage_5" -> currStageQuestions = new Stage5Questions();
+            case "6", "stage_6" -> currStageQuestions = new Stage6Questions();
+            case "7", "stage_7" -> currStageQuestions = new Stage7Questions();
+            default -> {
+                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to OOPStage.", OutputKind.ERROR);
+                currStageQuestions = new Stage0Questions();
+                return;
+            }
+        }
+
+        qIterator = null;
+        currQuestion = null;
+        answeredQuestions = 0;
+        
+        terminalOut.clear();
+        terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
+        terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
     }
 
     private void handleAns(char lettChoice) {
