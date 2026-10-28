@@ -1,11 +1,14 @@
 package cmsc13.ParadigmBreach.model.questionBank;
 
+import org.yaml.snakeyaml.Yaml;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class QuestionBank {
     protected List<Question> listOfQuestions; // set of initial questions
@@ -19,6 +22,41 @@ public class QuestionBank {
     public QuestionBank(String csvResourcePath) {
         listOfQuestions = loadQuestionsFromCsv(csvResourcePath);
         shuffleQuestions();
+    }
+
+    public QuestionBank(String yamlResourcePath, boolean isYaml) {
+        listOfQuestions = loadQuestionsFromYaml(yamlResourcePath);
+        shuffleQuestions();
+    }
+
+    private List<Question> loadQuestionsFromYaml(String resourcePath) {
+        List<Question> questions = new ArrayList<>();
+        Yaml yaml = new Yaml();
+
+        InputStream inputStream = QuestionBank.class.getResourceAsStream("/" + resourcePath);
+        if (inputStream == null) {
+            inputStream = QuestionBank.class.getClassLoader().getResourceAsStream(resourcePath);
+        }
+        if (inputStream == null) {
+            throw new IllegalArgumentException("YAML resource file not found: " + resourcePath);
+        }
+
+        try {
+            List<Map<String, Object>> data = yaml.load(inputStream);
+            
+            for (Map<String, Object> map : data) {
+                String prompt = (String) map.get("prompt");
+                @SuppressWarnings("unchecked")
+                List<String> choices = (List<String>) map.get("choices");
+                int correctIndex = (int) map.get("correctChoiceIndx");
+
+                questions.add(new Question(prompt, choices, correctIndex));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse YAML question bank: " + resourcePath, e);
+        }
+
+        return questions;
     }
 
     private List<Question> loadQuestionsFromCsv(String resourcePath) {
