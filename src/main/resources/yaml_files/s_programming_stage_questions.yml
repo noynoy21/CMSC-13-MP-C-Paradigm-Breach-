@@ -1,0 +1,496 @@
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        val nums = List(1, 2, 3, 4)
+        val result = nums.map(_ * 2).filter(_ > 4)
+
+        println(result)
+      }
+    }
+  choices:
+    - "List(2, 4, 6, 8)"
+    - "List(6, 8)"
+    - "List(4, 6, 8)"
+    - "List(6, 8, 10)"
+  correctChoiceIndx: 1
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        var x = 10
+        val y = x
+        x = 20
+
+        println(s"$x, $y")
+      }
+    }
+  choices:
+    - "10, 10"
+    - "20, 20"
+    - "20, 10"
+    - "10, 20"
+  correctChoiceIndx: 2
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        def calculate(x: Int): Int = x * 2
+
+        val nums = List(1, 2, 3)
+        val result = nums.map(calculate).sum
+
+        println(result)
+      }
+    }
+  choices:
+    - "6"
+    - "12"
+    - "10"
+    - "18"
+  correctChoiceIndx: 0
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        val result = (1 to 4).filter(_ % 2 == 0).sum
+        println(result)
+      }
+    }
+  choices:
+    - "4"
+    - "6"
+    - "10"
+    - "2"
+  correctChoiceIndx: 1
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        val person = ("Mia", 20)
+        println(person._1 + ", " + (person._2 + 1))
+      }
+    }
+  choices:
+    - "20, Mia"
+    - "Mia, 21"
+    - "Mia, 20"
+    - "21, Mia"
+  correctChoiceIndx: 1
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        val nums = List(1, 2, 3, 4)
+        val result = nums.foldLeft(0)(_ + _)
+
+        println(result)
+      }
+    }
+  choices:
+    - "9"
+    - "10"
+    - "24"
+    - "4"
+  correctChoiceIndx: 1
+
+- prompt: |
+    object Main {
+      def main(args: Array[String]): Unit = {
+        val n = 2
+        val result = n match {
+          case 1 => "one"
+          case 2 => "two"
+          case _ => "other"
+        }
+
+        println(result)
+      }
+    }
+  choices:
+    - "one"
+    - "two"
+    - "other"
+    - "2"
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    List(6, 8)
+    ```
+  choices:
+    - |
+      object Main extends App {
+        val numbers = List(1, 2, 3, 4)
+        println(numbers.filter(_ > 2).map(_ * 2))
+      }
+    - |
+      object Main extends App {
+        val numbers = List(1, 2, 3, 4)
+        println(numbers.map(_ * 2).filter(_ > 4))
+      }
+    - |
+      object Main extends App {
+        val numbers = List(1, 2, 3, 4)
+        println(numbers.map(_ + 2).filter(_ > 4))
+      }
+    - |
+      object Main extends App {
+        val numbers = List(1, 2, 3, 4)
+        println(numbers.filter(_ >= 2).map(_ * 2))
+      }
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    20, 10
+    ```
+  choices:
+    - |
+      object Main extends App {
+        var x = 10
+        var y = x
+        x = 20
+        y = 30
+        println(s"$x, $y")
+      }
+    - |
+      object Main extends App {
+        val x = 10
+        val y = x
+        x = 20
+        println(s"$x, $y")
+      }
+    - |
+      object Main extends App {
+        var x = 10
+        val y = x
+        x = 20
+        println(s"$x, $y")
+      }
+    - |
+      object Main extends App {
+        var x = 10
+        val y = x
+        y = 20
+        println(s"$x, $y")
+      }
+  correctChoiceIndx: 2
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    12
+    ```
+  choices:
+    - |
+      object Main extends App {
+        def calculate(x: Int): Int = x + 2
+
+        val result = List(1, 2, 3).map(calculate).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        def calculate(x: Int): Int = x * 2
+
+        val result = List(1, 2, 3).map(calculate).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        def calculate(x: Int): Int = x * 3
+
+        val result = List(1, 2, 3).map(calculate).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        def calculate(x: Int): Int = x * 2
+
+        val result = List(1, 2, 3).filter(_ > 1).map(calculate).sum
+        println(result)
+      }
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    6
+    ```
+  choices:
+    - |
+      object Main extends App {
+        val result = (1 to 4).filter(_ % 2 == 0).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = (1 until 4).filter(_ % 2 == 0).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = (1 to 4).filter(_ % 2 != 0).sum
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = (1 to 4).filter(_ > 2).sum
+        println(result)
+      }
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    Mia, 21
+    ```
+  choices:
+    - |
+      object Main extends App {
+        val person = ("Mia", 20)
+        println(s"${person._1}, ${person._2}")
+      }
+    - |
+      object Main extends App {
+        val person = ("Mia", 20)
+        println(s"${person._1}, ${person._2 + 1}")
+      }
+    - |
+      object Main extends App {
+        val person = ("Mia", 21)
+        println(s"${person._1}, ${person._2 - 1}")
+      }
+    - |
+      object Main extends App {
+        val person = ("Mia", 20)
+        println(s"${person._2 + 1}, ${person._1}")
+      }
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    10
+    ```
+  choices:
+    - |
+      object Main extends App {
+        val result = List(1, 2, 3, 4).foldLeft(1)(_ * _)
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = List(1, 2, 3, 4).foldLeft(0)(_ + _)
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = List(1, 2, 3, 4).foldLeft(0)(_ * _)
+        println(result)
+      }
+    - |
+      object Main extends App {
+        val result = List(1, 2, 3, 4).foldLeft(0)(_ - _)
+        println(result)
+      }
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      val numbers = List(1, 2, 3, 4, 5, 6)
+      // MISSING CODE
+    }
+    ```
+
+    *Output*
+
+    ```
+    List(4, 8, 12)
+    ```
+  choices:
+    - |
+      println(numbers.filter(_ % 2 == 0).map(_ * 2))
+    - |
+      println(numbers.map(_ * 2).filter(_ % 2 == 0))
+    - |
+      println(numbers.filter(_ % 2 != 0).map(_ * 2))
+    - |
+      println(numbers.filter(_ > 3).map(_ * 2))
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      var score = 10
+      val bonus = 5
+      // MISSING CODE
+      println(score)
+    }
+    ```
+
+    *Output*
+
+    ```
+    15
+    ```
+  choices:
+    - |
+      score = bonus
+    - |
+      score + bonus
+    - |
+      score += bonus
+    - |
+      bonus = score + bonus
+  correctChoiceIndx: 2
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      val numbers = List(1, 2, 3, 4)
+      // MISSING CODE
+    }
+    ```
+
+    *Output*
+
+    ```
+    20
+    ```
+  choices:
+    - |
+      println(numbers.map(_ * 2).sum)
+    - |
+      println(numbers.filter(_ > 2).sum)
+    - |
+      println(numbers.map(_ + 2).sum)
+    - |
+      println(numbers.filter(_ % 2 == 0).map(_ * 2).sum)
+  correctChoiceIndx: 3
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      val grade = 85
+      // MISSING CODE
+    }
+    ```
+
+    *Output*
+
+    ```
+    Passed
+    ```
+  choices:
+    - |
+      val result = grade match {
+        case n if n >= 90 => "Passed"
+        case n if n >= 75 => "Passed"
+        case _ => "Failed"
+      }
+      println(result)
+    - |
+      val result = grade match {
+        case n if n >= 90 => "Passed"
+        case n if n >= 75 => "Failed"
+        case _ => "Passed"
+      }
+      println(result)
+    - |
+      val result = grade match {
+        case n if n < 75 => "Passed"
+        case _ => "Failed"
+      }
+      println(result)
+    - |
+      val result = grade match {
+        case n if n >= 85 => "Passed"
+        case _ => "Failed"
+      }
+      println(result)
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      val numbers = List(2, 4, 6)
+      // MISSING CODE
+    }
+    ```
+
+    *Output*
+
+    ```
+    12
+    ```
+  choices:
+    - |
+      println(numbers.foldLeft(1)(_ * _))
+    - |
+      println(numbers.foldLeft(0)(_ + _))
+    - |
+      println(numbers.foldLeft(0)(_ - _))
+    - |
+      println(numbers.foldLeft(0)(_ * _))
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```java
+    object Main extends App {
+      val person = ("Alex", 21)
+      // MISSING CODE
+    }
+    ```
+
+    *Output*
+
+    ```
+    Alex is 22 years old
+    ```
+  choices:
+    - |
+      val (name, age) = person
+      println(s"$name is ${age} years old")
+    - |
+      val (name, age) = person
+      println(s"$name is ${age + 1} years old")
+    - |
+      val (age, name) = person
+      println(s"$name is ${age + 1} years old")
+    - |
+      println(s"${person._2} is ${person._1} years old")
+  correctChoiceIndx: 1

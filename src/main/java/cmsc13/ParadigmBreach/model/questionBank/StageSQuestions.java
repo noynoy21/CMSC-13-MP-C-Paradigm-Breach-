@@ -5,6 +5,6 @@ package cmsc13.ParadigmBreach.model.questionBank;
 */
 public class StageSQuestions extends QuestionBank {
     public StageSQuestions() {
-        super("csv_files/7_module_stage_questions.csv");
+        super("yaml_files/s_programming_stage_questions.yml", true);
     }
 }

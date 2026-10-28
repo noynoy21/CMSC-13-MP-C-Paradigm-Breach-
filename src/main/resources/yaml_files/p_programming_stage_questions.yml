@@ -1,0 +1,206 @@
+- prompt: |
+    parent(tom, bob).
+    parent(bob, ann).
+
+    ?- parent(tom, X), parent(X, Y).
+  choices:
+    - "X = bob,\nY = ann."
+    - "X = tom,\nY = bob."
+    - "X = bob,\nY = tom."
+    - "false."
+  correctChoiceIndx: 0
+
+- prompt: |
+    ?- [1, 2, 3] = [H | T].
+  choices:
+    - "H = 1,\nT = [2, 3]."
+    - "H = [1],\nT = [2, 3]."
+    - "H = 1,\nT = 2."
+    - "false."
+  correctChoiceIndx: 0
+
+- prompt: |
+    ?- 5 + 2 =:= 3 + 4.
+  choices:
+    - "true."
+    - "false."
+    - "ERROR: Syntax error"
+    - "7 = 7."
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    true
+    ```
+  choices:
+    - |
+      parent(ann, bob).
+      parent(tom, bob).
+
+      ?- parent(ann, tom).
+    - |
+      parent(ann, bob).
+      parent(tom, bob).
+
+      ?- parent(ann, bob).
+    - |
+      parent(ann, bob).
+      parent(tom, bob).
+
+      ?- parent(bob, ann).
+    - |
+      parent(ann, bob).
+      parent(tom, bob).
+
+      ?- parent(X, Y).
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    X = apple
+    ```
+  choices:
+    - |
+      likes(mary, apple).
+      likes(mary, banana).
+
+      ?- likes(mary, X).
+    - |
+      likes(mary, apple).
+      likes(mary, banana).
+
+      ?- likes(X, mary).
+    - |
+      likes(mary, apple).
+      likes(mary, banana).
+
+      ?- likes(apple, X).
+    - |
+      likes(mary, apple).
+      likes(mary, banana).
+
+      ?- likes(mary, mary).
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    X = 3
+    ```
+  choices:
+    - |
+      ?- X = 1 + 2.
+    - |
+      ?- X is 1 + 2.
+    - |
+      ?- X == 1 + 2.
+    - |
+      ?- 1 + 2 = X.
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which of the following code snippets produces the following output?
+
+    ```
+    [1, 2, 3]
+    ```
+  choices:
+    - |
+      ?- Head = 1, Tail = [2, 3], List = Head | Tail.
+    - |
+      ?- Head = 1, Tail = [2, 3], List = [Head, Tail].
+    - |
+      ?- Head = 1, Tail = [2, 3], List = [Head | Tail].
+    - |
+      ?- Head = 1, Tail = [2, 3], List = (Head, Tail).
+  correctChoiceIndx: 2
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```prolog
+    likes(john, pizza).
+    likes(mary, pasta).
+
+    ?- /* MISSING CODE */
+    ```
+
+    *Output*
+
+    ```
+    X = pizza.
+    ```
+  choices:
+    - |
+      likes(john, X).
+    - |
+      likes(X, pizza).
+    - |
+      likes(mary, X).
+    - |
+      likes(X, pasta).
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```prolog
+    parent(pam, bob).
+    parent(tom, bob).
+    parent(tom, liz).
+
+    grandparent(X, Z) :- parent(X, Y), /* MISSING CODE */.
+
+    ?- grandparent(pam, liz).
+    ```
+
+    *Output*
+
+    ```
+    false.
+    ```
+  choices:
+    - |
+      parent(Z, Y)
+    - |
+      parent(Y, Z)
+    - |
+      parent(X, Z)
+    - |
+      grandparent(Y, Z)
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```prolog
+    % Query execution
+    ?- [Head | Tail] = [1, 2, 3, 4], /* MISSING CODE */.
+    ```
+
+    *Output*
+
+    ```
+    Result = [2, 3, 4].
+    ```
+  choices:
+    - |
+      Result = Head
+    - |
+      Result = Tail
+    - |
+      Result = [Head]
+    - |
+      Result = [Tail]
+  correctChoiceIndx: 1
