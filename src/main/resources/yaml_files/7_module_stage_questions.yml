@@ -1,0 +1,109 @@
+- prompt: |
+    In imperative programming, a variable's value can be changed through assignment statements. Which functional programming concept most directly contrasts with this approach?
+  choices:
+    - "Encapsulation, because data is hidden inside classes."
+    - "Immutability, because data is not modified after creation."
+    - "Inheritance, because objects reuse existing attributes."
+    - "Polymorphism, because methods can behave differently."
+  correctChoiceIndx: 1
+
+- prompt: |
+    How does a function in procedural programming differ from a method in object-oriented programming and a pure function in functional programming?
+  choices:
+    - "Procedures organize steps, methods belong to objects or classes, and pure functions avoid side effects."
+    - "Procedures create objects, methods define classes, and pure functions modify global variables."
+    - "Procedures require inheritance, methods require recursion, and pure functions require loops."
+    - "Procedures manipulate objects, methods avoid parameters, and pure functions require mutable state."
+  correctChoiceIndx: 0
+
+- prompt: |
+    An object-oriented program defines a base class Animal and a subclass Dog that inherits its behavior. A functional program instead combines small functions to perform a larger task. Which comparison is most accurate?
+  choices:
+    - "Both approaches require a child class to inherit from a parent class."
+    - "Function composition is the functional equivalent of inheritance in every respect."
+    - "Inheritance reuses or specializes class behavior, while function composition builds larger computations by combining functions."
+    - "Inheritance combines functions, while function composition creates class hierarchies."
+  correctChoiceIndx: 2
+
+- prompt: |
+    Suppose you want to select all numbers greater than 10 from a list.
+    - Approach A: Loop through every number, check the condition, and append qualifying numbers to a new list.
+    - Approach B: Use a filtering operation that specifies the condition for selecting numbers.
+     Which statement best distinguishes the approaches?
+  choices:
+    - "Approach A is declarative because it uses a loop, while Approach B is imperative because it uses a condition."
+    - "Both approaches are necessarily object-oriented because they process lists."
+    - "Approach A describes what result is wanted, while Approach B specifies every execution step."
+    - "Approach A emphasizes how to perform the task, while Approach B emphasizes what elements should be selected."
+  correctChoiceIndx: 3
+
+- prompt: |
+    A class hides its internal data and exposes public methods. A pure function returns the same output whenever it receives the same inputs and has no side effects.
+     What is the most important distinction?
+  choices:
+    - "Both concepts mean that a program cannot use variables."
+    - "Encapsulation controls access to an object's internals, while purity concerns predictable results and the absence of side effects."
+    - "Pure functions hide their data inside classes, while encapsulation prevents functions from returning values."
+    - "Encapsulation and purity are two names for the same programming concept."
+  correctChoiceIndx: 1
+
+- prompt: |
+    Consider two approaches to calculating the area of different shapes.
+    - Approach A: Different shape classes implement their own calculateArea() methods.
+    - Approach B: A function receives another function as an argument to determine how a calculation should be performed.
+     Which mapping is correct?
+  choices:
+    - "Approach A demonstrates polymorphism, while Approach B demonstrates the use of a higher-order function."
+    - "Approach A demonstrates immutability, while Approach B demonstrates inheritance."
+    - "Both approaches demonstrate encapsulation only."
+    - "Approach A is functional programming, while Approach B is necessarily imperative programming."
+  correctChoiceIndx: 0
+
+- prompt: |
+    An OOP program uses a BankAccount object whose balance changes whenever deposit() is called. A functional approach creates a new account state with an updated balance instead of modifying the existing state.
+     What is the main difference?
+  choices:
+    - "OOP cannot represent financial calculations, while functional programming can."
+    - "Functional programming requires every value to be stored in a class."
+    - "The OOP approach typically changes an object's state, while the functional approach can represent the update as a transformation from one state to another."
+    - "d. Both approaches necessarily modify the same shared variable."
+  correctChoiceIndx: 2
+
+- prompt: |
+    A procedural program groups instructions into functions and passes data between them. An OOP program groups related data and behavior into objects.
+     Which statement best compares their organization?
+  choices:
+    - "Procedural programming has no functions, while OOP has functions."
+    - "Procedural programming commonly organizes operations around procedures and data, while OOP organizes related state and behavior around objects."
+    - "OOP eliminates the need for algorithms and control flow."
+    - "Procedural programming requires inheritance, while OOP prohibits it."
+  correctChoiceIndx: 1
+
+- prompt: |
+    A C# programmer uses LINQ to filter, transform, and sort a collection, expressing the desired operations without manually writing every loop and update.
+     Which interpretation is the best?
+  choices:
+    - "LINQ makes C# exclusively a functional programming language."
+    - "LINQ works only with object inheritance and cannot process collections."
+    - "LINQ is equivalent to a class constructor because it creates objects."
+    - "LINQ supports a more declarative style and functional techniques within a language that also supports imperative and object-oriented programming."
+  correctChoiceIndx: 3
+
+- prompt: |
+    You are implementing a system that processes a list of student grades. One solution uses a Student class with a getAverage() method. Another uses a function that receives a collection of grades and returns their average without modifying the collection.
+     Which conclusion is most accurate?
+  choices:
+    - "Both implementations can perform the same computation, but they organize the data and behavior differently."
+    - "The functional implementation cannot calculate an average because it does not use a class."
+    - "The OOP implementation is necessarily more accurate because methods belong to objects."
+    - "The two implementations cannot produce the same result because they use different paradigms."
+  correctChoiceIndx: 0
+
+- prompt: |
+    Which component is most closely associated with encapsulating data and behavior in OOP?
+  choices:
+    - "Pure function"
+    - "Object"
+    - "Loop"
+    - "Recursive call"
+  correctChoiceIndx: 1

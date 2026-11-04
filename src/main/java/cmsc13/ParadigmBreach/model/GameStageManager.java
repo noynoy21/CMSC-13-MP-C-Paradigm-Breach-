@@ -15,10 +15,6 @@ import cmsc13.ParadigmBreach.model.questionBank.Stage4Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage5Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
-import cmsc13.ParadigmBreach.model.questionBank.StageCQuestions;
-import cmsc13.ParadigmBreach.model.questionBank.StageJQuestions;
-import cmsc13.ParadigmBreach.model.questionBank.StagePQuestions;
-import cmsc13.ParadigmBreach.model.questionBank.StageSQuestions;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.view.TerminalOutput;
 
@@ -101,10 +97,10 @@ public class GameStageManager {
             case "5", "stage_5" -> currStageQuestions = new Stage5Questions();
             case "6", "stage_6" -> currStageQuestions = new Stage6Questions();
             case "7", "stage_7" -> currStageQuestions = new Stage7Questions();
-            case "c", "stage_c" -> currStageQuestions = new StageCQuestions();
-            case "j", "stage_j" -> currStageQuestions = new StageJQuestions();
-            case "p", "stage_p" -> currStageQuestions = new StagePQuestions();
-            case "s", "stage_s" -> currStageQuestions = new StageSQuestions();
+            // case "c", "stage_c" -> currStageQuestions = new StageCQuestions();
+            // case "j", "stage_j" -> currStageQuestions = new StageJQuestions();
+            // case "p", "stage_p" -> currStageQuestions = new StagePQuestions();
+            // case "s", "stage_s" -> currStageQuestions = new StageSQuestions();
             default -> {
                 terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to OOPStage.", OutputKind.ERROR);
                 currStageQuestions = new Stage0Questions();
@@ -118,7 +114,7 @@ public class GameStageManager {
         
         terminalOut.clear();
         terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
-        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | c | j | p | s>'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
     }
 
     private void handleAns(char lettChoice) {

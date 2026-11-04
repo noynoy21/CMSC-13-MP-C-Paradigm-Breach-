@@ -1,0 +1,89 @@
+- prompt: |
+    According to Alan Kay, which of the following languages represents a "crystallization of style" rather than an "agglutination of features"?
+  choices:
+    - "COBOL"
+    - "PL/1"
+    - "Ada"
+    - "Smalltalk"
+  correctChoiceIndx: 3
+
+- prompt: |
+    Which specific programming paradigm is defined as "programming with no variables at all"?
+  choices:
+    - "Functional programming"
+    - "Function-Level (Combinator) programming"
+    - "Procedural programming"
+    - "Logic programming"
+  correctChoiceIndx: 1
+
+- prompt: |
+    Who famously wrote that "There are only two kinds of languages: the ones people complain about and the ones nobody uses"?
+  choices:
+    - "Alan Kay"
+    - "John Ousterhout"
+    - "Bjarne Stroustrup"
+    - "Edsger Dijkstra"
+  correctChoiceIndx: 2
+
+- prompt: |
+    Which language was developed as the very first object-oriented programming language?
+  choices:
+    - "Smalltalk"
+    - "Simula-67"
+    - "C++"
+    - "Java"
+  correctChoiceIndx: 1
+
+- prompt: |
+    In the 16-bit machine language program example, how many bits are used for the opcode and the operands?
+  choices:
+    - "8 bits opcode, 8 bits operands"
+    - "6 bits opcode, 10 bits operands"
+    - "4 bits opcode, 12 bits operands"
+    - "2 bits opcode, 14 bits operands"
+  correctChoiceIndx: 2
+
+- prompt: |
+    Which high-level language required code to begin in column 7 or beyond before its 90 version removed it?
+  choices:
+    - "ALGOL 60"
+    - "FORTRAN 77"
+    - "Ada 83"
+    - "COBOL"
+  correctChoiceIndx: 1
+
+- prompt: |
+    Which early hardware devices served as the direct forerunners of today's software text editors?
+  choices:
+    - "Keypunch machine and card reader"
+    - "Compilers and interpreters"
+    - "Registers and magnetic vacuum tubes"
+    - "Teletype terminals and line printers"
+  correctChoiceIndx: 0
+
+- prompt: |
+    According to Ousterhout’s Dichotomy, programming languages fall roughly into which two types?
+  choices:
+    - "High-level and low-level languages"
+    - "Compiled and interpreted languages"
+    - "Scripting and system languages"
+    - "Imperative and declarative languages"
+  correctChoiceIndx: 2
+
+- prompt: |
+    Why did ALGOL 60 fail to displace FORTRAN in the early 1960s despite its superior design features?
+  choices:
+    - "It lacked support for recursive procedures"
+    - "It was machine-dependent and lacked standard compilers"
+    - "Programmers and software development managers found its description difficult to read and understand"
+    - "It did not provide notations for structured control statements"
+  correctChoiceIndx: 2
+
+- prompt: |
+    According to the text, scripting languages like Perl, JavaScript, and Ruby are classified under which paradigm?
+  choices:
+    - "Functional languages"
+    - "Logic languages"
+    - "Imperative languages"
+    - "Rule-based languages"
+  correctChoiceIndx: 2

@@ -1,0 +1,8 @@
+- prompt: |
+    What is the capital of Russia?
+  choices:
+    - "Moscow"
+    - "St. Petersburg"
+    - "Novosibirsk"
+    - "Yekaterinburg"
+  correctChoiceIndx: 0
