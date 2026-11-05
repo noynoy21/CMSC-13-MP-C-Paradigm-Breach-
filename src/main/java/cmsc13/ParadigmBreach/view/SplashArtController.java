@@ -80,14 +80,14 @@ public class SplashArtController {
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
-            SceneManager.get().openCutsceneWindow(
-                Screen.CUTSCENE, 
-                List.of(
-                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/splash_arts/ascii-art-text.png", "Lorem ipsum"),
-                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/tutorial_images/splash_screen.png", "asdfghjkl"),
-                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/tutorial_images/desktop.png", "hello")
-                ),
-                () -> SceneManager.get().showDesktop()
+            SceneManager.get().openNameInputWindow(
+                Screen.NAME_INPUT,
+                () -> SceneManager.get().openCutsceneWindow(
+                    Screen.CUTSCENE, 
+                    "/images/splash_arts/ascii-art-text.png", 
+                    "Good morning " + cmsc13.ParadigmBreach.model.PlayerSession.getPlayerName() + "!", 
+                    () -> SceneManager.get().showDesktop()
+                )
             );
         });
         out.play();

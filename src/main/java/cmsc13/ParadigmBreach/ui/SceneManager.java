@@ -7,6 +7,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import cmsc13.ParadigmBreach.view.CutsceneController;
+import cmsc13.ParadigmBreach.view.NameInputController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -102,6 +103,21 @@ public class SceneManager {
         Zip zippedScreen = load(screen);
         CutsceneController controller = (CutsceneController) zippedScreen.controller();
         controller.initData(slides, onComplete);
+
+        Stage window = new Stage();
+        window.initOwner(primaryStage);
+        window.setTitle(screen.getTitle());
+        window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
+        window.show();
+        return (T) controller;
+    }
+
+    /** Opens the name input screen and returns its controller for initialization. */
+    @SuppressWarnings("unchecked")
+    public <T> T openNameInputWindow(Screen screen, Runnable onComplete) {
+        Zip zippedScreen = load(screen);
+        NameInputController controller = (NameInputController) zippedScreen.controller();
+        controller.initData(onComplete);
 
         Stage window = new Stage();
         window.initOwner(primaryStage);
