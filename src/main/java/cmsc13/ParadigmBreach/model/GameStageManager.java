@@ -18,11 +18,20 @@ import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
+import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.view.TerminalOutput;
 
 public class GameStageManager {
+    public enum QnaOutcome {
+        NONE,
+        QUESTION_STARTED,
+        ANSWER_ACCEPTED,
+        STAGE_CHANGED
+    }
+
     private TerminalOutput terminalOut;
+    private final LifeTracker lifeTracker;
 
     private QuestionBank currStageQuestions;
     private Question currQuestion;
@@ -47,13 +56,14 @@ public class GameStageManager {
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
-    public GameStageManager(TerminalOutput terminalOut) {
+    public GameStageManager(TerminalOutput terminalOut, LifeTracker lifeTracker) {
         this.terminalOut = terminalOut;
+        this.lifeTracker = lifeTracker;
         setStage("0");
     }
 
-    public void handleQnaInput(String input) {
-        String[] inArray = input.toLowerCase().split(" ");
+    public QnaOutcome handleQnaInput(String input) {
+        String[] inArray = input.toLowerCase().trim().split("\\s+");
         String command = inArray[0];
 
         switch (command) {
@@ -61,14 +71,16 @@ public class GameStageManager {
                 if (inArray.length > 1) {
                     terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
                     terminalOut.append("command only needs 0 arguments: ask", OutputKind.RESPONSE);
-                    break;
+                    return QnaOutcome.NONE;
                 }
-                handleAsk();
+                return handleAsk() ? QnaOutcome.QUESTION_STARTED : QnaOutcome.NONE;
             }
             case "ans" -> {
                 if (canAnswer(input)) {
                     handleAns(inArray[1].charAt(0));
+                    return QnaOutcome.ANSWER_ACCEPTED;
                 }
+                return QnaOutcome.NONE;
             }
             case "stage" -> {
                 if (inArray.length < 2) {
@@ -76,12 +88,24 @@ public class GameStageManager {
                     terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
                     break;
                 }
-                setStage(inArray[1]);
+                return setStage(inArray[1]) ? QnaOutcome.STAGE_CHANGED : QnaOutcome.NONE;
             }
         }
+
+        return QnaOutcome.NONE;
     }
 
-    private void handleAsk() {
+    public int getHealth() {
+        return lifeTracker.getLivesRemaining();
+    }
+
+    private boolean handleAsk() {
+        if (lifeTracker.getLivesRemaining() == 0) {
+            terminalOut.append("This stage is over. Switch stages to continue.", OutputKind.ERROR);
+            return false;
+        }
+
+        // initialize the iterator
         if (qIterator == null) {
             qIterator = activeStageQuestions.iterator();
         }
@@ -96,21 +120,18 @@ public class GameStageManager {
                 String questionStr = buildQuestion(currQuestion);
                 terminalOut.append(questionStr, OutputKind.QUESTION);
                 AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
+                return true;
             } else if (!currQuestion.isAnswered()) {
                 terminalOut.append("Answer current question first", OutputKind.ERROR);
             } 
         } else {
             terminalOut.append("No questions left in current stage. Module complete!", OutputKind.CORRECT);
         }
+
+        return false;
     }
 
-    public void setStage(String stageKey) {
-        stageKey = stageKey.toLowerCase();
-        // Handle stage_X format conversion
-        if (stageKey.startsWith("stage_")) {
-            stageKey = stageKey.replace("stage_", "");
-        }
-
+    public boolean setStage(String stageKey) {
         switch (stageKey) {
             case "0" -> currStageQuestions = new Stage0Questions();
             case "1" -> currStageQuestions = new Stage1Questions();
@@ -137,22 +158,27 @@ public class GameStageManager {
         qIterator = null;
         currQuestion = null;
         answeredQuestions = 0;
+        lifeTracker.reset();
         
         terminalOut.clear();
-        terminalOut.append("Successfully switched to Stage " + stageKey.toUpperCase(), OutputKind.CORRECT);
-        terminalOut.append("Required questions for this stage: " + activeStageQuestions.size(), OutputKind.RESPONSE);
-        terminalOut.append("Type 'ask' to begin questions.", OutputKind.RESPONSE);
+        terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
+        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+        return true;
     }
 
     private void handleAns(char lettChoice) {
         if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) {
             answeredQuestions++;
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
-            terminalOut.append("CORRECT! You chose the correct answer.", OutputKind.CORRECT);
-        } else {
+
+            terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
+            lifeTracker.refresh();
+        } else { // wrong answer
             answeredQuestions++;
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
-            terminalOut.append("Wrong! You chose the wrong answer :(", OutputKind.ERROR);
+
+            terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
+            loseHealth();
         }
 
         currQuestion.setAnswered(true);
@@ -212,8 +238,27 @@ public class GameStageManager {
         );
     }
 
+    public void timeoutCurrentQuestion() {
+        if (currQuestion == null || currQuestion.isAnswered() || !currQuestion.hasBeenAsked()) {
+            return;
+        }
+
+        currQuestion.setAnswered(true);
+        answeredQuestions++;
+        terminalOut.append("Time is up. This question was marked as unanswered.", OutputKind.ERROR);
+        terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": timed out.", OutputKind.ERROR);
+        loseHealth();
+    }
+
+    private void loseHealth() {
+        int health = lifeTracker.loseLife();
+        if (health == 0) {
+            terminalOut.append("Stage failed. Switch stages to start again.", OutputKind.ERROR);
+        }
+    }
+
     private boolean canAnswer(String input) {
-        String[] inArray = input.toLowerCase().split(" ");
+        String[] inArray = input.toLowerCase().trim().split("\\s+");
 
         if (currQuestion == null) {
             terminalOut.append("No question has been asked.", OutputKind.ERROR);
