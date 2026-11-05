@@ -173,12 +173,14 @@ public class GameStageManager {
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
 
             terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
+            AudioManager.get().playSFX(SoundEffect.CORRECT);
             lifeTracker.refresh();
         } else { // wrong answer
             answeredQuestions++;
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
 
             terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
+            AudioManager.get().playSFX(SoundEffect.WRONG);
             loseHealth();
         }
 
