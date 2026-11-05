@@ -1,5 +1,8 @@
 package cmsc13.ParadigmBreach.view;
 
+import java.util.List;
+
+import cmsc13.ParadigmBreach.model.CutsceneSlide;
 import javafx.animation.FadeTransition;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,23 +21,22 @@ public class CutsceneController {
     @FXML private ImageView cutsceneImage;
     @FXML private Label cutsceneText;
 
+    private List<CutsceneSlide> slides;
+    private int currentIndex = 0;
     private Runnable onComplete;
     private boolean leaving = false;
 
-    private final EventHandler<KeyEvent> keyHandler = e -> finishCutscene();
-    private final EventHandler<MouseEvent> mouseHandler = e -> finishCutscene();
+    private final EventHandler<KeyEvent> keyHandler = e -> handleAdvance();
+    private final EventHandler<MouseEvent> mouseHandler = e -> handleAdvance();
 
-    public void initData(String imagePath, String text, Runnable onComplete) {
+    public void initData(List<CutsceneSlide> slides, Runnable onComplete) {
+        this.slides = slides;
         this.onComplete = onComplete;
+        this.currentIndex = 0;
 
-        if (imagePath != null && !imagePath.isEmpty()) {
-            try {
-                cutsceneImage.setImage(new Image(getClass().getResourceAsStream(imagePath)));
-            } catch (Exception e) {
-                System.err.println("Failed to load cutscene image: " + imagePath);
-            }
+        if (slides != null && !slides.isEmpty()) {
+            showSlide(currentIndex);
         }
-        cutsceneText.setText(text);
 
         root.sceneProperty().addListener((obs, oldScene, scene) -> {
             if (scene != null) {
@@ -42,6 +44,42 @@ public class CutsceneController {
                 scene.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
             }
         });
+    }
+
+    // Backward compatibility overload for single slide
+    public void initData(String imagePath, String text, Runnable onComplete) {
+        initData(List.of(new CutsceneSlide(imagePath, text)), onComplete);
+    }
+
+    private void showSlide(int index) {
+        CutsceneSlide slide = slides.get(index);
+        if (slide.imagePath() != null && !slide.imagePath().isEmpty()) {
+            try {
+                var url = getClass().getResource(slide.imagePath());
+                if (url != null) {
+                    cutsceneImage.setImage(new Image(url.toExternalForm()));
+                } else {
+                    cutsceneImage.setImage(new Image(getClass().getResourceAsStream(slide.imagePath())));
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to load cutscene image: " + slide.imagePath());
+                cutsceneImage.setImage(null);
+            }
+        } else {
+            cutsceneImage.setImage(null);
+        }
+        cutsceneText.setText(slide.text());
+    }
+
+    private void handleAdvance() {
+        if (leaving) return;
+
+        if (currentIndex < slides.size() - 1) {
+            currentIndex++;
+            showSlide(currentIndex);
+        } else {
+            finishCutscene();
+        }
     }
 
     private void finishCutscene() {

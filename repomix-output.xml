@@ -1,10 +1,10 @@
-This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,7 +32,6 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Files matching these patterns are excluded: .git/**, **/*.mp3
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -102,6 +101,7 @@ src/
             OutputKind.java
             SystemInfo.java
           view/
+            CutsceneController.java
             DesktopController.java
             DesktopIcon.java
             SplashArtController.java
@@ -112,8 +112,15 @@ src/
       module-info.java
     resources/
       audio/
+        music/
+          [TEMP]_desktop_music.mp3
+          [TEMP]_splash_music.mp3
         sfx/
-          node-v26.13.0-x64.msi
+          [TEST]_countdown_beeping.mp3
+          correct.mp3
+          pengu_token_fail.mp3
+          pengu_token_success.mp3
+          wrong.mp3
       css_files/
         desktopLook.css
         readmeMdTutorial.css
@@ -129,6 +136,7 @@ src/
           terminal.fxml
           welcome.fxml
         command-line.fxml
+        cutscene.fxml
         desktop.fxml
         readme-md-tutorial.fxml
         splash-art.fxml
@@ -2589,6 +2597,76 @@ version=1
 </project>
 </file>
 
+<file path="src/main/java/cmsc13/ParadigmBreach/view/CutsceneController.java">
+package cmsc13.ParadigmBreach.view;
+
+import javafx.animation.FadeTransition;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+
+public class CutsceneController {
+
+    @FXML private StackPane root;
+    @FXML private ImageView cutsceneImage;
+    @FXML private Label cutsceneText;
+
+    private Runnable onComplete;
+    private boolean leaving = false;
+
+    private final EventHandler<KeyEvent> keyHandler = e -> finishCutscene();
+    private final EventHandler<MouseEvent> mouseHandler = e -> finishCutscene();
+
+    public void initData(String imagePath, String text, Runnable onComplete) {
+        this.onComplete = onComplete;
+
+        if (imagePath != null && !imagePath.isEmpty()) {
+            try {
+                cutsceneImage.setImage(new Image(getClass().getResourceAsStream(imagePath)));
+            } catch (Exception e) {
+                System.err.println("Failed to load cutscene image: " + imagePath);
+            }
+        }
+        cutsceneText.setText(text);
+
+        root.sceneProperty().addListener((obs, oldScene, scene) -> {
+            if (scene != null) {
+                scene.addEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
+                scene.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
+            }
+        });
+    }
+
+    private void finishCutscene() {
+        if (leaving) return;
+        leaving = true;
+
+        Scene scene = root.getScene();
+        if (scene != null) {
+            scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
+            scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
+        }
+
+        FadeTransition ft = new FadeTransition(Duration.seconds(0.5), root);
+        ft.setToValue(0);
+        ft.setOnFinished(e -> {
+            root.getScene().getWindow().hide();
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
+        ft.play();
+    }
+}
+</file>
+
 <file path="src/main/java/cmsc13/ParadigmBreach/view/DesktopIcon.java">
 package cmsc13.ParadigmBreach.view;
 
@@ -2825,6 +2903,30 @@ C:::::C                        P::::P           a::::aaaa::::::a r:::::r        
       </ImageView>
    </children>
 </VBox>
+</file>
+
+<file path="src/main/resources/fxml_files/cutscene.fxml">
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.CutsceneController">
+   <children>
+      <VBox alignment="CENTER" spacing="40.0">
+         <children>
+            <ImageView fx:id="cutsceneImage" fitHeight="300.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="cutsceneText" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" wrapText="true" style="-fx-text-fill: #33ff33; -fx-font-family: 'Cascadia Mono'; -fx-font-size: 16px;" />
+         </children>
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+      </VBox>
+   </children>
+</StackPane>
 </file>
 
 <file path="src/main/resources/fxml_files/desktop.fxml">
@@ -6460,32 +6562,6 @@ public final class AudioManager {
 }
 </file>
 
-<file path="src/main/java/cmsc13/ParadigmBreach/audio/SoundEffect.java">
-package cmsc13.ParadigmBreach.audio;
-
-public enum SoundEffect implements AudioAsset {
-    BEEP_COUNTDOWN("/audio/sfx/[TEST]_countdown_beeping.mp3", 1); // credit to: https://www.youtube.com/watch?v=OFxvJac1lpQ
-
-    private final String resourcePath;
-    private final double volume;
-
-    SoundEffect(String resourcePath, double volume) {
-        this.resourcePath = resourcePath;
-        this.volume = volume;
-    }
-
-    @Override
-    public String resourcePath() {
-        return resourcePath;
-    }
-
-    @Override
-    public double volume() {
-        return volume;
-    }
-}
-</file>
-
 <file path="src/main/java/cmsc13/ParadigmBreach/model/questionBank/GameStage.java">
 package cmsc13.ParadigmBreach.model.questionBank;
 
@@ -6721,6 +6797,36 @@ public enum MusicTrack implements AudioAsset {
 }
 </file>
 
+<file path="src/main/java/cmsc13/ParadigmBreach/audio/SoundEffect.java">
+package cmsc13.ParadigmBreach.audio;
+
+public enum SoundEffect implements AudioAsset {
+    BEEP_COUNTDOWN("/audio/sfx/[TEST]_countdown_beeping.mp3", 1.0), // credit to: https://www.youtube.com/watch?v=OFxvJac1lpQ
+    CORRECT("/audio/sfx/correct.mp3", 1.0),
+    WRONG("/audio/sfx/wrong.mp3", 1.0),
+    TOKEN_SUCCESS("/audio/sfx/pengu_token_success.mp3", 1.0),
+    TOKEN_FAIL("/audio/sfx/pengu_token_fail.mp3", 1.0);
+
+    private final String resourcePath;
+    private final double volume;
+
+    SoundEffect(String resourcePath, double volume) {
+        this.resourcePath = resourcePath;
+        this.volume = volume;
+    }
+
+    @Override
+    public String resourcePath() {
+        return resourcePath;
+    }
+
+    @Override
+    public double volume() {
+        return volume;
+    }
+}
+</file>
+
 <file path="src/main/java/cmsc13/ParadigmBreach/model/questionBank/Question.java">
 package cmsc13.ParadigmBreach.model.questionBank;
 
@@ -6778,233 +6884,6 @@ package cmsc13.ParadigmBreach.model.questionBank;
 public class Stage2Questions extends QuestionBank {
     public Stage2Questions() {
         super("yaml_files/2_module_stage_questions.yml", true);
-    }
-}
-</file>
-
-<file path="src/main/java/cmsc13/ParadigmBreach/ui/SceneManager.java">
-package cmsc13.ParadigmBreach.ui;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URL;
-import java.util.EnumMap;
-import java.util.Map;
-
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-public class SceneManager {
-
-    private static SceneManager instance;
-
-    private final Stage primaryStage;
-    private final Map<Screen, Stage> openSingles = new EnumMap<>(Screen.class);
-    private final Map<Screen, Object> singleControllers = new EnumMap<>(Screen.class);
-
-    private SceneManager(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
-
-    public static void init(Stage primaryStage) { instance = new SceneManager(primaryStage); }
-
-    public static SceneManager get() {
-        if (instance == null) throw new IllegalStateException("SceneManager.init(stage) was not called");
-        return instance;
-    }
-
-    private record Zip(Parent root, Object controller) {}
-
-    private Zip load(Screen screen) {
-        URL url = SceneManager.class.getResource(screen.getFxmlPath());
-        if (url == null) throw new IllegalArgumentException("FXML not found: " + screen.getFxmlPath());
-        try {
-            FXMLLoader loader = new FXMLLoader(url);
-            Parent root = loader.load();
-            return new Zip(root, loader.getController());
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to load " + screen, e);
-        }
-    }
-
-    public void showSplashArt() {
-        Zip zippedSplashArt = load(Screen.SPLASHART);
-        primaryStage.setTitle(Screen.DESKTOP.getTitle());
-        primaryStage.setScene(new Scene(zippedSplashArt.root, Screen.SPLASHART.getWidth(), Screen.SPLASHART.getHeight()));
-        primaryStage.show();
-    }
-
-    /** Puts the desktop in the main window. Call once from App.start(). */
-    public void showDesktop() {
-        Zip zippedDesktop = load(Screen.DESKTOP);
-        primaryStage.setTitle(Screen.DESKTOP.getTitle());
-        primaryStage.setScene(new Scene(zippedDesktop.root, Screen.DESKTOP.getWidth(), Screen.DESKTOP.getHeight()));
-        primaryStage.setMaximized(true);
-        primaryStage.show();
-        openWindow(Screen.TUTORIALREADME);
-    }
-
-    /** Opens a screen in its own window, owned by the desktop. Returns its controller. */
-    @SuppressWarnings("unchecked")
-    public <T> T openWindow(Screen screen) {
-        if (screen.isSingleInstance()) {
-            Stage existing = openSingles.get(screen);
-            if (existing != null) {                    // already open: just focus it
-                existing.toFront();
-                existing.requestFocus();
-                return (T) singleControllers.get(screen);
-            }
-        }
-
-        Zip zippedScreen = load(screen);
-        Stage window = new Stage();
-        window.initOwner(primaryStage);
-        window.initModality(Modality.NONE);            // desktop stays clickable
-        window.setTitle(screen.getTitle());
-        window.setScene(new Scene(zippedScreen.root, screen.getWidth(), screen.getHeight()));
-
-        if (screen.isSingleInstance()) {
-            openSingles.put(screen, window);
-            singleControllers.put(screen, zippedScreen.controller);
-            window.setOnHidden(e -> {                  // fires on any close
-                openSingles.remove(screen);
-                singleControllers.remove(screen);
-            });
-        }
-
-        window.show();
-        return (T) zippedScreen.controller;
-    }
-
-    public Stage getPrimaryStage() { return primaryStage; }
-}
-</file>
-
-<file path="src/main/java/cmsc13/ParadigmBreach/view/SplashArtController.java">
-package cmsc13.ParadigmBreach.view;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import cmsc13.ParadigmBreach.audio.AudioManager;
-import cmsc13.ParadigmBreach.audio.MusicTrack;
-import cmsc13.ParadigmBreach.ui.SceneManager;
-import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-
-public class SplashArtController {
-
-    @FXML private StackPane root;
-    @FXML private ImageView ParadigmBreachTitle;
-    // @FXML private Label prompt;
-
-    private final List<Animation> animations = new ArrayList<>();
-    private PauseTransition blinkWait;
-    private boolean leaving = false;
-    private boolean stopped = false;
-    private final EventHandler<KeyEvent> keyHandler = e -> leave();
-    private final EventHandler<MouseEvent> mouseHandler = e -> leave();
-
-    @FXML
-    private void initialize() {
-        floatUpDown(ParadigmBreachTitle, 24, 2);
-        blinkHard(ParadigmBreachTitle, 1);
-
-        root.setFocusTraversable(true);
-
-        // Case 1: the scene already exists. Case 2: it gets attached later.
-        if (root.getScene() != null) {
-            attach(root.getScene());
-        }
-        root.sceneProperty().addListener((obs, oldScene, scene) -> {
-            if (scene != null) attach(scene);
-        });
-
-        
-        AudioManager.get().playMusic(MusicTrack.SPLASH_SCREEN);
-    }
-
-    private void attach(Scene scene) {
-        // Filters run before any node can consume the event
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
-        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        Platform.runLater(root::requestFocus);
-    }
-
-    private void leave() {
-        double fadeoutDur = 0.6;
-
-        if (leaving) return;
-        leaving = true;
-
-        Scene scene = root.getScene();
-        scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
-        scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
-
-        FadeTransition out = new FadeTransition(Duration.seconds(fadeoutDur), root);
-        out.setToValue(0);
-        out.setOnFinished(e -> {
-            stopAll();
-            SceneManager.get().showDesktop();
-        });
-        out.play();
-
-        AudioManager.get().fadeOutMusic(fadeoutDur);
-    }
-
-    private void stopAll() {
-        stopped = true;
-        animations.forEach(Animation::stop);
-        if (blinkWait != null) blinkWait.stop();
-    }
-
-    // ---------- animations ----------
-
-    private void floatUpDown(Node n, double distance, double seconds) {
-        TranslateTransition t = new TranslateTransition(Duration.seconds(seconds), n);
-        t.setByY(-distance);
-        t.setInterpolator(Interpolator.EASE_BOTH);
-        t.setAutoReverse(true);
-        t.setCycleCount(Animation.INDEFINITE);
-        t.play();
-        animations.add(t);
-    }
-
-    private void blinkHard(Node n, double seconds) {
-        Timeline tl = new Timeline(new KeyFrame(Duration.seconds(seconds),
-                e -> n.setVisible(!n.isVisible())));
-        tl.setCycleCount(Animation.INDEFINITE);
-        tl.play();
-        animations.add(tl);
-    }
-
-    private Image load(String path) {
-        URL url = SplashArtController.class.getResource(path);
-        if (url == null) {
-            System.err.println("Missing splash layer: " + path);
-            return null;                           // ImageView just shows nothing
-        }
-        return new Image(url.toExternalForm());
     }
 }
 </file>
@@ -7166,6 +7045,123 @@ public class Stage3Questions extends QuestionBank {
 }
 </file>
 
+<file path="src/main/java/cmsc13/ParadigmBreach/ui/SceneManager.java">
+package cmsc13.ParadigmBreach.ui;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.EnumMap;
+import java.util.Map;
+
+import cmsc13.ParadigmBreach.view.CutsceneController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class SceneManager {
+
+    private static SceneManager instance;
+
+    private final Stage primaryStage;
+    private final Map<Screen, Stage> openSingles = new EnumMap<>(Screen.class);
+    private final Map<Screen, Object> singleControllers = new EnumMap<>(Screen.class);
+
+    private SceneManager(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public static void init(Stage primaryStage) { instance = new SceneManager(primaryStage); }
+
+    public static SceneManager get() {
+        if (instance == null) throw new IllegalStateException("SceneManager.init(stage) was not called");
+        return instance;
+    }
+
+    private record Zip(Parent root, Object controller) {}
+
+    private Zip load(Screen screen) {
+        URL url = SceneManager.class.getResource(screen.getFxmlPath());
+        if (url == null) throw new IllegalArgumentException("FXML not found: " + screen.getFxmlPath());
+        try {
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            return new Zip(root, loader.getController());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to load " + screen, e);
+        }
+    }
+
+    public void showSplashArt() {
+        Zip zippedSplashArt = load(Screen.SPLASHART);
+        primaryStage.setTitle(Screen.DESKTOP.getTitle());
+        primaryStage.setScene(new Scene(zippedSplashArt.root, Screen.SPLASHART.getWidth(), Screen.SPLASHART.getHeight()));
+        primaryStage.show();
+    }
+
+    /** Puts the desktop in the main window. Call once from App.start(). */
+    public void showDesktop() {
+        Zip zippedDesktop = load(Screen.DESKTOP);
+        primaryStage.setTitle(Screen.DESKTOP.getTitle());
+        primaryStage.setScene(new Scene(zippedDesktop.root, Screen.DESKTOP.getWidth(), Screen.DESKTOP.getHeight()));
+        primaryStage.setMaximized(true);
+        primaryStage.show();
+        openWindow(Screen.TUTORIALREADME);
+    }
+
+    /** Opens a screen in its own window, owned by the desktop. Returns its controller. */
+    @SuppressWarnings("unchecked")
+    public <T> T openWindow(Screen screen) {
+        if (screen.isSingleInstance()) {
+            Stage existing = openSingles.get(screen);
+            if (existing != null) {                    // already open: just focus it
+                existing.toFront();
+                existing.requestFocus();
+                return (T) singleControllers.get(screen);
+            }
+        }
+
+        Zip zippedScreen = load(screen);
+        Stage window = new Stage();
+        window.initOwner(primaryStage);
+        window.initModality(Modality.NONE);            // desktop stays clickable
+        window.setTitle(screen.getTitle());
+        window.setScene(new Scene(zippedScreen.root, screen.getWidth(), screen.getHeight()));
+
+        if (screen.isSingleInstance()) {
+            openSingles.put(screen, window);
+            singleControllers.put(screen, zippedScreen.controller);
+            window.setOnHidden(e -> {                  // fires on any close
+                openSingles.remove(screen);
+                singleControllers.remove(screen);
+            });
+        }
+
+        window.show();
+        return (T) zippedScreen.controller;
+    }
+
+    /** Opens a screen and returns its controller for initialization. */
+    @SuppressWarnings("unchecked")
+    public <T> T openCutsceneWindow(Screen screen, String imagePath, String text, Runnable onComplete) {
+        Zip zippedScreen = load(screen);
+        CutsceneController controller = (CutsceneController) zippedScreen.controller();
+        controller.initData(imagePath, text, onComplete);
+
+        Stage window = new Stage();
+        window.initOwner(primaryStage);
+        window.setTitle(screen.getTitle());
+        window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
+        window.show();
+        return (T) controller;
+    }
+
+    public Stage getPrimaryStage() { return primaryStage; }
+}
+</file>
+
 <file path="src/main/java/cmsc13/ParadigmBreach/view/DesktopController.java">
 package cmsc13.ParadigmBreach.view;
 
@@ -7198,6 +7194,138 @@ public class DesktopController {
     }
     private void openFiles()    {
         SceneManager.get().openWindow(Screen.TUTORIALREADME);
+    }
+}
+</file>
+
+<file path="src/main/java/cmsc13/ParadigmBreach/view/SplashArtController.java">
+package cmsc13.ParadigmBreach.view;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import cmsc13.ParadigmBreach.audio.AudioManager;
+import cmsc13.ParadigmBreach.audio.MusicTrack;
+import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+
+public class SplashArtController {
+
+    @FXML private StackPane root;
+    @FXML private ImageView ParadigmBreachTitle;
+    // @FXML private Label prompt;
+
+    private final List<Animation> animations = new ArrayList<>();
+    private PauseTransition blinkWait;
+    private boolean leaving = false;
+    private boolean stopped = false;
+    private final EventHandler<KeyEvent> keyHandler = e -> leave();
+    private final EventHandler<MouseEvent> mouseHandler = e -> leave();
+
+    @FXML
+    private void initialize() {
+        floatUpDown(ParadigmBreachTitle, 24, 2);
+        blinkHard(ParadigmBreachTitle, 1);
+
+        root.setFocusTraversable(true);
+
+        // Case 1: the scene already exists. Case 2: it gets attached later.
+        if (root.getScene() != null) {
+            attach(root.getScene());
+        }
+        root.sceneProperty().addListener((obs, oldScene, scene) -> {
+            if (scene != null) attach(scene);
+        });
+
+        
+        AudioManager.get().playMusic(MusicTrack.SPLASH_SCREEN);
+    }
+
+    private void attach(Scene scene) {
+        // Filters run before any node can consume the event
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
+        Platform.runLater(root::requestFocus);
+    }
+
+    private void leave() {
+        double fadeoutDur = 0.6;
+
+        if (leaving) return;
+        leaving = true;
+
+        Scene scene = root.getScene();
+        scene.removeEventFilter(KeyEvent.KEY_PRESSED, keyHandler);
+        scene.removeEventFilter(MouseEvent.MOUSE_PRESSED, mouseHandler);
+
+        FadeTransition out = new FadeTransition(Duration.seconds(fadeoutDur), root);
+        out.setToValue(0);
+        out.setOnFinished(e -> {
+            stopAll();
+            SceneManager.get().openCutsceneWindow(
+                Screen.CUTSCENE, 
+                "/images/splash_arts/ascii-art-text.png", 
+                "System breach detected. Initializing C1pher protocols...", 
+                () -> SceneManager.get().showDesktop()
+            );
+        });
+        out.play();
+
+        AudioManager.get().fadeOutMusic(fadeoutDur);
+    }
+
+    private void stopAll() {
+        stopped = true;
+        animations.forEach(Animation::stop);
+        if (blinkWait != null) blinkWait.stop();
+    }
+
+    // ---------- animations ----------
+
+    private void floatUpDown(Node n, double distance, double seconds) {
+        TranslateTransition t = new TranslateTransition(Duration.seconds(seconds), n);
+        t.setByY(-distance);
+        t.setInterpolator(Interpolator.EASE_BOTH);
+        t.setAutoReverse(true);
+        t.setCycleCount(Animation.INDEFINITE);
+        t.play();
+        animations.add(t);
+    }
+
+    private void blinkHard(Node n, double seconds) {
+        Timeline tl = new Timeline(new KeyFrame(Duration.seconds(seconds),
+                e -> n.setVisible(!n.isVisible())));
+        tl.setCycleCount(Animation.INDEFINITE);
+        tl.play();
+        animations.add(tl);
+    }
+
+    private Image load(String path) {
+        URL url = SplashArtController.class.getResource(path);
+        if (url == null) {
+            System.err.println("Missing splash layer: " + path);
+            return null;                           // ImageView just shows nothing
+        }
+        return new Image(url.toExternalForm());
     }
 }
 </file>
@@ -7943,7 +8071,8 @@ public enum Screen {
     DESKTOP ("/fxml_files/desktop.fxml",      "ParadigmBreach", 1000, 600, true),
     TERMINAL("/fxml_files/command-line.fxml", "Terminal",        975, 400, false),
     TUTORIALREADME("/fxml_files/tutorial-readme-md.fxml", "README.md (Tutorial)", 650, 550, true),
-    SPLASHART("/fxml_files/splash-art.fxml", "Splash Art", 800, 400, true);
+    SPLASHART("/fxml_files/splash-art.fxml", "Splash Art", 800, 400, true),
+    CUTSCENE("/fxml_files/cutscene.fxml", "Paradigm Breach - Transmission", 1000, 600, false);
 
     private final String fxmlPath, title;
     private final double w, h;
@@ -8133,6 +8262,7 @@ public enum Screen {
 <file path="src/main/java/cmsc13/ParadigmBreach/model/GameStageManager.java">
 package cmsc13.ParadigmBreach.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8157,8 +8287,23 @@ public class GameStageManager {
     private QuestionBank currStageQuestions;
     private Question currQuestion;
     private int answeredQuestions = 0;
-
+    private List<Question> activeStageQuestions;
     private Iterator<Question> qIterator;
+
+    private String currentStageKey = "0";
+    private static final List<String> STAGE_SEQUENCE = List.of("0", "1", "2", "3", "4", "5", "6", "7");
+
+    // =========================================================================
+    // GAME LOOP CONFIGURATION: Question Limit per Stage
+    // 
+    // To play with the arbitrary limit constraint (e.g., 10 questions):
+    //     Keep QUESTIONS_PER_STAGE = 10; and comment out the unlimited line.
+    // 
+    // To play with the zero-constraints version (all available questions):
+    //     Uncomment the Integer.MAX_VALUE line below.
+    // =========================================================================
+    private static final int QUESTIONS_PER_STAGE = 2;
+    // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
@@ -8188,7 +8333,7 @@ public class GameStageManager {
             case "stage" -> {
                 if (inArray.length < 2) {
                     terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 >", OutputKind.RESPONSE);
+                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
                     break;
                 }
                 setStage(inArray[1]);
@@ -8197,13 +8342,12 @@ public class GameStageManager {
     }
 
     private void handleAsk() {
-        // initialize the iterator
         if (qIterator == null) {
-            qIterator = currStageQuestions.getShuffledQuestions().iterator();
+            qIterator = activeStageQuestions.iterator();
         }
 
         if (qIterator.hasNext()) {
-            if (currQuestion == null || currQuestion.isAnswered()) { // start questions or move to next question
+            if (currQuestion == null || currQuestion.isAnswered()) {
                 currQuestion = qIterator.next();
             }
 
@@ -8216,65 +8360,98 @@ public class GameStageManager {
                 terminalOut.append("Answer current question first", OutputKind.ERROR);
             } 
         } else {
-            terminalOut.append("No question left in current stage.", OutputKind.ERROR);
+            terminalOut.append("No questions left in current stage. Module complete!", OutputKind.CORRECT);
         }
     }
 
     public void setStage(String stageKey) {
+        stageKey = stageKey.toLowerCase();
+        // Handle stage_X format conversion
+        if (stageKey.startsWith("stage_")) {
+            stageKey = stageKey.replace("stage_", "");
+        }
+
         switch (stageKey) {
-            case "0", "stage_0" -> currStageQuestions = new Stage0Questions();
-            case "1", "stage_1" -> currStageQuestions = new Stage1Questions();
-            case "2", "stage_2" -> currStageQuestions = new Stage2Questions();
-            case "3", "stage_3" -> currStageQuestions = new Stage3Questions();
-            case "4", "stage_4" -> currStageQuestions = new Stage4Questions();
-            case "5", "stage_5" -> currStageQuestions = new Stage5Questions();
-            case "6", "stage_6" -> currStageQuestions = new Stage6Questions();
-            case "7", "stage_7" -> currStageQuestions = new Stage7Questions();
-            // case "c", "stage_c" -> currStageQuestions = new StageCQuestions();
-            // case "j", "stage_j" -> currStageQuestions = new StageJQuestions();
-            // case "p", "stage_p" -> currStageQuestions = new StagePQuestions();
-            // case "s", "stage_s" -> currStageQuestions = new StageSQuestions();
+            case "0" -> currStageQuestions = new Stage0Questions();
+            case "1" -> currStageQuestions = new Stage1Questions();
+            case "2" -> currStageQuestions = new Stage2Questions();
+            case "3" -> currStageQuestions = new Stage3Questions();
+            case "4" -> currStageQuestions = new Stage4Questions();
+            case "5" -> currStageQuestions = new Stage5Questions();
+            case "6" -> currStageQuestions = new Stage6Questions();
+            case "7" -> currStageQuestions = new Stage7Questions();
             default -> {
-                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to OOPStage.", OutputKind.ERROR);
+                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 0.", OutputKind.ERROR);
+                stageKey = "0";
                 currStageQuestions = new Stage0Questions();
-                return;
             }
         }
+
+        this.currentStageKey = stageKey;
+
+        // Apply question limit configuration
+        List<Question> rawShuffled = currStageQuestions.getShuffledQuestions();
+        int limit = Math.min(QUESTIONS_PER_STAGE, rawShuffled.size());
+        activeStageQuestions = new ArrayList<>(rawShuffled.subList(0, limit));
 
         qIterator = null;
         currQuestion = null;
         answeredQuestions = 0;
         
         terminalOut.clear();
-        terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
-        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+        terminalOut.append("Successfully switched to Stage " + stageKey.toUpperCase(), OutputKind.CORRECT);
+        terminalOut.append("Required questions for this stage: " + activeStageQuestions.size(), OutputKind.RESPONSE);
+        terminalOut.append("Type 'ask' to begin questions.", OutputKind.RESPONSE);
     }
 
     private void handleAns(char lettChoice) {
-        // input validation.
-        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())){ // correct answer
+        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) {
             answeredQuestions++;
-
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
-
-            terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
-        } else { // wrong answer
+            terminalOut.append("CORRECT! You chose the correct answer.", OutputKind.CORRECT);
+        } else {
             answeredQuestions++;
-
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
-
-            terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
+            terminalOut.append("Wrong! You chose the wrong answer :(", OutputKind.ERROR);
         }
 
-        
         currQuestion.setAnswered(true);
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
+
+        // Check if stage requirement has been met
+        if (answeredQuestions >= activeStageQuestions.size()) {
+            checkStageCompletion();
+        }
+    }
+
+    private void checkStageCompletion() {
+        terminalOut.append("\n========================================", OutputKind.CORRECT);
+        terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " CLEARED!", OutputKind.CORRECT);
+        terminalOut.append("========================================", OutputKind.CORRECT);
+
+        int currentIndex = STAGE_SEQUENCE.indexOf(currentStageKey);
+        
+        // Check if this was the final stage (Win Condition)
+        if (currentIndex == -1 || currentIndex >= STAGE_SEQUENCE.size() - 1) {
+            triggerWinCondition();
+        } else {
+            // Automatically advance to the next stage
+            String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
+            terminalOut.append("Advancing to next security sector: Stage " + nextStageKey + "...\n", OutputKind.RESPONSE);
+            setStage(nextStageKey);
+        }
+    }
+
+    private void triggerWinCondition() {
+        terminalOut.append("\n========================================", OutputKind.CORRECT);
+        terminalOut.append("🔥 FIREWALL DEFEATED. SYSTEM BREACHED. 🔥", OutputKind.CORRECT);
+        terminalOut.append("You have successfully cleared all stages and broken the paradigm, C1pher!", OutputKind.CORRECT);
+        terminalOut.append("========================================", OutputKind.CORRECT);
     }
 
     private boolean canAnswer(String input) {
         String[] inArray = input.toLowerCase().split(" ");
 
-        // if currentQuestion state is valid.
         if (currQuestion == null) {
             terminalOut.append("No question has been asked.", OutputKind.ERROR);
             terminalOut.append("Try the command: ask", OutputKind.ERROR);
@@ -8285,15 +8462,14 @@ public class GameStageManager {
             return false;
         }
 
-        // iif user input is valid.
         if (inArray.length < 2) {
             terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            terminalOut.append("command only needs 1 argument: ans _", OutputKind.RESPONSE);
             return false;
         }
         if (inArray.length > 2) {
             terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            terminalOut.append("command only needs 1 argument: ans _", OutputKind.RESPONSE);
             return false;
         }
         String arg = inArray[1];
@@ -8304,11 +8480,10 @@ public class GameStageManager {
         }
         if (!letterChoices.contains(arg.charAt(0))) {
             terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
-            terminalOut.append("letter choice must be among of: a | b | c | d.", OutputKind.RESPONSE);
+            terminalOut.append("letter choice must be among: a | b | c | d.", OutputKind.RESPONSE);
             return false;
         }
 
-        // if input passes all tests:
         return true;
     }
 
@@ -8320,11 +8495,11 @@ public class GameStageManager {
 
         sb.append("Choices:\n");
         String letter;
-        String choicePromts;
+        String choicePrompts;
         for (int i = 0; i < 4; i++) {
             letter = "[" + letterChoices.get(i) + "]: ";
-            choicePromts = q.getChoices().get(i);
-            sb.append(letter).append(choicePromts);
+            choicePrompts = q.getChoices().get(i);
+            sb.append(letter).append(choicePrompts);
             sb.append("\n");
         }
         currQuestion.setHasBeenAsked(true);
