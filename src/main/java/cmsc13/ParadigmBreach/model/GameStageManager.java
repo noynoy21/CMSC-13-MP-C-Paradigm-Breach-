@@ -27,6 +27,9 @@ public class GameStageManager {
         NONE,
         QUESTION_STARTED,
         ANSWER_ACCEPTED,
+        PENGU_ASKED,
+        PENGU_OUT_OF_TOKENS,
+        PENGU_ANSWERED,
         STAGE_CHANGED
     }
 
@@ -87,12 +90,54 @@ public class GameStageManager {
                     terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
                     terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
                     break;
+                } else if (inArray.length > 2) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
+                    break;
                 }
                 return setStage(inArray[1]) ? QnaOutcome.STAGE_CHANGED : QnaOutcome.NONE;
+            }
+            case "pngu" -> {
+                if (inArray.length < 2) {
+                    terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("""
+                                       pngu -wdyt
+                                       pngu -ans
+                                       """, OutputKind.RESPONSE);
+                    break;
+                } else if (inArray.length > 2) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("""
+                                       pngu -wdyt
+                                       pngu -ans
+                                       """, OutputKind.RESPONSE);
+                    break;
+                }
+                // String pnguArg = inArray[1].replace("-", "");
+                // String pnguArg = getPnguArg(inArray[1]);
+                return handlePenguInput(inArray[1]);
             }
         }
 
         return QnaOutcome.NONE;
+    }
+
+    private QnaOutcome handlePenguInput(String argument) {
+        argument = argument.replace("-", "");
+
+        switch (argument) {
+            case "wdyt" -> {
+                terminalOut.append("WDYT", OutputKind.ERROR);
+                return QnaOutcome.PENGU_ASKED;
+            }
+            case "ans" -> {
+                terminalOut.append("ANS", OutputKind.ERROR);
+                return QnaOutcome.PENGU_ANSWERED;
+            }
+            default -> {
+                return QnaOutcome.NONE;
+            }
+        }
     }
 
     public int getHealth() {

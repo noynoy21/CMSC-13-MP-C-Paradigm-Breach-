@@ -21,8 +21,10 @@ public class TerminalController {
                                              HELP       Prints out available commands.
                                              EXIT       Closes the command-line terminal.
                                              ASK        Ask a question; answer within 30 seconds.
-                                             STAGE      Switch between game stages (e.g., stage 1).
+                                             ANS        Answer a question; ans _.
+                                             PNGU       Ask Pengu for help.
                                              """;
+                                            //  STAGE      Switch between game stages (e.g., stage 1).
                                             //  CLEAR      Clears the current texts in the command-line.
 
  
@@ -82,7 +84,7 @@ public class TerminalController {
         expireQuestionTimerIfNeeded();
 
         switch (cmd.toLowerCase().split(" ")[0]) {
-            case "ask", "ans", "stage" -> {
+            case "ask", "ans", "stage", "pngu" -> {
                 handleQuestionCommand(cmd);
             }
             case "help" ->  {
