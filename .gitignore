@@ -4,3 +4,4 @@ target/
 *.class
 out/
 repomix-output.xml
+AGENTS.md
