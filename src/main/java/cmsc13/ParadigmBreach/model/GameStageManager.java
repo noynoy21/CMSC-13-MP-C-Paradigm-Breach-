@@ -16,6 +16,8 @@ import cmsc13.ParadigmBreach.model.questionBank.Stage4Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage5Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
+import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.view.TerminalOutput;
 
@@ -173,18 +175,41 @@ public class GameStageManager {
         if (currentIndex == -1 || currentIndex >= STAGE_SEQUENCE.size() - 1) {
             triggerWinCondition();
         } else {
-            // Automatically advance to the next stage
+            // Automatically advance to the next stage via transition cutscene
             String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
-            terminalOut.append("Advancing to next security sector: Stage " + nextStageKey + "...\n", OutputKind.RESPONSE);
-            setStage(nextStageKey);
+            terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
+            
+            List<CutsceneSlide> transitionSlides = List.of(
+                new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "Stage " + currentStageKey.toUpperCase() + " cleared"),
+                new CutsceneSlide("/images/tutorial_images/desktop.png", "Next stage: STAGE " + nextStageKey.toUpperCase())
+            );
+
+            SceneManager.get().openCutsceneWindow(
+                Screen.CUTSCENE,
+                transitionSlides,
+                () -> {
+                    setStage(nextStageKey);
+                }
+            );
         }
     }
 
     private void triggerWinCondition() {
-        terminalOut.append("\n========================================", OutputKind.CORRECT);
-        terminalOut.append("🔥 FIREWALL DEFEATED. SYSTEM BREACHED. 🔥", OutputKind.CORRECT);
-        terminalOut.append("You have successfully cleared all stages and broken the paradigm, C1pher!", OutputKind.CORRECT);
-        terminalOut.append("========================================", OutputKind.CORRECT);
+        terminalOut.append("YOU WIN", OutputKind.CORRECT);
+
+        List<CutsceneSlide> winSlides = List.of(
+            new CutsceneSlide("/images/splash_arts/ascii-art-text.png", "CLEAR"),
+            new CutsceneSlide("/images/tutorial_images/splash_screen.png", "Lorem ipsum"),
+            new CutsceneSlide("/images/desktop_wallpaper_hex.png", "Lorem ipsum")
+        );
+
+        SceneManager.get().openCutsceneWindow(
+            Screen.CUTSCENE,
+            winSlides,
+            () -> {
+                terminalOut.append("Thanks for playing", OutputKind.CORRECT);
+            }
+        );
     }
 
     private boolean canAnswer(String input) {

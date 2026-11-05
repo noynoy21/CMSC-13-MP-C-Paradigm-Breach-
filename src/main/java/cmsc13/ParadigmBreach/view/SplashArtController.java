@@ -82,8 +82,11 @@ public class SplashArtController {
             stopAll();
             SceneManager.get().openCutsceneWindow(
                 Screen.CUTSCENE, 
-                "/images/splash_arts/ascii-art-text.png", 
-                "System breach detected. Initializing C1pher protocols...", 
+                List.of(
+                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/splash_arts/ascii-art-text.png", "Lorem ipsum"),
+                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/tutorial_images/splash_screen.png", "asdfghjkl"),
+                    new cmsc13.ParadigmBreach.model.CutsceneSlide("/images/tutorial_images/desktop.png", "hello")
+                ),
                 () -> SceneManager.get().showDesktop()
             );
         });

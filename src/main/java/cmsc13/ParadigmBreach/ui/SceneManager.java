@@ -96,11 +96,12 @@ public class SceneManager {
     }
 
     /** Opens a screen and returns its controller for initialization. */
+    /** Opens a cutscene window with multiple slides and returns its controller. */
     @SuppressWarnings("unchecked")
-    public <T> T openCutsceneWindow(Screen screen, String imagePath, String text, Runnable onComplete) {
+    public <T> T openCutsceneWindow(Screen screen, java.util.List<cmsc13.ParadigmBreach.model.CutsceneSlide> slides, Runnable onComplete) {
         Zip zippedScreen = load(screen);
         CutsceneController controller = (CutsceneController) zippedScreen.controller();
-        controller.initData(imagePath, text, onComplete);
+        controller.initData(slides, onComplete);
 
         Stage window = new Stage();
         window.initOwner(primaryStage);
