@@ -170,7 +170,8 @@
 }
 
 .sidebar-left .timer-label,
-.sidebar-left .health-label {
+.sidebar-left .health-label,
+.sidebar-left .pengu-token-label {
     /* -fx-background-color: rgba(12, 12, 12); */
     -fx-border-color: rgba(51, 255, 51, 0.55);
     -fx-border-width: 1;
@@ -186,4 +187,10 @@
 
 .sidebar-left .health-label {
     -fx-text-fill: #ff3030;
+}
+
+.sidebar-left .pengu-token-label {
+    -fx-text-fill: #ffd746;
+    -fx-border-width: 0;
+    -fx-font-size: 15px;
 }

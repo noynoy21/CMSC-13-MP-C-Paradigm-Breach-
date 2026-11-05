@@ -1,17 +1,24 @@
 package cmsc13.ParadigmBreach.view;
 
 import cmsc13.ParadigmBreach.model.GameStageManager;
+import cmsc13.ParadigmBreach.model.PenguAssistant;
+import cmsc13.ParadigmBreach.audio.AudioManager;
+import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.util.BlockDigitRenderer;
 import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.util.QuestionTimer;
 import javafx.application.Platform;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.TextFlow;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class TerminalController {
     private static final int QUESTION_TIME_LIMIT_SECONDS = 30;
@@ -22,7 +29,8 @@ public class TerminalController {
                                              EXIT       Closes the command-line terminal.
                                              ASK        Ask a question; answer within 30 seconds.
                                              ANS        Answer a question; ans _.
-                                             PNGU       Ask Pengu for help.
+                                             PNGU -wdyt Peek at Pengu's choice (costs one token).
+                                             PNGU -ans  Let Pengu answer for free.
                                              """;
                                             //  STAGE      Switch between game stages (e.g., stage 1).
                                             //  CLEAR      Clears the current texts in the command-line.
@@ -43,6 +51,12 @@ public class TerminalController {
     @FXML
     private Label healthLabel;
 
+    @FXML
+    private Label penguTokensLabel;
+
+    @FXML
+    private ImageView penguImage;
+
     @FXML 
     private TextField input;
 
@@ -50,6 +64,11 @@ public class TerminalController {
     private TerminalOutput terminalOut; // centralize the control of terminal outputs
     private QuestionTimer questionTimer;
     private LifeTracker lifeTracker;
+    private PenguAssistant penguAssistant;
+    private Image penguNormalImage;
+    private Image penguHappyImage;
+    private Image penguFailImage;
+    private PauseTransition penguReactionReset;
 
     @FXML
     private void initialize() {
@@ -64,12 +83,17 @@ public class TerminalController {
         Platform.runLater(input::requestFocus);   // start with the cursor in the input
 
         lifeTracker = new LifeTracker(this::updateHealthDisplay);
-        gsManager = new GameStageManager(terminalOut, lifeTracker);
+        penguAssistant = new PenguAssistant(this::updatePenguTokenDisplay);
+        gsManager = new GameStageManager(terminalOut, lifeTracker, penguAssistant);
         questionTimer = new QuestionTimer(
             QUESTION_TIME_LIMIT_SECONDS,
             this::updateTimerDisplay,
             this::onQuestionTimeout
         );
+        penguNormalImage = loadPenguImage("/images/pengu/tux_oEyes.png");
+        penguHappyImage = loadPenguImage("/images/pengu/tux_happyEyes.png");
+        penguFailImage = loadPenguImage("/images/pengu/tux_xEyes.png");
+        penguImage.setImage(penguNormalImage);
         timerLabel.setText("TIME: --");
         installWindowCloseHandler();
     }
@@ -104,6 +128,18 @@ public class TerminalController {
         switch (outcome) {
             case QUESTION_STARTED -> startQuestionTimer();
             case ANSWER_ACCEPTED -> stopQuestionTimer("ANSWERED");
+            case PENGU_ANSWERED -> {
+                stopQuestionTimer("ANSWERED");
+                showPenguReaction(penguHappyImage);
+            }
+            case PENGU_ASKED -> {
+                AudioManager.get().playSFX(SoundEffect.TOKEN_SUCCESS);
+                showPenguReaction(penguHappyImage);
+            }
+            case PENGU_OUT_OF_TOKENS, PENGU_FAILED -> {
+                AudioManager.get().playSFX(SoundEffect.TOKEN_FAIL);
+                showPenguReaction(penguFailImage);
+            }
             case STAGE_CHANGED -> stopQuestionTimer("TIME: --");
             case NONE -> { }
         }
@@ -125,6 +161,29 @@ public class TerminalController {
     private void updateHealthDisplay(int livesRemaining) {
         String hearts = LifeTracker.renderHearts(livesRemaining);
         healthLabel.setText("LIFE REMAINING:\n" + hearts);
+    }
+
+    private void updatePenguTokenDisplay(int tokensRemaining) {
+        penguTokensLabel.setText("PENGU TOKENS:\n" + tokensRemaining);
+    }
+
+    private Image loadPenguImage(String path) {
+        var imageUrl = TerminalController.class.getResource(path);
+        if (imageUrl == null) {
+            throw new IllegalStateException("Missing Pengu image: " + path);
+        }
+        return new Image(imageUrl.toExternalForm());
+    }
+
+    private void showPenguReaction(Image reactionImage) {
+        if (penguReactionReset != null) {
+            penguReactionReset.stop();
+        }
+
+        penguImage.setImage(reactionImage);
+        penguReactionReset = new PauseTransition(Duration.millis(900));
+        penguReactionReset.setOnFinished(event -> penguImage.setImage(penguNormalImage));
+        penguReactionReset.playFromStart();
     }
 
     private void expireQuestionTimerIfNeeded() {
