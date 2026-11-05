@@ -80,11 +80,14 @@ public class SplashArtController {
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
-            SceneManager.get().openCutsceneWindow(
-                Screen.CUTSCENE, 
-                "/images/splash_arts/ascii-art-text.png", 
-                "System breach detected. Initializing C1pher protocols...", 
-                () -> SceneManager.get().showDesktop()
+            SceneManager.get().openNameInputWindow(
+                Screen.NAME_INPUT,
+                () -> SceneManager.get().openCutsceneWindow(
+                    Screen.CUTSCENE, 
+                    "/images/splash_arts/ascii-art-text.png", 
+                    "Good morning " + cmsc13.ParadigmBreach.model.PlayerSession.getPlayerName() + "!", 
+                    () -> SceneManager.get().showDesktop()
+                )
             );
         });
         out.play();
