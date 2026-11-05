@@ -14,6 +14,7 @@ public class TerminalController {
                                              HELP       Prints out available commands.
                                              EXIT       Closes the command-line terminal.
                                              ASK        Ask a test question.
+                                             STAGE      Switch between game stages (e.g., stage 1).
                                              """;
                                             //  CLEAR      Clears the current texts in the command-line.
 
@@ -57,7 +58,7 @@ public class TerminalController {
         terminalOut.append("\n> " + cmd + "\n", OutputKind.COMMAND);
 
         switch (cmd.toLowerCase().split(" ")[0]) {
-            case "ask", "ans" -> {
+            case "ask", "ans", "stage" -> {
                 gsManager.handleQnaInput(cmd);
             }
             case "help" ->  {
