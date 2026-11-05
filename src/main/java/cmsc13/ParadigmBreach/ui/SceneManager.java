@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
+import cmsc13.ParadigmBreach.model.CutsceneSlide;
 import cmsc13.ParadigmBreach.view.CutsceneController;
 import cmsc13.ParadigmBreach.view.NameInputController;
 import javafx.fxml.FXMLLoader;
@@ -54,6 +56,17 @@ public class SceneManager {
         primaryStage.show();
     }
 
+    public void showNameInput(Screen screen, Runnable onComplete) {
+        Zip zipped = load(screen);
+        NameInputController controller = (NameInputController) zipped.controller();
+        controller.initData(onComplete);
+
+        primaryStage.setTitle(screen.getTitle());
+        primaryStage.setScene(new Scene(zipped.root(), screen.getWidth(), screen.getHeight()));
+        primaryStage.show();
+        // return controller;
+    }
+
     /** Puts the desktop in the main window. Call once from App.start(). */
     public void showDesktop() {
         Zip zippedDesktop = load(Screen.DESKTOP);
@@ -99,25 +112,10 @@ public class SceneManager {
     /** Opens a screen and returns its controller for initialization. */
     /** Opens a cutscene window with multiple slides and returns its controller. */
     @SuppressWarnings("unchecked")
-    public <T> T openCutsceneWindow(Screen screen, java.util.List<cmsc13.ParadigmBreach.model.CutsceneSlide> slides, Runnable onComplete) {
+    public <T> T openCutsceneWindow(Screen screen, List<CutsceneSlide> slides, Runnable onComplete) {
         Zip zippedScreen = load(screen);
         CutsceneController controller = (CutsceneController) zippedScreen.controller();
         controller.initData(slides, onComplete);
-
-        Stage window = new Stage();
-        window.initOwner(primaryStage);
-        window.setTitle(screen.getTitle());
-        window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
-        window.show();
-        return (T) controller;
-    }
-
-    /** Opens the name input screen and returns its controller for initialization. */
-    @SuppressWarnings("unchecked")
-    public <T> T openNameInputWindow(Screen screen, Runnable onComplete) {
-        Zip zippedScreen = load(screen);
-        NameInputController controller = (NameInputController) zippedScreen.controller();
-        controller.initData(onComplete);
 
         Stage window = new Stage();
         window.initOwner(primaryStage);

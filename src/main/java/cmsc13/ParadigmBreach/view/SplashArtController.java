@@ -80,7 +80,7 @@ public class SplashArtController {
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
-            SceneManager.get().openNameInputWindow(
+            SceneManager.get().showNameInput(
                 Screen.NAME_INPUT,
                 () -> SceneManager.get().openCutsceneWindow(
                     Screen.CUTSCENE,
