@@ -1,5 +1,6 @@
 package cmsc13.ParadigmBreach.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import cmsc13.ParadigmBreach.model.questionBank.Stage4Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage5Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
+import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
 import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.view.TerminalOutput;
@@ -33,7 +36,23 @@ public class GameStageManager {
     private QuestionBank currStageQuestions;
     private Question currQuestion;
     private int answeredQuestions = 0;
+    private List<Question> activeStageQuestions;
     private Iterator<Question> qIterator;
+
+    private String currentStageKey = "0";
+    private static final List<String> STAGE_SEQUENCE = List.of("0", "1", "2", "3", "4", "5", "6", "7");
+
+    // =========================================================================
+    // GAME LOOP CONFIGURATION: Question Limit per Stage
+    // 
+    // To play with the arbitrary limit constraint (e.g., 10 questions):
+    //     Keep QUESTIONS_PER_STAGE = 10; and comment out the unlimited line.
+    // 
+    // To play with the zero-constraints version (all available questions):
+    //     Uncomment the Integer.MAX_VALUE line below.
+    // =========================================================================
+    private static final int QUESTIONS_PER_STAGE = 2;
+    // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
@@ -66,8 +85,8 @@ public class GameStageManager {
             case "stage" -> {
                 if (inArray.length < 2) {
                     terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 >", OutputKind.RESPONSE);
-                    return QnaOutcome.NONE;
+                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
+                    break;
                 }
                 return setStage(inArray[1]) ? QnaOutcome.STAGE_CHANGED : QnaOutcome.NONE;
             }
@@ -88,11 +107,11 @@ public class GameStageManager {
 
         // initialize the iterator
         if (qIterator == null) {
-            qIterator = currStageQuestions.getShuffledQuestions().iterator();
+            qIterator = activeStageQuestions.iterator();
         }
 
         if (qIterator.hasNext()) {
-            if (currQuestion == null || currQuestion.isAnswered()) { // start questions or move to next question
+            if (currQuestion == null || currQuestion.isAnswered()) {
                 currQuestion = qIterator.next();
             }
 
@@ -106,7 +125,7 @@ public class GameStageManager {
                 terminalOut.append("Answer current question first", OutputKind.ERROR);
             } 
         } else {
-            terminalOut.append("No question left in current stage.", OutputKind.ERROR);
+            terminalOut.append("No questions left in current stage. Module complete!", OutputKind.CORRECT);
         }
 
         return false;
@@ -114,24 +133,27 @@ public class GameStageManager {
 
     public boolean setStage(String stageKey) {
         switch (stageKey) {
-            case "0", "stage_0" -> currStageQuestions = new Stage0Questions();
-            case "1", "stage_1" -> currStageQuestions = new Stage1Questions();
-            case "2", "stage_2" -> currStageQuestions = new Stage2Questions();
-            case "3", "stage_3" -> currStageQuestions = new Stage3Questions();
-            case "4", "stage_4" -> currStageQuestions = new Stage4Questions();
-            case "5", "stage_5" -> currStageQuestions = new Stage5Questions();
-            case "6", "stage_6" -> currStageQuestions = new Stage6Questions();
-            case "7", "stage_7" -> currStageQuestions = new Stage7Questions();
-            // case "c", "stage_c" -> currStageQuestions = new StageCQuestions();
-            // case "j", "stage_j" -> currStageQuestions = new StageJQuestions();
-            // case "p", "stage_p" -> currStageQuestions = new StagePQuestions();
-            // case "s", "stage_s" -> currStageQuestions = new StageSQuestions();
+            case "0" -> currStageQuestions = new Stage0Questions();
+            case "1" -> currStageQuestions = new Stage1Questions();
+            case "2" -> currStageQuestions = new Stage2Questions();
+            case "3" -> currStageQuestions = new Stage3Questions();
+            case "4" -> currStageQuestions = new Stage4Questions();
+            case "5" -> currStageQuestions = new Stage5Questions();
+            case "6" -> currStageQuestions = new Stage6Questions();
+            case "7" -> currStageQuestions = new Stage7Questions();
             default -> {
-                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to OOPStage.", OutputKind.ERROR);
+                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 0.", OutputKind.ERROR);
                 stageKey = "0";
                 currStageQuestions = new Stage0Questions();
             }
         }
+
+        this.currentStageKey = stageKey;
+
+        // Apply question limit configuration
+        List<Question> rawShuffled = currStageQuestions.getShuffledQuestions();
+        int limit = Math.min(QUESTIONS_PER_STAGE, rawShuffled.size());
+        activeStageQuestions = new ArrayList<>(rawShuffled.subList(0, limit));
 
         qIterator = null;
         currQuestion = null;
@@ -145,26 +167,75 @@ public class GameStageManager {
     }
 
     private void handleAns(char lettChoice) {
-        // input validation.
-        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())){ // correct answer
+        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) {
             answeredQuestions++;
-
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
 
             terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
             lifeTracker.refresh();
         } else { // wrong answer
             answeredQuestions++;
-
             terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
 
             terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
             loseHealth();
         }
 
-        
         currQuestion.setAnswered(true);
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
+
+        // Check if stage requirement has been met
+        if (answeredQuestions >= activeStageQuestions.size()) {
+            checkStageCompletion();
+        }
+    }
+
+    private void checkStageCompletion() {
+        terminalOut.append("\n========================================", OutputKind.CORRECT);
+        terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " CLEARED!", OutputKind.CORRECT);
+        terminalOut.append("========================================", OutputKind.CORRECT);
+
+        int currentIndex = STAGE_SEQUENCE.indexOf(currentStageKey);
+        
+        // Check if this was the final stage (Win Condition)
+        if (currentIndex == -1 || currentIndex >= STAGE_SEQUENCE.size() - 1) {
+            triggerWinCondition();
+        } else {
+            // Automatically advance to the next stage via transition cutscene
+            String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
+            terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
+            
+            List<CutsceneSlide> transitionSlides = List.of(
+                new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "Stage " + currentStageKey.toUpperCase() + " cleared"),
+                new CutsceneSlide("/images/tutorial_images/desktop.png", "Next stage: STAGE " + nextStageKey.toUpperCase())
+            );
+
+            SceneManager.get().openCutsceneWindow(
+                Screen.CUTSCENE,
+                transitionSlides,
+                () -> {
+                    setStage(nextStageKey);
+                }
+            );
+        }
+    }
+
+    private void triggerWinCondition() {
+        terminalOut.append("YOU WIN", OutputKind.CORRECT);
+
+        List<CutsceneSlide> winSlides = List.of(
+            new CutsceneSlide("/images/splash_arts/ascii-art-text.png", "CLEAR"),
+            new CutsceneSlide("/images/tutorial_images/splash_screen.png", "Lorem ipsum"),
+            new CutsceneSlide("/images/desktop_wallpaper_hex.png", "Lorem ipsum")
+        );
+
+        SceneManager.get().openCutsceneWindow(
+            Screen.CUTSCENE,
+            winSlides,
+            () -> {
+                terminalOut.append("Thanks for playing", OutputKind.CORRECT);
+            }
+        );
     }
 
     public void timeoutCurrentQuestion() {
@@ -189,7 +260,6 @@ public class GameStageManager {
     private boolean canAnswer(String input) {
         String[] inArray = input.toLowerCase().trim().split("\\s+");
 
-        // if currentQuestion state is valid.
         if (currQuestion == null) {
             terminalOut.append("No question has been asked.", OutputKind.ERROR);
             terminalOut.append("Try the command: ask", OutputKind.ERROR);
@@ -200,15 +270,14 @@ public class GameStageManager {
             return false;
         }
 
-        // iif user input is valid.
         if (inArray.length < 2) {
             terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            terminalOut.append("command only needs 1 argument: ans _", OutputKind.RESPONSE);
             return false;
         }
         if (inArray.length > 2) {
             terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+            terminalOut.append("command only needs 1 argument: ans _", OutputKind.RESPONSE);
             return false;
         }
         String arg = inArray[1];
@@ -219,11 +288,10 @@ public class GameStageManager {
         }
         if (!letterChoices.contains(arg.charAt(0))) {
             terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
-            terminalOut.append("letter choice must be among of: a | b | c | d.", OutputKind.RESPONSE);
+            terminalOut.append("letter choice must be among: a | b | c | d.", OutputKind.RESPONSE);
             return false;
         }
 
-        // if input passes all tests:
         return true;
     }
 
@@ -235,11 +303,11 @@ public class GameStageManager {
 
         sb.append("Choices:\n");
         String letter;
-        String choicePromts;
+        String choicePrompts;
         for (int i = 0; i < 4; i++) {
             letter = "[" + letterChoices.get(i) + "]: ";
-            choicePromts = q.getChoices().get(i);
-            sb.append(letter).append(choicePromts);
+            choicePrompts = q.getChoices().get(i);
+            sb.append(letter).append(choicePrompts);
             sb.append("\n");
         }
         currQuestion.setHasBeenAsked(true);

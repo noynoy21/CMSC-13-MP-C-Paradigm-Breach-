@@ -7,6 +7,7 @@ import java.util.List;
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.MusicTrack;
 import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -79,7 +80,17 @@ public class SplashArtController {
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
-            SceneManager.get().showDesktop();
+            SceneManager.get().openNameInputWindow(
+                Screen.NAME_INPUT,
+                () -> SceneManager.get().openCutsceneWindow(
+                    Screen.CUTSCENE,
+                    List.of(new cmsc13.ParadigmBreach.model.CutsceneSlide(
+                        "/images/splash_arts/ascii-art-text.png",
+                        "Good evening, " + cmsc13.ParadigmBreach.model.PlayerSession.getPlayerName() + "!"
+                    )),
+                    () -> SceneManager.get().showDesktop()
+                )
+            );
         });
         out.play();
 
