@@ -8,10 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 
 public class DesktopController {
-    // private App mainApp;
 
     @FXML 
     private FlowPane desktopArea;
+
+    // private GameStageManager gsManager;
 
     @FXML
     private void initialize() {
@@ -22,6 +23,8 @@ public class DesktopController {
         );
 
         AudioManager.get().playMusic(MusicTrack.DESKTOP);
+
+        // gsManager = new GameStageManager(null);
     }
 
     private void openTerminal() {
