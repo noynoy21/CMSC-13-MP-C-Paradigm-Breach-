@@ -4,49 +4,65 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="950.0" styleClass="terminal-root" stylesheets="@../css_files/terminalLook.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.TerminalController">
+
+<BorderPane styleClass="terminal-background" stylesheets="@../css_files/terminalLook.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cmsc13.ParadigmBreach.view.TerminalController">
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="content" BorderPane.alignment="CENTER">
-         <bottom>
-            <HBox prefHeight="10.0" prefWidth="520.0" styleClass="text-area" BorderPane.alignment="CENTER">
-               <children>
-                  <Label styleClass="prompt" text="&gt;" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="input" onAction="#onEnter" prefHeight="51.0" prefWidth="511.0" styleClass="text-field" HBox.hgrow="ALWAYS" />
-               </children>
-            </HBox>
-         </bottom>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" styleClass="terminal-root" stylesheets="@../css_files/terminalLook.css">
          <center>
-            <ScrollPane fx:id="outputScroll" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" stylesheets="@../css_files/terminalLook.css" BorderPane.alignment="CENTER">
-               <content>
-                  <TextFlow fx:id="outputFlow" prefHeight="122.0" prefWidth="490.0" styleClass="terminal-output" />
-               </content>
-            </ScrollPane>
+            <BorderPane prefHeight="200.0" prefWidth="699.0" styleClass="content" BorderPane.alignment="CENTER">
+               <bottom>
+                  <HBox prefHeight="10.0" prefWidth="520.0" styleClass="text-area" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label styleClass="prompt" text="&gt;" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="input" onAction="#onEnter" prefHeight="51.0" prefWidth="511.0" styleClass="text-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </bottom>
+               <center>
+                  <ScrollPane fx:id="outputScroll" fitToWidth="true" hbarPolicy="NEVER" prefHeight="400.0" prefWidth="694.0" styleClass="text-area" stylesheets="@../css_files/terminalLook.css" BorderPane.alignment="CENTER">
+                     <content>
+                        <TextFlow fx:id="outputFlow" prefHeight="122.0" prefWidth="490.0" styleClass="terminal-output" />
+                     </content>
+                  </ScrollPane>
+               </center>
+            </BorderPane>
          </center>
+         <right>
+            <VBox prefHeight="400.0" prefWidth="238.0" styleClass="text-area" BorderPane.alignment="CENTER">
+               <children>
+                  <ScrollPane fx:id="summaryScroll" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" VBox.vgrow="ALWAYS">
+                     <content>
+                        <TextFlow fx:id="summaryFlow" prefHeight="200.0" prefWidth="200.0" styleClass="terminal-output" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </right>
+         <left>
+            <VBox prefHeight="600.0" prefWidth="270.0" styleClass="sidebar-left" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="timerLabel" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="10.0" maxWidth="Infinity" minHeight="140.0" prefHeight="167.0" prefWidth="270.0" styleClass="timer-label" text="TIME: --" textAlignment="CENTER" />
+                  <Label fx:id="healthLabel" alignment="CENTER" maxWidth="Infinity" styleClass="health-label" text="LIFE REMAINING:&#10;&lt;3 &lt;3 &lt;3 &lt;3" />
+                  <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" />
+                  <BorderPane prefHeight="178.0" prefWidth="270.0" styleClass="text-area" VBox.vgrow="ALWAYS">
+                     <left>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" styleClass="text-area" BorderPane.alignment="CENTER">
+                           <image>
+                              <Image url="@../images/pengu/tux_happyEyes.png" />
+                           </image>
+                        </ImageView>
+                     </left>
+                  </BorderPane>
+               </children>
+            </VBox>
+         </left>
       </BorderPane>
    </center>
-   <right>
-      <VBox prefHeight="400.0" prefWidth="238.0" styleClass="text-area" BorderPane.alignment="CENTER">
-         <children>
-            <ScrollPane fx:id="summaryScroll" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" styleClass="text-area" VBox.vgrow="ALWAYS">
-               <content>
-                  <TextFlow fx:id="summaryFlow" prefHeight="200.0" prefWidth="200.0" styleClass="terminal-output" />
-               </content>
-            </ScrollPane>
-         </children></VBox>
-   </right>
-   <left>
-      <VBox prefHeight="500.0" prefWidth="219.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-            <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" />
-            <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" />
-            <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
-   </left>
 </BorderPane>
