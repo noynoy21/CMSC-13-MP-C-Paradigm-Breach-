@@ -1,5 +1,6 @@
 package cmsc13.ParadigmBreach.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,9 +30,17 @@ public class GameStageManager {
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
+    // --- Game Loop Configuration ---
+    private static final int QUESTIONS_PER_STAGE = 10;
+    private final List<String> campaignStages = List.of("1", "2", "3", "4", "5", "6", "7");
+    private int currentStageIndex = 0;
+    private int stageQuestionCount = 0;
+    private int totalStageQuestions = 0;
+
     public GameStageManager(TerminalOutput terminalOut) {
         this.terminalOut = terminalOut;
-        setStage("0");
+        // Start the game loop at Stage 1 (or use Stage 0 for trial/tutorial)
+        setStage(campaignStages.get(currentStageIndex));
     }
 
     public void handleQnaInput(String input) {
@@ -55,7 +64,7 @@ public class GameStageManager {
             case "stage" -> {
                 if (inArray.length < 2) {
                     terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 >", OutputKind.RESPONSE);
+                    terminalOut.append("Usage: stage < 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
                     break;
                 }
                 setStage(inArray[1]);
@@ -64,137 +73,148 @@ public class GameStageManager {
     }
 
     private void handleAsk() {
-        // initialize the iterator
-        if (qIterator == null) {
-            qIterator = currStageQuestions.getShuffledQuestions().iterator();
+        if (qIterator == null || !qIterator.hasNext()) {
+            terminalOut.append("Module complete or no active questions. Use 'stage <num>' to switch or restart.", OutputKind.ERROR);
+            return;
         }
 
-        if (qIterator.hasNext()) {
-            if (currQuestion == null || currQuestion.isAnswered()) { // start questions or move to next question
-                currQuestion = qIterator.next();
-            }
+        if (currQuestion == null || currQuestion.isAnswered()) {
+            currQuestion = qIterator.next();
+        }
 
-            if (!currQuestion.hasBeenAsked()) {
-                terminalOut.clear();
-                String questionStr = buildQuestion(currQuestion);
-                terminalOut.append(questionStr, OutputKind.QUESTION);
-                AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
-            } else if (!currQuestion.isAnswered()) {
-                terminalOut.append("Answer current question first", OutputKind.ERROR);
-            } 
-        } else {
-            terminalOut.append("No question left in current stage.", OutputKind.ERROR);
+        if (!currQuestion.hasBeenAsked()) {
+            terminalOut.clear();
+            String questionStr = buildQuestion(currQuestion);
+            terminalOut.append(questionStr, OutputKind.QUESTION);
+            AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
+        } else if (!currQuestion.isAnswered()) {
+            terminalOut.append("Answer current question first", OutputKind.ERROR);
         }
     }
 
     public void setStage(String stageKey) {
-        switch (stageKey) {
-            case "0", "stage_0" -> currStageQuestions = new Stage0Questions();
-            case "1", "stage_1" -> currStageQuestions = new Stage1Questions();
-            case "2", "stage_2" -> currStageQuestions = new Stage2Questions();
-            case "3", "stage_3" -> currStageQuestions = new Stage3Questions();
-            case "4", "stage_4" -> currStageQuestions = new Stage4Questions();
-            case "5", "stage_5" -> currStageQuestions = new Stage5Questions();
-            case "6", "stage_6" -> currStageQuestions = new Stage6Questions();
-            case "7", "stage_7" -> currStageQuestions = new Stage7Questions();
-            // case "c", "stage_c" -> currStageQuestions = new StageCQuestions();
-            // case "j", "stage_j" -> currStageQuestions = new StageJQuestions();
-            // case "p", "stage_p" -> currStageQuestions = new StagePQuestions();
-            // case "s", "stage_s" -> currStageQuestions = new StageSQuestions();
+        String normalizedKey = stageKey.toLowerCase().replace("stage_", "").replace("stage", "").trim();
+
+        switch (normalizedKey) {
+            case "0" -> currStageQuestions = new Stage0Questions();
+            case "1" -> currStageQuestions = new Stage1Questions();
+            case "2" -> currStageQuestions = new Stage2Questions();
+            case "3" -> currStageQuestions = new Stage3Questions();
+            case "4" -> currStageQuestions = new Stage4Questions();
+            case "5" -> currStageQuestions = new Stage5Questions();
+            case "6" -> currStageQuestions = new Stage6Questions();
+            case "7" -> currStageQuestions = new Stage7Questions();
             default -> {
-                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to OOPStage.", OutputKind.ERROR);
-                currStageQuestions = new Stage0Questions();
-                return;
+                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 1.", OutputKind.ERROR);
+                currStageQuestions = new Stage1Questions();
+                normalizedKey = "1";
             }
         }
 
-        qIterator = null;
+        // Sync campaign tracker if a campaign stage is selected
+        if (campaignStages.contains(normalizedKey)) {
+            currentStageIndex = campaignStages.indexOf(normalizedKey);
+        }
+
+        // Randomly pick up to QUESTIONS_PER_STAGE from the shuffled questions pool
+        List<Question> allShuffled = currStageQuestions.getShuffledQuestions();
+        totalStageQuestions = Math.min(QUESTIONS_PER_STAGE, allShuffled.size());
+        List<Question> stagePool = new ArrayList<>(allShuffled.subList(0, totalStageQuestions));
+        
+        qIterator = stagePool.iterator();
         currQuestion = null;
         answeredQuestions = 0;
+        stageQuestionCount = 0;
         
         terminalOut.clear();
-        terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
-        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+        terminalOut.append("Successfully loaded stage: " + normalizedKey.toUpperCase(), OutputKind.CORRECT);
+        terminalOut.append("Goal: Answer " + totalStageQuestions + " questions to clear this module.\nType 'ask' to begin.", OutputKind.RESPONSE);
     }
 
     private void handleAns(char lettChoice) {
-        // input validation.
-        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())){ // correct answer
+        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) { 
             answeredQuestions++;
-
-            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
-
+            terminalOut.appendSummary("\nQuestion no." + (stageQuestionCount + 1) + ": correct.", OutputKind.CORRECT);
             terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
             AudioManager.get().playSFX(SoundEffect.CORRECT);
-        } else { // wrong answer
+        } else { 
             answeredQuestions++;
-
-            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
-
+            terminalOut.appendSummary("\nQuestion no." + (stageQuestionCount + 1) + ": wrong.", OutputKind.ERROR);
             terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
             AudioManager.get().playSFX(SoundEffect.WRONG);
         }
 
-        
         currQuestion.setAnswered(true);
-        terminalOut.append("Question answered.", OutputKind.RESPONSE);
+        stageQuestionCount++;
+        terminalOut.append("Progress: " + stageQuestionCount + "/" + totalStageQuestions + " questions completed.", OutputKind.RESPONSE);
+
+        // Check if the stage/module quota has been met
+        if (stageQuestionCount >= totalStageQuestions) {
+            handleStageComplete();
+        }
+    }
+
+    private void handleStageComplete() {
+        String clearedStage = campaignStages.get(currentStageIndex);
+        terminalOut.append("\n========================================", OutputKind.CORRECT);
+        terminalOut.append("      MODULE " + clearedStage.toUpperCase() + " CLEARED SUCCESSFULLY!      ", OutputKind.CORRECT);
+        terminalOut.append("========================================", OutputKind.CORRECT);
+
+        currentStageIndex++;
+        if (currentStageIndex < campaignStages.size()) {
+            // Automatically advance to the next campaign stage
+            String nextStage = campaignStages.get(currentStageIndex);
+            terminalOut.append("Initiating breach to Stage " + nextStage + "...\n", OutputKind.RESPONSE);
+            setStage(nextStage);
+        } else {
+            // --- WIN CONDITION ---
+            terminalOut.append("\n****************************************", OutputKind.CORRECT);
+            terminalOut.append("*          VICTORY! YOU WIN!           *", OutputKind.CORRECT);
+            terminalOut.append("*  All Paradigm modules have been broken!*", OutputKind.CORRECT);
+            terminalOut.append("****************************************", OutputKind.CORRECT);
+            currQuestion = null;
+            qIterator = null;
+        }
     }
 
     private boolean canAnswer(String input) {
         String[] inArray = input.toLowerCase().split(" ");
 
-        // if currentQuestion state is valid.
         if (currQuestion == null) {
             terminalOut.append("No question has been asked.", OutputKind.ERROR);
             terminalOut.append("Try the command: ask", OutputKind.ERROR);
             return false;
         } 
         if (currQuestion.isAnswered()) {
-            terminalOut.append("Question already answered.", OutputKind.ERROR);
+            terminalOut.append("Question already answered. Type 'ask' for the next question.", OutputKind.ERROR);
             return false;
         }
 
-        // iif user input is valid.
-        if (inArray.length < 2) {
-            terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
+        if (inArray.length < 2 || inArray.length > 2) {
+            terminalOut.append("Invalid arguments: " + input, OutputKind.ERROR);
+            terminalOut.append("Usage: ans <a|b|c|d>", OutputKind.RESPONSE);
             return false;
         }
-        if (inArray.length > 2) {
-            terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
-            terminalOut.append("command only needs 1 argmuent: ans _", OutputKind.RESPONSE);
-            return false;
-        }
+        
         String arg = inArray[1];
-        if (arg.length() != 1) {
-            terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
-            terminalOut.append("command argument must only be 1 letter choice.", OutputKind.RESPONSE);
-            return false;
-        }
-        if (!letterChoices.contains(arg.charAt(0))) {
-            terminalOut.append("Invalid argument: " + input, OutputKind.ERROR);
-            terminalOut.append("letter choice must be among of: a | b | c | d.", OutputKind.RESPONSE);
+        if (arg.length() != 1 || !letterChoices.contains(arg.charAt(0))) {
+            terminalOut.append("Invalid choice: " + input, OutputKind.ERROR);
+            terminalOut.append("Letter choice must be among: a | b | c | d.", OutputKind.RESPONSE);
             return false;
         }
 
-        // if input passes all tests:
         return true;
     }
 
     private String buildQuestion(Question q) {
         StringBuilder sb = new StringBuilder();
-        String question = q.getPrompt();
-        sb.append("Q: ").append(question);
-        sb.append("\n");
-
+        sb.append("Q: ").append(q.getPrompt()).append("\n");
         sb.append("Choices:\n");
-        String letter;
-        String choicePromts;
+        
         for (int i = 0; i < 4; i++) {
-            letter = "[" + letterChoices.get(i) + "]: ";
-            choicePromts = q.getChoices().get(i);
-            sb.append(letter).append(choicePromts);
-            sb.append("\n");
+            String letter = "[" + letterChoices.get(i) + "]: ";
+            String choicePrompts = q.getChoices().get(i);
+            sb.append(letter).append(choicePrompts).append("\n");
         }
         currQuestion.setHasBeenAsked(true);
 
