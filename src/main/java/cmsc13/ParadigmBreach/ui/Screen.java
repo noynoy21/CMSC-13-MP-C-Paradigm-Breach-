@@ -4,7 +4,8 @@ public enum Screen {
     DESKTOP ("/fxml_files/desktop.fxml",      "ParadigmBreach", 1000, 600, true),
     TERMINAL("/fxml_files/command-line.fxml", "Terminal",        975, 400, false),
     TUTORIALREADME("/fxml_files/tutorial-readme-md.fxml", "README.md (Tutorial)", 650, 550, true),
-    SPLASHART("/fxml_files/splash-art.fxml", "Splash Art", 800, 400, true);
+    SPLASHART("/fxml_files/splash-art.fxml", "Splash Art", 800, 400, true),
+    CUTSCENE("/fxml_files/cutscene.fxml", "Paradigm Breach - Transmission", 1000, 600, false);
 
     private final String fxmlPath, title;
     private final double w, h;

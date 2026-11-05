@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.EnumMap;
 import java.util.Map;
 
+import cmsc13.ParadigmBreach.view.CutsceneController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -92,6 +93,21 @@ public class SceneManager {
 
         window.show();
         return (T) zippedScreen.controller;
+    }
+
+    /** Opens a screen and returns its controller for initialization. */
+    @SuppressWarnings("unchecked")
+    public <T> T openCutsceneWindow(Screen screen, String imagePath, String text, Runnable onComplete) {
+        Zip zippedScreen = load(screen);
+        CutsceneController controller = (CutsceneController) zippedScreen.controller();
+        controller.initData(imagePath, text, onComplete);
+
+        Stage window = new Stage();
+        window.initOwner(primaryStage);
+        window.setTitle(screen.getTitle());
+        window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
+        window.show();
+        return (T) controller;
     }
 
     public Stage getPrimaryStage() { return primaryStage; }
