@@ -1,6 +1,5 @@
 package cmsc13.ParadigmBreach.model.questionBank;
 
-import org.yaml.snakeyaml.Yaml;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,22 +9,44 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.Yaml;
+
 public class QuestionBank {
     protected List<Question> listOfQuestions; // set of initial questions
     protected List<Question> shuffledQuestions; // shuffled questions
 
-    public QuestionBank(List<Question> list) {
-        listOfQuestions = list;
-        shuffleQuestions();
-    }
+    // public QuestionBank(List<Question> list) {
+    //     listOfQuestions = list;
+    //     shuffleQuestions();
+    // }
 
-    public QuestionBank(String csvResourcePath) {
-        listOfQuestions = loadQuestionsFromCsv(csvResourcePath);
-        shuffleQuestions();
-    }
+    // public QuestionBank(String csvResourcePath) {
+    //     listOfQuestions = loadQuestionsFromCsv(csvResourcePath);
+    //     shuffleQuestions();
+    // }
 
-    public QuestionBank(String yamlResourcePath, boolean isYaml) {
-        listOfQuestions = loadQuestionsFromYaml(yamlResourcePath);
+    // public QuestionBank(String yamlResourcePath, boolean isYaml) {
+    //     listOfQuestions = loadQuestionsFromYaml(yamlResourcePath);
+    //     shuffleQuestions();
+    // }
+
+    public QuestionBank(String filePath) {
+        String[] parts = filePath.split("\\.");
+
+        if (parts.length <= 1) {
+            throw new IllegalArgumentException("filePath input is not a file: " + filePath);
+        }
+
+        String fileType = parts[parts.length-1];
+
+        switch (fileType) {
+            case "yml" -> {
+                listOfQuestions = loadQuestionsFromYaml(filePath);
+            }
+            default -> {
+                throw new IllegalArgumentException("Invalid file type: ." + fileType);
+            }
+        }
         shuffleQuestions();
     }
 
