@@ -7,6 +7,7 @@ import java.util.List;
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.MusicTrack;
 import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -79,7 +80,12 @@ public class SplashArtController {
         out.setToValue(0);
         out.setOnFinished(e -> {
             stopAll();
-            SceneManager.get().showDesktop();
+            SceneManager.get().openCutsceneWindow(
+                Screen.CUTSCENE, 
+                "/images/splash_arts/ascii-art-text.png", 
+                "System breach detected. Initializing C1pher protocols...", 
+                () -> SceneManager.get().showDesktop()
+            );
         });
         out.play();
 
