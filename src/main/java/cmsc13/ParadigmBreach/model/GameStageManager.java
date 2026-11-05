@@ -162,7 +162,8 @@ public class GameStageManager {
         
         terminalOut.clear();
         terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
-        terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'\n Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+        // terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'", OutputKind.RESPONSE);
+        terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
         return true;
     }
 
@@ -298,7 +299,7 @@ public class GameStageManager {
     private String buildQuestion(Question q) {
         StringBuilder sb = new StringBuilder();
         String question = q.getPrompt();
-        sb.append("Q: ").append(question);
+        sb.append("Q: \n").append(question);
         sb.append("\n");
 
         sb.append("Choices:\n");
@@ -307,7 +308,8 @@ public class GameStageManager {
         for (int i = 0; i < 4; i++) {
             letter = "[" + letterChoices.get(i) + "]: ";
             choicePrompts = q.getChoices().get(i);
-            sb.append(letter).append(choicePrompts);
+            sb.append(letter).append("\n");
+            sb.append(choicePrompts);
             sb.append("\n");
         }
         currQuestion.setHasBeenAsked(true);

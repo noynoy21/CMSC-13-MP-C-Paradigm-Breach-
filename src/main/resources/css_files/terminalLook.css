@@ -9,7 +9,7 @@
 
 .text-area, .text-field {
     -fx-font-family: "Cascadia Mono";
-    -fx-font-size: 13.5px;
+    -fx-font-size: 16px;
     -fx-text-fill: #33ff33;
     -fx-highlight-fill: #f5ff33;
     -fx-highlight-text-fill: #0c0c0c;
@@ -18,7 +18,7 @@
 .terminal-output {
     -fx-padding: 8;
     -fx-font-family: "Cascadia Mono";
-    -fx-font-size: 13.5px;
+    -fx-font-size: 16px;
 }
 
 .terminal-output .command  { -fx-fill: #ffffff; }
