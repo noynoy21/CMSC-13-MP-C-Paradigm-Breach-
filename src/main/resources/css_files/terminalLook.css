@@ -1,7 +1,10 @@
-.terminal-root {
-    -fx-background-image: url("../images/desktop_wallpaper_hex.png");   /* relative to the CSS file */
+.terminal-background {
+    -fx-background-image: url("../images/desktop_wallpaper_hex.png");   /*relative to the CSS file*/
     -fx-background-size: cover;
-    -fx-background-color: rgba(12, 12, 12, 0.6);   
+}
+
+.terminal-root {
+    -fx-background-color: rgba(12, 12, 12, 0.75);
 }
 
 .text-area, .text-field {
@@ -34,8 +37,8 @@
 .text-area .scroll-pane,
 .text-area .viewport,
 .text-area .content {
-    -fx-background-color: rgba(12, 12, 12, 0.5);
-    /* -fx-background-color: transparent; */
+    /* -fx-background-color: rgba(12, 12, 12); */
+    -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
@@ -158,4 +161,29 @@
 /* Square where the two bars meet */
 .text-area .corner {
     -fx-background-color: rgba(51, 255, 51, 0.15);
+}
+
+.sidebar-left .label {
+    -fx-text-fill: #33ff33;
+    -fx-font-family: "Cascadia Mono";
+    -fx-font-size: 13px;
+}
+
+.sidebar-left .timer-label,
+.sidebar-left .health-label {
+    /* -fx-background-color: rgba(12, 12, 12); */
+    -fx-border-color: rgba(51, 255, 51, 0.55);
+    -fx-border-width: 1;
+    -fx-font-family: "Cascadia Mono";
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+    -fx-padding: 10;
+}
+
+.sidebar-left .timer-label {
+    -fx-text-fill: #ffd746;
+}
+
+.sidebar-left .health-label {
+    -fx-text-fill: #ff3030;
 }
