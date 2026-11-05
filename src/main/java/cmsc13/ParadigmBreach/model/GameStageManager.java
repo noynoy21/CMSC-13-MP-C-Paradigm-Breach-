@@ -27,11 +27,16 @@ public class GameStageManager {
         NONE,
         QUESTION_STARTED,
         ANSWER_ACCEPTED,
+        PENGU_ASKED,
+        PENGU_OUT_OF_TOKENS,
+        PENGU_FAILED,
+        PENGU_ANSWERED,
         STAGE_CHANGED
     }
 
     private TerminalOutput terminalOut;
     private final LifeTracker lifeTracker;
+    private final PenguAssistant penguAssistant;
 
     private QuestionBank currStageQuestions;
     private Question currQuestion;
@@ -56,9 +61,10 @@ public class GameStageManager {
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
-    public GameStageManager(TerminalOutput terminalOut, LifeTracker lifeTracker) {
+    public GameStageManager(TerminalOutput terminalOut, LifeTracker lifeTracker, PenguAssistant penguAssistant) {
         this.terminalOut = terminalOut;
         this.lifeTracker = lifeTracker;
+        this.penguAssistant = penguAssistant;
         setStage("0");
     }
 
@@ -87,16 +93,85 @@ public class GameStageManager {
                     terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
                     terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
                     break;
+                } else if (inArray.length > 2) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    terminalOut.append("Usage: stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >", OutputKind.RESPONSE);
+                    break;
                 }
                 return setStage(inArray[1]) ? QnaOutcome.STAGE_CHANGED : QnaOutcome.NONE;
+            }
+            case "pngu" -> {
+                if (inArray.length < 2) {
+                    terminalOut.append("Too few arguments: " + input, OutputKind.ERROR);
+                    appendPenguUsage();
+                    return QnaOutcome.PENGU_FAILED;
+                } else if (inArray.length > 2) {
+                    terminalOut.append("Too many arguments: " + input, OutputKind.ERROR);
+                    appendPenguUsage();
+                    return QnaOutcome.PENGU_FAILED;
+                }
+                return handlePenguInput(inArray[1]);
             }
         }
 
         return QnaOutcome.NONE;
     }
 
+    private QnaOutcome handlePenguInput(String argument) {
+        switch (argument) {
+            case "-peek" -> {
+                if (!hasActiveQuestion()) {
+                    terminalOut.append("Ask an unanswered question before asking Pengu for a peek.", OutputKind.ERROR);
+                    return QnaOutcome.PENGU_FAILED;
+                }
+                if (!penguAssistant.spendPeekToken()) {
+                    terminalOut.append("Pengu is out of peek tokens for this stage.", OutputKind.ERROR);
+                    return QnaOutcome.PENGU_OUT_OF_TOKENS;
+                }
+
+                int choiceIndex = penguAssistant.getThoughtChoiceIndex(currQuestion);
+                appendPenguChoice("Pengu thinks the answer is", choiceIndex);
+                return QnaOutcome.PENGU_ASKED;
+            }
+            case "-copy" -> {
+                if (!hasActiveQuestion()) {
+                    terminalOut.append("Ask an unanswered question before letting Pengu answer.", OutputKind.ERROR);
+                    return QnaOutcome.PENGU_FAILED;
+                }
+
+                int choiceIndex = penguAssistant.getCopyChoiceIndex(currQuestion);
+                appendPenguChoice("Pengu answers", choiceIndex);
+                handleAns(letterChoices.get(choiceIndex));
+                return QnaOutcome.PENGU_ANSWERED;
+            }
+            default -> {
+                terminalOut.append("Unknown Pengu command: " + argument, OutputKind.ERROR);
+                appendPenguUsage();
+                return QnaOutcome.PENGU_FAILED;
+            }
+        }
+    }
+
+    private boolean hasActiveQuestion() {
+        return currQuestion != null && currQuestion.hasBeenAsked() && !currQuestion.isAnswered();
+    }
+
+    private void appendPenguChoice(String prefix, int choiceIndex) {
+        char letter = letterChoices.get(choiceIndex);
+        String answer = currQuestion.getChoices().get(choiceIndex);
+        terminalOut.append(prefix + " [" + letter + "]: " + answer, OutputKind.RESPONSE);
+    }
+
+    private void appendPenguUsage() {
+        terminalOut.append("Usage: pngu -peek | pngu -copy", OutputKind.RESPONSE);
+    }
+
     public int getHealth() {
         return lifeTracker.getLivesRemaining();
+    }
+
+    public int getPenguTokensRemaining() {
+        return penguAssistant.getTokensRemaining();
     }
 
     private boolean handleAsk() {
@@ -131,6 +206,7 @@ public class GameStageManager {
         return false;
     }
 
+    //  cheatcode
     public boolean setStage(String stageKey) {
         switch (stageKey) {
             case "0" -> currStageQuestions = new Stage0Questions();
@@ -159,6 +235,7 @@ public class GameStageManager {
         currQuestion = null;
         answeredQuestions = 0;
         lifeTracker.reset();
+        penguAssistant.resetForStage();
         
         terminalOut.clear();
         terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
