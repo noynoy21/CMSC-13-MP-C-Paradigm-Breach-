@@ -51,7 +51,7 @@ public class GameStageManager {
     // To play with the zero-constraints version (all available questions):
     //     Uncomment the Integer.MAX_VALUE line below.
     // =========================================================================
-    private static final int QUESTIONS_PER_STAGE = 2;
+    private static final int QUESTIONS_PER_STAGE = 10;
     // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
