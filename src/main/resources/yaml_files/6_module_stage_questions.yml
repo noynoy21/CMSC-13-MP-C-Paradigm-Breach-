@@ -1,4 +1,5 @@
-- prompt: |
+- id: "q-00123"
+  prompt: |
     Which programming paradigm determines the flow of execution based on events such as user actions, sensor outputs, or system messages?
   choices:
     - "Procedural programming"
@@ -7,7 +8,8 @@
     - "Declarative programming"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00124"
+  prompt: |
     What central mechanism in an event-driven application runs continuously in the background to listen for and dispatch events to callbacks?
   choices:
     - "Main thread loader"
@@ -16,7 +18,8 @@
     - "Memory manager"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00125"
+  prompt: |
     In an event-driven Swing application, which class object represents a click action triggered on a JButton?
   choices:
     - "MouseEvent"
@@ -25,7 +28,8 @@
     - "ItemEvent"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00126"
+  prompt: |
     Which Java interface must be implemented to handle click events on a JButton?
   choices:
     - "ActionListener"
@@ -34,7 +38,8 @@
     - "WindowListener"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00127"
+  prompt: |
     What is the primary purpose of an adapter class (such as MouseAdapter) in Java Swing?
   choices:
     - "To automatically optimize graphics rendering performance."
@@ -43,7 +48,8 @@
     - "To allow multiple inheritance of concrete GUI components."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00128"
+  prompt: |
     Which method in the MouseListener interface is triggered when the mouse pointer moves inside a component's visual boundaries?
   choices:
     - "mouseClicked()"
@@ -52,7 +58,8 @@
     - "mousePressed()"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00129"
+  prompt: |
     How does an event source register a listener to listen for an Xxx event in Java Swing?
   choices:
     - "sourceComponent.registerXxxListener(listener)"
@@ -61,7 +68,8 @@
     - "sourceComponent.bindXxxListener(listener)"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00130"
+  prompt: |
     Why can an event handler NOT be created by extending an adapter class directly inside a main class that extends JFrame?
   choices:
     - "Adapter classes are restricted to private package access."
@@ -70,7 +78,8 @@
     - "Adapter classes cannot be inherited by GUI classes."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00131"
+  prompt: |
     What are the three main participants involved in event handling in Java Swing?
   choices:
     - "The compiler, the JVM, and the application."
@@ -79,7 +88,8 @@
     - "The main loop, the thread pool, and the garbage collector."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00132"
+  prompt: |
     The following statements about event-driven programming are true except one:
   choices:
     - "The flow of control is primarily driven by user actions or system messages."

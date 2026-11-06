@@ -1,6 +1,7 @@
 # CONCEPTUAL QUESTIONS
 
-- prompt: |
+- id: "q-00012"
+  prompt: |
     According to the text, around which year was the idea of procedural programming born?
   choices:
     - "Around 1950"
@@ -9,7 +10,8 @@
     - "Around 1988"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00013"
+  prompt: |
     Which translation program reads the entire program, makes a translation, and produces a complete binary code version before execution?
   choices:
     - "An interpreter"
@@ -18,7 +20,8 @@
     - "An assembler"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00014"
+  prompt: |
     Why was FORTRAN traditionally implemented with a compiler instead of an interpreter?
   choices:
     - "It was designed for novice programmers who need easy error tracking"
@@ -27,7 +30,8 @@
     - "It does not allow the use of recursive functions"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00015"
+  prompt: |
     Who developed the C programming language in 1972 at Bell Laboratories?
   choices:
     - "Ken Thompson and Dennis Ritchie"
@@ -36,7 +40,8 @@
     - "Dennis Thompson and Ken Ritchie Lights"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00016"
+  prompt: |
     Which basic variable type in C is described as typically occupying a single octet (one byte)?
   choices:
     - "int"
@@ -45,7 +50,8 @@
     - "char"
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00017"
+  prompt: |
     In C, what is the implicit initial value of a variable with static storage duration if it is defined without an explicit initializer?
   choices:
     - "It remains completely undefined"
@@ -54,7 +60,8 @@
     - "It throws a compile-time linking error"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00018"
+  prompt: |
     Which operator is used in the C language to directly access the memory address of a variable?
   choices:
     - "The asterisk operator (*)"
@@ -63,7 +70,8 @@
     - "The ellipsis operator (...)"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00019"
+  prompt: |
     When a local variable and a global variable share the exact same identifier name within a C function, which behavior occurs?
   choices:
     - "The value of the global variable takes preference"
@@ -72,7 +80,8 @@
     - "Both variables share the same pointer reference location"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00020"
+  prompt: |
     What is the C parameter-passing approach called where parameters are local copies initialized with argument values, preventing the function from modifying original variables?
   choices:
     - "Call by reference"
@@ -81,7 +90,8 @@
     - "Call by value"
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00021"
+  prompt: |
     In the ALGOL programming language, what term is used to describe procedures that do not return a resulting value?
   choices:
     - "Functional procedures"
@@ -92,7 +102,8 @@
 
 # PROGRAMMING QUESTIONS
 
-- prompt: |
+- id: "q-00022"
+  prompt: |
     
     #include <stdio.h>
 
@@ -113,7 +124,8 @@
     - "0 1 2 3"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00023"
+  prompt: |
     
     #include <stdio.h>
 
@@ -132,7 +144,8 @@
     - "15, 11"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00024"
+  prompt: |
     
     #include <stdio.h>
 
@@ -148,7 +161,8 @@
     - "1"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00025"
+  prompt: |
     
     #include <stdio.h>
 
@@ -167,7 +181,8 @@
     - "3 5"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00026"
+  prompt: |
     
     #include <stdio.h>
 
@@ -184,7 +199,8 @@
     - "H"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00027"
+  prompt: |
     
     #include <stdio.h>
 
@@ -206,7 +222,8 @@
     - "4"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00028"
+  prompt: |
     
     #include <stdio.h>
 
@@ -226,7 +243,8 @@
     - "B"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00029"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -286,7 +304,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00030"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -323,7 +342,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00031"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```c
@@ -360,7 +380,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00032"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -401,7 +422,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00033"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -434,7 +456,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00034"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -487,7 +510,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00035"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -527,7 +551,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00036"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -568,7 +593,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00037"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -606,7 +632,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00038"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -645,7 +672,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00039"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -691,7 +719,8 @@
       System.out.println(sum);
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00040"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -726,7 +755,8 @@
       result = calculate(4) - 1;
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00041"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -758,7 +788,8 @@
       copy[2] = 20;
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00042"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -802,7 +833,8 @@
       System.out.println(result);
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00043"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -832,3 +864,104 @@
     - |
       System.out.println(word.toUpperCase());
   correctChoiceIndx: 3
+
+- id: "q-00144"
+  prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```c
+    #include <stdio.h>
+
+    /* MISSING CODE */ {
+        return x * x;
+    }
+
+    int main() {
+        printf("%.2f", square(2.5));
+        return 0;
+    }
+    ```
+
+    *Output*
+
+    ````
+    6.25
+    ````
+  choices:
+    - |
+      int square(double x)
+    - |
+      float square(float x)
+    - |
+      void square(float x)
+    - |
+      double square(int x)
+  correctChoiceIndx: 1
+
+- id: "q-00145"
+  prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```c
+    #include <stdio.h>
+
+    int main() {
+        int val = 10;
+        int *ptr = &val;
+        /* MISSING CODE */
+        return 0;
+    }
+    ```
+
+    *Output*
+
+    ````
+    Value: 10
+    ````
+  choices:
+    - |
+      printf("Value: %d", ptr);
+    - |
+      printf("Value: %d", *ptr);
+    - |
+      printf("Value: %d", &ptr);
+    - |
+      printf("Value: %d", *val);
+  correctChoiceIndx: 1
+
+- id: "q-00146"
+  prompt: |
+    Which line should replace /* MISSING CODE */ in the snippet to make the output?
+
+    *Snippet*
+
+    ```c
+    #include <stdio.h>
+
+    int main() {
+        int a = 10, b = 15;
+        int max = /* MISSING CODE */;
+        printf("Max is %d", max);
+        return 0;
+    }
+    ```
+
+    *Output*
+
+    ````
+    Max is 15
+    ````
+  choices:
+    - |
+      (a > b) : a ? b
+    - |
+      (a > b) ? a : b
+    - |
+      (a < b) ? a : b
+    - |
+      if(a > b) a else b
+  correctChoiceIndx: 1

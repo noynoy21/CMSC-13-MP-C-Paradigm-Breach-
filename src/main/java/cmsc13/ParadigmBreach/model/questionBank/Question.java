@@ -3,19 +3,24 @@ package cmsc13.ParadigmBreach.model.questionBank;
 import java.util.List;
 
 public class Question {
+    private final String id;
     private String prompt;
     private List<String> choices;
     private int correctChoiceIndx;
     private boolean isAnswered;
     private boolean hasBeenAsked;
 
-    public Question(String prompt, List<String> choices, int correctChoiceIndx) {
+    /** Creates a question loaded from a source that provides a stable ID. */
+    public Question(String id, String prompt, List<String> choices, int correctChoiceIndx) {
+        this.id = id;
         this.prompt = prompt;
         this.choices = choices;
         this.correctChoiceIndx = correctChoiceIndx;
         this.isAnswered = false;
         this.hasBeenAsked = false;
     }
+
+    public String getId() { return id; }
 
     public String getPrompt() { return prompt; }
     public void setPrompt(String prompt) { this.prompt = prompt; }

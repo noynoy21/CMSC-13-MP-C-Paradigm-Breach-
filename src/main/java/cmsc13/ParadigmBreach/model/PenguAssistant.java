@@ -22,6 +22,10 @@ public final class PenguAssistant {
         return tokenTracker.getTokensRemaining();
     }
 
+    public void restoreTokens(int savedTokens) {
+        tokenTracker.restore(savedTokens);
+    }
+
     public boolean spendPeekToken() {
         return tokenTracker.spendToken();
     }
@@ -30,6 +34,30 @@ public final class PenguAssistant {
         thoughtQuestion = null;
         thoughtChoiceIndex = -1;
         tokenTracker.resetForStage();
+    }
+
+    public String getThoughtQuestionId() {
+        return thoughtQuestion == null ? null : thoughtQuestion.getId();
+    }
+
+    public int getSavedThoughtChoiceIndex() {
+        return thoughtChoiceIndex;
+    }
+
+    public void restoreThought(Question question, int choiceIndex) {
+        if (question == null) {
+            if (choiceIndex != -1) {
+                throw new IllegalArgumentException("A Pengu thought choice requires a question");
+            }
+            thoughtQuestion = null;
+            thoughtChoiceIndex = -1;
+            return;
+        }
+        if (choiceIndex < 0 || choiceIndex > 3) {
+            throw new IllegalArgumentException("Pengu thought choice must be between 0 and 3");
+        }
+        thoughtQuestion = question;
+        thoughtChoiceIndex = choiceIndex;
     }
 
     /** Returns the same thought on repeated peeks for a given question. */

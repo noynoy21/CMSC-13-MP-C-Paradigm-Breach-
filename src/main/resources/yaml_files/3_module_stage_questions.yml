@@ -1,6 +1,7 @@
 # CONCEPTUAL QUESTIONS
 
-- prompt: |
+- id: "q-00044"
+  prompt: |
     What formal system developed in the 1930s forms the roots of functional programming?
   choices:
     - "Turing machines"
@@ -9,7 +10,8 @@
     - "Combinatory logic"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00045"
+  prompt: |
     Which early multi-paradigm language developed in the late 1950s introduced features now found in functional languages?
   choices:
     - "Fortran"
@@ -18,7 +20,8 @@
     - "APL"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00046"
+  prompt: |
     Which of the following describes a 'pure function'?
   choices:
     - "A function that has side effects"
@@ -27,7 +30,8 @@
     - "A function that relies heavily on a mutable list structure"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00047"
+  prompt: |
     What defines non-strict (lazy) evaluation in functional programming?
   choices:
     - "Statements are immediately evaluated as soon as the variable is defined"
@@ -36,7 +40,8 @@
     - "All variables must be allocated on a linear stack during run-time"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00048"
+  prompt: |
     What is a function called if it accepts another function as an argument or returns a function as an output?
   choices:
     - "First-order function"
@@ -45,7 +50,8 @@
     - "Identity function"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00049"
+  prompt: |
     In Java, which of the following is a typical example of an immutable object?
   choices:
     - "StringBuilder"
@@ -54,7 +60,8 @@
     - "MyClass references"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00050"
+  prompt: |
     What technique transforms a function with multiple parameters into a sequence of functions that each accept only one parameter at a time?
   choices:
     - "Recursion"
@@ -63,7 +70,8 @@
     - "Referential transparency"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00051"
+  prompt: |
     How are closures typically implemented to allow a function to access non-local variables after the containing function has returned?
   choices:
     - "By allocating all local variables on a linear stack"
@@ -72,7 +80,8 @@
     - "By converting all functions into first-order functions"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00052"
+  prompt: |
     A function argument used only to pass data to itself while performing recursion to optimize tail calls is known as an:
   choices:
     - "Accumulator"
@@ -81,7 +90,8 @@
     - "Delegate"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00053"
+  prompt: |
     In F#, which construct is used to introduce pattern matching?
   choices:
     - "if ... then ... else"
@@ -92,7 +102,8 @@
 
 # PROGRAMMING QUESTIONS
 
-- prompt: |
+- id: "q-00054"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         val nums = List(1, 2, 3, 4)
@@ -108,7 +119,8 @@
     - "List(6, 8, 10)"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00055"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         var x = 10
@@ -125,7 +137,8 @@
     - "10, 20"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00056"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         def calculate(x: Int): Int = x * 2
@@ -143,7 +156,8 @@
     - "18"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00057"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         val result = (1 to 4).filter(_ % 2 == 0).sum
@@ -157,7 +171,8 @@
     - "2"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00058"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         val person = ("Mia", 20)
@@ -171,7 +186,8 @@
     - "21, Mia"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00059"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         val nums = List(1, 2, 3, 4)
@@ -187,7 +203,8 @@
     - "4"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00060"
+  prompt: |
     object Main {
       def main(args: Array[String]): Unit = {
         val n = 2
@@ -207,7 +224,8 @@
     - "2"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00061"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -236,7 +254,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00062"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -274,7 +293,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00063"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -311,7 +331,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00064"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -340,7 +361,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00065"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -369,7 +391,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00066"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -398,7 +421,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00067"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -426,7 +450,8 @@
       println(numbers.filter(_ > 3).map(_ * 2))
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00068"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -456,7 +481,8 @@
       bonus = score + bonus
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00069"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -484,7 +510,8 @@
       println(numbers.filter(_ % 2 == 0).map(_ * 2).sum)
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00070"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -530,7 +557,8 @@
       println(result)
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00071"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -558,7 +586,8 @@
       println(numbers.foldLeft(0)(_ * _))
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00072"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*

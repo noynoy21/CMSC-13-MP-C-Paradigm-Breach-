@@ -1,8 +1,12 @@
 package cmsc13.ParadigmBreach.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
@@ -16,6 +20,11 @@ import cmsc13.ParadigmBreach.model.questionBank.Stage4Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage5Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage6Questions;
 import cmsc13.ParadigmBreach.model.questionBank.Stage7Questions;
+import cmsc13.ParadigmBreach.persistence.GameSaveData;
+import cmsc13.ParadigmBreach.persistence.GameSaveData.QuestionProgress;
+import cmsc13.ParadigmBreach.persistence.GameSaveData.QuestionStatus;
+import cmsc13.ParadigmBreach.persistence.GameSaveData.StageSummary;
+import cmsc13.ParadigmBreach.persistence.GameSaveStore;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
 import cmsc13.ParadigmBreach.util.LifeTracker;
@@ -37,12 +46,21 @@ public class GameStageManager {
     private TerminalOutput terminalOut;
     private final LifeTracker lifeTracker;
     private final PenguAssistant penguAssistant;
+    private final GameSaveStore saveRepository;
 
     private QuestionBank currStageQuestions;
     private Question currQuestion;
     private int answeredQuestions = 0;
     private List<Question> activeStageQuestions;
     private Iterator<Question> qIterator;
+    private final Map<String, QuestionProgress> questionProgressById = new LinkedHashMap<>();
+    private final List<StageSummary> summaryHistory = new ArrayList<>();
+    private long remainingQuestionMillis;
+    private String pendingNextStageKey;
+    private boolean gameCompleted;
+    private boolean restoredFromSave;
+    public static final int QUESTION_TIME_LIMIT_SECONDS = 30;
+    private static final long MAX_QUESTION_TIME_MILLIS = QUESTION_TIME_LIMIT_SECONDS * 1_000L;
 
     private String currentStageKey = "0";
     private static final List<String> STAGE_SEQUENCE = List.of("0", "1", "2", "3", "4", "5", "6", "7");
@@ -56,16 +74,95 @@ public class GameStageManager {
     // To play with the zero-constraints version (all available questions):
     //     Uncomment the Integer.MAX_VALUE line below.
     // =========================================================================
-    private static final int QUESTIONS_PER_STAGE = 3;
+    private static final int QUESTIONS_PER_STAGE = 10;
     // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
 
-    public GameStageManager(TerminalOutput terminalOut, LifeTracker lifeTracker, PenguAssistant penguAssistant) {
+    public GameStageManager(
+        TerminalOutput terminalOut,
+        LifeTracker lifeTracker,
+        PenguAssistant penguAssistant,
+        GameSaveStore saveRepository
+    ) {
         this.terminalOut = terminalOut;
         this.lifeTracker = lifeTracker;
         this.penguAssistant = penguAssistant;
-        setStage("0");
+        this.saveRepository = saveRepository;
+        initializeFromSave();
+    }
+
+    private void initializeFromSave() {
+        if (saveRepository == null) {
+            setStage("0", false);
+            return;
+        }
+
+        Optional<GameSaveData> savedData;
+        String startupWarning = null;
+        try {
+            savedData = saveRepository.load();
+        } catch (GameSaveData.UnsupportedSaveVersionException e) {
+            savedData = Optional.empty();
+            startupWarning = "This save uses an unsupported version and was left untouched. "
+                + "A fresh session is running.";
+        } catch (Exception e) {
+            startupWarning = preserveInvalidSave("The saved game could not be read.");
+            savedData = Optional.empty();
+        }
+
+        if (savedData.isPresent()) {
+            try {
+                GameSaveData data = savedData.get();
+                restoreFromSave(data);
+                restoredFromSave = true;
+                if (pendingNextStageKey != null) {
+                    String nextStage = pendingNextStageKey;
+                    pendingNextStageKey = null;
+                    terminalOut.append("Recovered the saved stage transition.", OutputKind.RESPONSE);
+                    setStage(nextStage, false);
+                } else if (gameCompleted) {
+                    terminalOut.append("This profile has already completed the game.", OutputKind.CORRECT);
+                    terminalOut.append("Type 'stage <number>' to replay a stage.", OutputKind.RESPONSE);
+                } else {
+                    // terminalOut.append("Saved progress restored for stage " + currentStageKey + ".", OutputKind.CORRECT);
+                    
+                    terminalOut.append("\n========================================", OutputKind.QUESTION);
+                    terminalOut.append("LOADED STAGE " + currentStageKey.toUpperCase() + " FROM SAVE", OutputKind.QUESTION);
+                    terminalOut.append("========================================", OutputKind.QUESTION);
+
+                    if (currQuestion != null && !currQuestion.isAnswered()) {
+                        terminalOut.append(buildQuestion(currQuestion), OutputKind.QUESTION);
+                    } else if (lifeTracker.getLivesRemaining() > 0) {
+                        terminalOut.append("Type 'ask' to continue.", OutputKind.RESPONSE);
+                    }
+                }
+            } catch (RuntimeException e) {
+                startupWarning = preserveInvalidSave("The saved progress no longer matches the question bank.");
+                terminalOut.clear();
+                terminalOut.clearSummary();
+                summaryHistory.clear();
+                setStage("0", false);
+            }
+        } else {
+            setStage("0", false);
+        }
+
+        if (startupWarning != null) {
+            terminalOut.append(startupWarning, OutputKind.ERROR);
+        }
+    }
+
+    private String preserveInvalidSave(String reason) {
+        try {
+            String backupLocation = saveRepository.preserveExistingSave();
+            if (backupLocation != null) {
+                return reason + " A copy was kept at " + backupLocation + ". Starting a fresh game.";
+            }
+            return reason + " The original save could not be backed up; starting a fresh game.";
+        } catch (Exception backupError) {
+            return reason + " The original save could not be backed up; starting a fresh game.";
+        }
     }
 
     public QnaOutcome handleQnaInput(String input) {
@@ -152,10 +249,6 @@ public class GameStageManager {
         }
     }
 
-    private boolean hasActiveQuestion() {
-        return currQuestion != null && currQuestion.hasBeenAsked() && !currQuestion.isAnswered();
-    }
-
     private void appendPenguChoice(String prefix, int choiceIndex) {
         char letter = letterChoices.get(choiceIndex);
         String answer = currQuestion.getChoices().get(choiceIndex);
@@ -178,6 +271,280 @@ public class GameStageManager {
         setStage(currentStageKey, true);
     }
 
+    public boolean wasRestoredFromSave() {
+        return restoredFromSave;
+    }
+
+    public boolean hasActiveQuestion() {
+        return currQuestion != null
+            && currQuestion.hasBeenAsked()
+            && !currQuestion.isAnswered()
+            && lifeTracker.getLivesRemaining() > 0;
+    }
+
+    public long getRemainingQuestionMillis() {
+        return remainingQuestionMillis;
+    }
+
+    public boolean isGameCompleted() {
+        return gameCompleted;
+    }
+
+    /** Writes a snapshot only when the player explicitly chooses a destination slot. */
+    public boolean saveProgress(GameSaveStore destination, long timerRemainingMillis) {
+        if (destination == null) {
+            terminalOut.append("Choose a save slot before saving.", OutputKind.ERROR);
+            return false;
+        }
+
+        remainingQuestionMillis = Math.max(0, Math.min(timerRemainingMillis, MAX_QUESTION_TIME_MILLIS));
+        List<QuestionProgress> savedQuestions = new ArrayList<>(activeStageQuestions.size());
+        for (Question question : activeStageQuestions) {
+            QuestionProgress progress = questionProgressById.get(question.getId());
+            if (progress == null) {
+                terminalOut.append("Progress could not be saved because the current stage state is incomplete.", OutputKind.ERROR);
+                return false;
+            }
+            savedQuestions.add(progress);
+        }
+
+        GameSaveData data = new GameSaveData(
+            PlayerSession.getPlayerName(),
+            currentStageKey,
+            savedQuestions,
+            currQuestion == null ? null : currQuestion.getId(),
+            lifeTracker.getLivesRemaining(),
+            penguAssistant.getTokensRemaining(),
+            remainingQuestionMillis,
+            pendingNextStageKey,
+            gameCompleted,
+            penguAssistant.getThoughtQuestionId(),
+            penguAssistant.getSavedThoughtChoiceIndex(),
+            summaryHistory,
+            null
+        );
+
+        try {
+            destination.save(data);
+            return true;
+        } catch (Exception e) {
+            terminalOut.append("Progress could not be saved: " + e.getMessage(), OutputKind.ERROR);
+            return false;
+        }
+    }
+
+    private void restoreFromSave(GameSaveData data) {
+        if (!PlayerSession.getPlayerName().equalsIgnoreCase(data.getPlayerName())) {
+            throw new IllegalArgumentException("The save belongs to another player profile");
+        }
+
+        currentStageKey = data.getStageKey();
+        currStageQuestions = createQuestionBank(data.getStageKey());
+        Map<String, Question> questionsById = new HashMap<>();
+        for (Question question : currStageQuestions.getShuffledQuestions()) {
+            if (questionsById.put(question.getId(), question) != null) {
+                throw new IllegalArgumentException("Duplicate question ID in stage " + data.getStageKey());
+            }
+        }
+
+        if (data.getQuestions().isEmpty()) {
+            throw new IllegalArgumentException("A saved stage must contain at least one selected question");
+        }
+
+        activeStageQuestions = new ArrayList<>(data.getQuestions().size());
+        questionProgressById.clear();
+        boolean encounteredUnasked = false;
+        boolean encounteredActive = false;
+        String expectedCurrentQuestionId = null;
+        int startedQuestionCount = 0;
+        answeredQuestions = 0;
+
+        for (QuestionProgress progress : data.getQuestions()) {
+            Question question = questionsById.get(progress.id());
+            if (question == null) {
+                throw new IllegalArgumentException("Question ID no longer exists: " + progress.id());
+            }
+            if (questionProgressById.put(progress.id(), progress) != null) {
+                throw new IllegalArgumentException("Duplicate saved question ID: " + progress.id());
+            }
+
+            QuestionStatus status = progress.status();
+            if (status == QuestionStatus.NOT_ASKED) {
+                encounteredUnasked = true;
+                if (progress.selectedChoiceIndex() != null) {
+                    throw new IllegalArgumentException("Unasked question has a selected answer: " + progress.id());
+                }
+            } else {
+                if (encounteredUnasked) {
+                    throw new IllegalArgumentException("Saved question order skips an unasked question");
+                }
+                if (encounteredActive) {
+                    throw new IllegalArgumentException("A saved question follows the active question");
+                }
+                startedQuestionCount++;
+                expectedCurrentQuestionId = progress.id();
+                question.setHasBeenAsked(true);
+                if (status == QuestionStatus.ACTIVE) {
+                    if (encounteredActive || progress.selectedChoiceIndex() != null) {
+                        throw new IllegalArgumentException("Invalid active question state: " + progress.id());
+                    }
+                    encounteredActive = true;
+                } else {
+                    question.setAnswered(true);
+                    answeredQuestions++;
+                    boolean hasSelection = progress.selectedChoiceIndex() != null;
+                    if ((status == QuestionStatus.CORRECT || status == QuestionStatus.INCORRECT) != hasSelection) {
+                        throw new IllegalArgumentException("Saved answer does not match outcome for " + progress.id());
+                    }
+                }
+            }
+            activeStageQuestions.add(question);
+        }
+
+        if (!java.util.Objects.equals(expectedCurrentQuestionId, data.getCurrentQuestionId())) {
+            throw new IllegalArgumentException("Saved current question does not match question progress");
+        }
+        if (data.getRemainingQuestionMillis() < 0
+            || data.getRemainingQuestionMillis() > MAX_QUESTION_TIME_MILLIS
+            || (!encounteredActive && data.getRemainingQuestionMillis() != 0)) {
+            throw new IllegalArgumentException("Invalid saved timer state");
+        }
+        if (encounteredActive && data.getLivesRemaining() == 0) {
+            throw new IllegalArgumentException("A game-over save cannot have an active question");
+        }
+
+        qIterator = activeStageQuestions.iterator();
+        for (int i = 0; i < startedQuestionCount; i++) {
+            qIterator.next();
+        }
+        currQuestion = data.getCurrentQuestionId() == null
+            ? null
+            : questionsById.get(data.getCurrentQuestionId());
+        remainingQuestionMillis = data.getRemainingQuestionMillis();
+        pendingNextStageKey = data.getPendingNextStageKey();
+        gameCompleted = data.isGameCompleted();
+        if (pendingNextStageKey != null && !isNextStage(data.getStageKey(), pendingNextStageKey)) {
+            throw new IllegalArgumentException("Invalid pending stage transition");
+        }
+        if (gameCompleted && (!"7".equals(data.getStageKey()) || pendingNextStageKey != null)) {
+            throw new IllegalArgumentException("Invalid completed-game state");
+        }
+        boolean allQuestionsResolved = answeredQuestions == activeStageQuestions.size();
+        if (pendingNextStageKey != null && (!allQuestionsResolved || data.getLivesRemaining() == 0 || encounteredActive)) {
+            throw new IllegalArgumentException("A stage transition requires a successfully cleared stage");
+        }
+        if (gameCompleted && (!allQuestionsResolved || data.getLivesRemaining() == 0 || encounteredActive)) {
+            throw new IllegalArgumentException("A completed game must have cleared the final stage");
+        }
+        if (allQuestionsResolved && data.getLivesRemaining() > 0
+            && pendingNextStageKey == null && !gameCompleted) {
+            throw new IllegalArgumentException("A cleared stage is missing its transition state");
+        }
+
+        summaryHistory.clear();
+        summaryHistory.addAll(data.getSummaryHistory());
+        validateSummaryHistory(data);
+
+        lifeTracker.restore(data.getLivesRemaining());
+        penguAssistant.restoreTokens(data.getPenguTokensRemaining());
+
+        String thoughtQuestionId = data.getPenguThoughtQuestionId();
+        if (thoughtQuestionId == null) {
+            penguAssistant.restoreThought(null, data.getPenguThoughtChoiceIndex());
+        } else {
+            Question thoughtQuestion = questionsById.get(thoughtQuestionId);
+            QuestionProgress thoughtProgress = questionProgressById.get(thoughtQuestionId);
+            if (thoughtQuestion == null || thoughtProgress == null
+                || thoughtProgress.status() == QuestionStatus.NOT_ASKED) {
+                throw new IllegalArgumentException("Saved Pengu thought refers to an unknown or unasked question");
+            }
+            penguAssistant.restoreThought(thoughtQuestion, data.getPenguThoughtChoiceIndex());
+        }
+
+        rebuildSummaryFromHistory();
+    }
+
+    private void validateSummaryHistory(GameSaveData data) {
+        if (summaryHistory.isEmpty()) {
+            throw new IllegalArgumentException("Saved summary history is empty");
+        }
+        for (StageSummary stageSummary : summaryHistory) {
+            if (!STAGE_SEQUENCE.contains(stageSummary.stageKey())) {
+                throw new IllegalArgumentException("Saved summary refers to an unknown stage");
+            }
+        }
+
+        StageSummary currentSummary = summaryHistory.get(summaryHistory.size() - 1);
+        if (!currentSummary.stageKey().equals(data.getStageKey())) {
+            throw new IllegalArgumentException("Saved summary does not end at the current stage");
+        }
+
+        List<QuestionStatus> currentOutcomes = data.getQuestions().stream()
+            .map(QuestionProgress::status)
+            .filter(status -> status == QuestionStatus.CORRECT
+                || status == QuestionStatus.INCORRECT
+                || status == QuestionStatus.TIMED_OUT)
+            .toList();
+        if (!currentSummary.outcomes().equals(currentOutcomes)) {
+            throw new IllegalArgumentException("Saved summary outcomes do not match current stage progress");
+        }
+    }
+
+    private void rebuildSummaryFromHistory() {
+        terminalOut.clearSummary();
+        for (StageSummary stageSummary : summaryHistory) {
+            appendStageSummaryHeader(stageSummary.stageKey(), stageSummary.retry());
+            for (int i = 0; i < stageSummary.outcomes().size(); i++) {
+                appendQuestionSummary(i + 1, stageSummary.outcomes().get(i));
+            }
+        }
+    }
+
+    private void appendStageSummaryHeader(String stageKey, boolean retry) {
+        String header = retry
+            ? "\n--- Retry: STAGE " + stageKey.toUpperCase() + " ---"
+            : "\n---- STAGE " + stageKey.toUpperCase() + " ----";
+        terminalOut.appendSummary(header, OutputKind.RESPONSE);
+    }
+
+    private void appendQuestionSummary(int questionNumber, QuestionStatus status) {
+        String result;
+        OutputKind outputKind;
+        switch (status) {
+            case CORRECT -> {
+                result = "correct";
+                outputKind = OutputKind.CORRECT;
+            }
+            case INCORRECT -> {
+                result = "wrong";
+                outputKind = OutputKind.ERROR;
+            }
+            case TIMED_OUT -> {
+                result = "timed out";
+                outputKind = OutputKind.ERROR;
+            }
+            default -> throw new IllegalArgumentException("Not a resolved question outcome: " + status);
+        }
+        terminalOut.appendSummary("\nQuestion no." + questionNumber + ": " + result + ".", outputKind);
+    }
+
+    private void beginStageSummary(String stageKey, boolean retry) {
+        summaryHistory.add(new StageSummary(stageKey, retry, List.of()));
+        appendStageSummaryHeader(stageKey, retry);
+    }
+
+    private void recordQuestionSummary(QuestionStatus status) {
+        int lastIndex = summaryHistory.size() - 1;
+        StageSummary currentSummary = summaryHistory.get(lastIndex);
+        if (!currentSummary.stageKey().equals(currentStageKey)) {
+            throw new IllegalStateException("Current summary stage does not match gameplay stage");
+        }
+        List<QuestionStatus> outcomes = new ArrayList<>(currentSummary.outcomes());
+        outcomes.add(status);
+        summaryHistory.set(lastIndex, new StageSummary(currentStageKey, currentSummary.retry(), outcomes));
+        appendQuestionSummary(outcomes.size(), status);
+    }
+
     private boolean handleAsk() {
         if (lifeTracker.getLivesRemaining() == 0) {
             terminalOut.append("This stage is over. Switch stages to continue.", OutputKind.ERROR);
@@ -197,6 +564,10 @@ public class GameStageManager {
             if (!currQuestion.hasBeenAsked()) {
                 terminalOut.clear();
                 String questionStr = buildQuestion(currQuestion);
+                questionProgressById.put(
+                    currQuestion.getId(),
+                    new QuestionProgress(currQuestion.getId(), QuestionStatus.ACTIVE, null)
+                );
                 terminalOut.append(questionStr, OutputKind.QUESTION);
                 AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
                 return true;
@@ -216,21 +587,12 @@ public class GameStageManager {
     }
 
     private boolean setStage(String stageKey, boolean restarting) {
-        switch (stageKey) {
-            case "0" -> currStageQuestions = new Stage0Questions();
-            case "1" -> currStageQuestions = new Stage1Questions();
-            case "2" -> currStageQuestions = new Stage2Questions();
-            case "3" -> currStageQuestions = new Stage3Questions();
-            case "4" -> currStageQuestions = new Stage4Questions();
-            case "5" -> currStageQuestions = new Stage5Questions();
-            case "6" -> currStageQuestions = new Stage6Questions();
-            case "7" -> currStageQuestions = new Stage7Questions();
-            default -> {
-                terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 0.", OutputKind.ERROR);
-                stageKey = "0";
-                currStageQuestions = new Stage0Questions();
-            }
+        if (!STAGE_SEQUENCE.contains(stageKey)) {
+            terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 0.", OutputKind.ERROR);
+            stageKey = "0";
         }
+
+        currStageQuestions = createQuestionBank(stageKey);
 
         this.currentStageKey = stageKey;
 
@@ -242,35 +604,67 @@ public class GameStageManager {
         qIterator = null;
         currQuestion = null;
         answeredQuestions = 0;
+        questionProgressById.clear();
+        for (Question question : activeStageQuestions) {
+            questionProgressById.put(
+                question.getId(),
+                new QuestionProgress(question.getId(), QuestionStatus.NOT_ASKED, null)
+            );
+        }
+        remainingQuestionMillis = 0;
+        pendingNextStageKey = null;
+        gameCompleted = false;
         lifeTracker.reset();
         penguAssistant.resetForStage();
-        
+
         terminalOut.clear();
-        String status = restarting ? "Successfully restarted stage: " : "Successfully switched to stage: ";
-        terminalOut.append(status + stageKey.toUpperCase(), OutputKind.CORRECT);
+
+        // String status = restarting ? "Successfully restarted stage: " : "Successfully switched to stage: ";
+        // terminalOut.append(status + stageKey.toUpperCase(), OutputKind.CORRECT);
+        terminalOut.append("\n========================================", OutputKind.QUESTION);
+        terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " LOADED!", OutputKind.QUESTION);
+        terminalOut.append("========================================", OutputKind.QUESTION);
         // terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'", OutputKind.RESPONSE);
         terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
-        if (restarting) {
-            terminalOut.appendSummary("\n--- Retry: STAGE " + stageKey.toUpperCase() + " ---", OutputKind.RESPONSE);
-        } else {
-            terminalOut.appendSummary(
-                "\n---- STAGE " + stageKey.toUpperCase() + " ----",
-                OutputKind.RESPONSE);
-        }
+        beginStageSummary(stageKey, restarting);
         return true;
     }
 
+    private QuestionBank createQuestionBank(String stageKey) {
+        return switch (stageKey) {
+            case "0" -> new Stage0Questions();
+            case "1" -> new Stage1Questions();
+            case "2" -> new Stage2Questions();
+            case "3" -> new Stage3Questions();
+            case "4" -> new Stage4Questions();
+            case "5" -> new Stage5Questions();
+            case "6" -> new Stage6Questions();
+            case "7" -> new Stage7Questions();
+            default -> throw new IllegalArgumentException("Unknown stage key: " + stageKey);
+        };
+    }
+
+    private boolean isNextStage(String currentKey, String nextKey) {
+        int currentIndex = STAGE_SEQUENCE.indexOf(currentKey);
+        return currentIndex >= 0
+            && currentIndex < STAGE_SEQUENCE.size() - 1
+            && STAGE_SEQUENCE.get(currentIndex + 1).equals(nextKey);
+    }
+
     private void handleAns(char lettChoice) {
+        int selectedChoiceIndex = letterChoices.indexOf(lettChoice);
+        QuestionStatus result;
+        remainingQuestionMillis = 0;
         if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) {
+            result = QuestionStatus.CORRECT;
             answeredQuestions++;
-            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": correct.", OutputKind.CORRECT);
 
             terminalOut.append("CORRECT! You choose the correct answer.", OutputKind.CORRECT);
             AudioManager.get().playSFX(SoundEffect.CORRECT);
             lifeTracker.refresh();
         } else { // wrong answer
+            result = QuestionStatus.INCORRECT;
             answeredQuestions++;
-            terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": wrong.", OutputKind.ERROR);
 
             terminalOut.append("Wrong! You choose the wrong answer:(", OutputKind.ERROR);
             AudioManager.get().playSFX(SoundEffect.WRONG);
@@ -278,6 +672,11 @@ public class GameStageManager {
         }
 
         currQuestion.setAnswered(true);
+        questionProgressById.put(
+            currQuestion.getId(),
+            new QuestionProgress(currQuestion.getId(), result, selectedChoiceIndex)
+        );
+        recordQuestionSummary(result);
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
 
         if (lifeTracker.getLivesRemaining() == 0) {
@@ -291,39 +690,27 @@ public class GameStageManager {
     }
 
     private void checkStageCompletion() {
-        terminalOut.append("\n========================================", OutputKind.CORRECT);
-        terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " CLEARED!", OutputKind.CORRECT);
-        terminalOut.append("========================================", OutputKind.CORRECT);
+        terminalOut.append("\n========================================", OutputKind.QUESTION);
+        terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " CLEARED!", OutputKind.QUESTION);
+        terminalOut.append("========================================", OutputKind.QUESTION);
 
         int currentIndex = STAGE_SEQUENCE.indexOf(currentStageKey);
         
         // Check if this was the final stage (Win Condition)
         if (currentIndex == -1 || currentIndex >= STAGE_SEQUENCE.size() - 1) {
+            gameCompleted = true;
             triggerWinCondition();
         } else {
-            // Automatically advance to the next stage via transition cutscene
-            // String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
-            // terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
-            
-            // List<CutsceneSlide> transitionSlides = List.of(
-            //     new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "Stage " + currentStageKey.toUpperCase() + " cleared"),
-            //     new CutsceneSlide("/images/tutorial_images/desktop.png", "Next stage: STAGE " + nextStageKey.toUpperCase())
-            // );
-
-            // SceneManager.get().openCutsceneWindow(
-            //     Screen.CUTSCENE,
-            //     transitionSlides,
-            //     () -> {
-            //         setStage(nextStageKey);
-            //     }
-            // );
             String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
+            pendingNextStageKey = nextStageKey;
+            remainingQuestionMillis = 0;
             terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
 
             SceneManager.get().openCutsceneWindow(
                 Screen.CUTSCENE,
                 getStageClearSlides(currentStageKey, nextStageKey),
                 () -> {
+                    pendingNextStageKey = null;
                     setStage(nextStageKey);
                 }
             );
@@ -354,9 +741,14 @@ public class GameStageManager {
         }
 
         currQuestion.setAnswered(true);
+        remainingQuestionMillis = 0;
+        questionProgressById.put(
+            currQuestion.getId(),
+            new QuestionProgress(currQuestion.getId(), QuestionStatus.TIMED_OUT, null)
+        );
         answeredQuestions++;
         terminalOut.append("Time is up. This question was marked as unanswered.", OutputKind.ERROR);
-        terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": timed out.", OutputKind.ERROR);
+        recordQuestionSummary(QuestionStatus.TIMED_OUT);
         loseHealth();
 
         if (lifeTracker.getLivesRemaining() > 0 && answeredQuestions >= activeStageQuestions.size()) {

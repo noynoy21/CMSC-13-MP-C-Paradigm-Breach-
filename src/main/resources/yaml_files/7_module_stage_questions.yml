@@ -1,4 +1,5 @@
-- prompt: |
+- id: "q-00133"
+  prompt: |
     In imperative programming, a variable's value can be changed through assignment statements. Which functional programming concept most directly contrasts with this approach?
   choices:
     - "Encapsulation, because data is hidden inside classes."
@@ -7,7 +8,8 @@
     - "Polymorphism, because methods can behave differently."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00134"
+  prompt: |
     How does a function in procedural programming differ from a method in object-oriented programming and a pure function in functional programming?
   choices:
     - "Procedures organize steps, methods belong to objects or classes, and pure functions avoid side effects."
@@ -16,7 +18,8 @@
     - "Procedures manipulate objects, methods avoid parameters, and pure functions require mutable state."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00135"
+  prompt: |
     An object-oriented program defines a base class Animal and a subclass Dog that inherits its behavior. A functional program instead combines small functions to perform a larger task. Which comparison is most accurate?
   choices:
     - "Both approaches require a child class to inherit from a parent class."
@@ -25,7 +28,8 @@
     - "Inheritance combines functions, while function composition creates class hierarchies."
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00136"
+  prompt: |
     Suppose you want to select all numbers greater than 10 from a list.
     - Approach A: Loop through every number, check the condition, and append qualifying numbers to a new list.
     - Approach B: Use a filtering operation that specifies the condition for selecting numbers.
@@ -37,7 +41,8 @@
     - "Approach A emphasizes how to perform the task, while Approach B emphasizes what elements should be selected."
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00137"
+  prompt: |
     A class hides its internal data and exposes public methods. A pure function returns the same output whenever it receives the same inputs and has no side effects.
      What is the most important distinction?
   choices:
@@ -47,7 +52,8 @@
     - "Encapsulation and purity are two names for the same programming concept."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00138"
+  prompt: |
     Consider two approaches to calculating the area of different shapes.
     - Approach A: Different shape classes implement their own calculateArea() methods.
     - Approach B: A function receives another function as an argument to determine how a calculation should be performed.
@@ -59,7 +65,8 @@
     - "Approach A is functional programming, while Approach B is necessarily imperative programming."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00139"
+  prompt: |
     An OOP program uses a BankAccount object whose balance changes whenever deposit() is called. A functional approach creates a new account state with an updated balance instead of modifying the existing state.
      What is the main difference?
   choices:
@@ -69,7 +76,8 @@
     - "d. Both approaches necessarily modify the same shared variable."
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00140"
+  prompt: |
     A procedural program groups instructions into functions and passes data between them. An OOP program groups related data and behavior into objects.
      Which statement best compares their organization?
   choices:
@@ -79,7 +87,8 @@
     - "Procedural programming requires inheritance, while OOP prohibits it."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00141"
+  prompt: |
     A C# programmer uses LINQ to filter, transform, and sort a collection, expressing the desired operations without manually writing every loop and update.
      Which interpretation is the best?
   choices:
@@ -89,7 +98,8 @@
     - "LINQ supports a more declarative style and functional techniques within a language that also supports imperative and object-oriented programming."
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00142"
+  prompt: |
     You are implementing a system that processes a list of student grades. One solution uses a Student class with a getAverage() method. Another uses a function that receives a collection of grades and returns their average without modifying the collection.
      Which conclusion is most accurate?
   choices:
@@ -99,7 +109,8 @@
     - "The two implementations cannot produce the same result because they use different paradigms."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00143"
+  prompt: |
     Which component is most closely associated with encapsulating data and behavior in OOP?
   choices:
     - "Pure function"

@@ -121,6 +121,7 @@ public class StringsConfig {
                                              ANS        Answer a question; ans _.
                                              PNGU -wdyt Peek at Pengu's choice (costs one token).
                                              PNGU -ans  Let Pengu answer for free.
+                                             SAVE -s 1  Save progress to slot 1 (slots 1-3).
                                              """;
                                              
                                             //  STAGE      Switch between game stages (e.g., stage 1).

@@ -17,6 +17,7 @@ public final class QuestionTimer {
     private final Timeline timeline;
 
     private long deadlineNanos;
+    private long remainingNanos;
     private boolean running;
 
     public QuestionTimer(int durationSeconds, IntConsumer onTick, Runnable onTimeout) {
@@ -35,19 +36,66 @@ public final class QuestionTimer {
 
     public void start() {
         stop();
-        deadlineNanos = System.nanoTime() + TimeUnit.SECONDS.toNanos(durationSeconds);
+        remainingNanos = TimeUnit.SECONDS.toNanos(durationSeconds);
+        resume();
+    }
+
+    /** Starts a timer from persisted time remaining, without applying the full time limit. */
+    public void startWithRemainingMillis(long remainingMillis) {
+        if (remainingMillis <= 0) {
+            throw new IllegalArgumentException("remainingMillis must be greater than zero");
+        }
+        stop();
+        remainingNanos = TimeUnit.MILLISECONDS.toNanos(remainingMillis);
+        resume();
+    }
+
+    /** Pauses the countdown while its terminal window is hidden. */
+    public void pause() {
+        if (!running) {
+            return;
+        }
+
+        remainingNanos = deadlineNanos - System.nanoTime();
+        if (remainingNanos <= 0) {
+            expire();
+            return;
+        }
+
+        running = false;
+        timeline.stop();
+    }
+
+    /** Resumes a paused countdown without resetting its remaining time. */
+    public void resume() {
+        if (running || remainingNanos <= 0) {
+            return;
+        }
+
+        deadlineNanos = System.nanoTime() + remainingNanos;
         running = true;
-        onTick.accept(durationSeconds);
+        onTick.accept((int) ((remainingNanos + TimeUnit.SECONDS.toNanos(1) - 1)
+            / TimeUnit.SECONDS.toNanos(1)));
         timeline.playFromStart();
     }
 
     public void stop() {
         running = false;
+        remainingNanos = 0;
         timeline.stop();
     }
 
     public boolean isRunning() {
         return running;
+    }
+
+    /** Returns a rounded-up remaining duration suitable for saving. */
+    public long getRemainingMillis() {
+        long nanos = running ? deadlineNanos - System.nanoTime() : remainingNanos;
+        if (nanos <= 0) {
+            return 0;
+        }
+        return (nanos + TimeUnit.MILLISECONDS.toNanos(1) - 1) / TimeUnit.MILLISECONDS.toNanos(1);
     }
 
     /** Checks the deadline before input is handled, so a late answer cannot win the next UI pulse. */

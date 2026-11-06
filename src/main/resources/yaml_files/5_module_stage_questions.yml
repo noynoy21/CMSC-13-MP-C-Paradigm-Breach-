@@ -1,6 +1,7 @@
 # CONCEPTUAL QUESTIONS
 
-- prompt: |
+- id: "q-00103"
+  prompt: |
     Which programming paradigm is characterized by programming with state and commands that directly modify that state?
   choices:
     - "Imperative programming"
@@ -9,7 +10,8 @@
     - "Logic programming"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00104"
+  prompt: |
     What is defined as the contents of memory locations/variables at any given point in a program's execution?
   choices:
     - "Program state"
@@ -18,7 +20,8 @@
     - "Syntax tree"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00105"
+  prompt: |
     Which early high-level programming language was designed by John Backus at IBM in 1956 specifically for scientific computing and floating-point hardware?
   choices:
     - "COBOL"
@@ -27,7 +30,8 @@
     - "PL/I"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00106"
+  prompt: |
     Which programming language was developed in 1959 by the U.S. Department of Defense to process business data using English-like, self-documenting syntax?
   choices:
     - "FORTRAN"
@@ -36,7 +40,8 @@
     - "C"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00107"
+  prompt: |
     In imperative programming, what term refers to the binding of a variable to a specific memory location during assignment?
   choices:
     - "r-value"
@@ -45,7 +50,8 @@
     - "Scope value"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00108"
+  prompt: |
     Which loop statement in Java evaluates its condition at the end of the loop body, guaranteeing that the block executes at least once?
   choices:
     - "while loop"
@@ -54,7 +60,8 @@
     - "foreach loop"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00109"
+  prompt: |
     Which Java keyword is used to declare a constant variable whose value cannot be modified after initialization?
   choices:
     - "static"
@@ -63,7 +70,8 @@
     - "immutable"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00110"
+  prompt: |
     What core characteristic distinguishes declarative programming from imperative programming?
   choices:
     - "Declarative specifies HOW to achieve a result step-by-step."
@@ -72,7 +80,8 @@
     - "Declarative execution order is strictly determined by sequencing commands."
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00111"
+  prompt: |
     Which language notation was introduced alongside ALGOL 60 to formally define programming language syntax?
   choices:
     - "Turing notation"
@@ -81,7 +90,8 @@
     - "Assembly mnemonics"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00112"
+  prompt: |
     The following statements about imperative and declarative paradigms are true except one:
   choices:
     - "Imperative programming focuses on explicit state modifications and control flow."
@@ -92,7 +102,8 @@
 
 # PROGRAMMING QUESTIONS
 
-- prompt: |
+- id: "q-00113"
+  prompt: |
     parent(tom, bob).
     parent(bob, ann).
 
@@ -104,7 +115,8 @@
     - "false."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00114"
+  prompt: |
     ?- [1, 2, 3] = [H | T].
   choices:
     - "H = 1,\nT = [2, 3]."
@@ -113,7 +125,8 @@
     - "false."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00115"
+  prompt: |
     ?- 5 + 2 =:= 3 + 4.
   choices:
     - "true."
@@ -122,7 +135,8 @@
     - "7 = 7."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00116"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -151,7 +165,8 @@
       ?- parent(X, Y).
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00117"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -180,7 +195,8 @@
       ?- likes(mary, mary).
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00118"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -197,7 +213,8 @@
       ?- 1 + 2 = X.
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00119"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -214,7 +231,8 @@
       ?- Head = 1, Tail = [2, 3], List = (Head, Tail).
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00120"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -242,7 +260,8 @@
       likes(X, pasta).
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00121"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -273,7 +292,8 @@
       grandparent(Y, Z)
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00122"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
