@@ -5,6 +5,8 @@ import java.io.UncheckedIOException;
 
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
+import cmsc13.ParadigmBreach.view.TerminalController;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -23,6 +25,15 @@ public class App extends Application {
 
         SceneManager.init(primaryStage);
         AudioManager.init();
+        primaryStage.setOnCloseRequest(event -> {
+            TerminalController terminalController = SceneManager.get().getSingleController(Screen.TERMINAL);
+            if (terminalController != null) {
+                terminalController.handleDesktopCloseRequest(event);
+            } else {
+                event.consume();
+                exitImmediately();
+            }
+        });
         SceneManager.get().showSplashArt();
 
         try (var fontStream = App.class.getResourceAsStream("/fonts/CascadiaMono.ttf")) {
@@ -41,5 +52,11 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    /** Ends the process without entering the affected JavaFX window teardown path. */
+    public static void exitImmediately() {
+        AudioManager.get().stopMusic();
+        System.exit(0);
     }
 }

@@ -1,7 +1,9 @@
 package cmsc13.ParadigmBreach.view;
 
+import java.io.IOException;
 import java.util.Locale;
 
+import cmsc13.ParadigmBreach.App;
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.model.GameStageManager;
@@ -12,6 +14,8 @@ import cmsc13.ParadigmBreach.util.BlockDigitRenderer;
 import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.util.QuestionTimer;
+import cmsc13.ParadigmBreach.ui.SceneManager;
+import cmsc13.ParadigmBreach.ui.Screen;
 import cmsc13.ParadigmBreach.util.StringsConfig;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -19,18 +23,32 @@ import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 public class TerminalController {
+    private enum SaveDialogMode {
+        CLOSE_PROMPT,
+        SLOT_PICKER,
+        SAVE_FAILURE
+    }
+
     private final String helpCommandOutput = StringsConfig.get().getHelpCommandOutput();
     private final String gameOverError = StringsConfig.get().getGameOverError();
  
@@ -85,6 +103,7 @@ public class TerminalController {
     private PauseTransition penguReactionReset;
     private Timeline gameOverBlink;
     private boolean awaitingRedoChoice;
+    private boolean exitPending;
 
     @FXML
     private void initialize() {
@@ -122,11 +141,12 @@ public class TerminalController {
         );
         lifeTracker = new LifeTracker(this::updateHealthDisplay);
         penguAssistant = new PenguAssistant(this::updatePenguTokenDisplay);
+        Integer selectedSlot = PlayerSession.getSelectedSaveSlot();
         gsManager = new GameStageManager(
             terminalOut,
             lifeTracker,
             penguAssistant,
-            GameSaveRepository.forPlayer(PlayerSession.getPlayerName())
+            selectedSlot == null ? null : GameSaveRepository.forSlot(selectedSlot)
         );
 
         if (gsManager.isGameCompleted()) {
@@ -157,13 +177,16 @@ public class TerminalController {
         boolean redoChoiceWasPending = awaitingRedoChoice;
         expireQuestionTimerIfNeeded();
 
+        if (cmd.toLowerCase(Locale.ROOT).split("\\s+")[0].equals("save")) {
+            handleSaveCommand(cmd);
+            return;
+        }
+
         if (redoChoiceWasPending) {
             handleRedoChoice(cmd);
-            saveTerminalState();
             return;
         }
         if (awaitingRedoChoice) {
-            saveTerminalState();
             return;
         }
 
@@ -181,7 +204,6 @@ public class TerminalController {
                 terminalOut.append("Unknown command: " + cmd, OutputKind.ERROR);
             }
         }
-        saveTerminalState();
     }
 
     private void handleQuestionCommand(String command) {
@@ -206,9 +228,28 @@ public class TerminalController {
         }
     }
 
-    private void saveTerminalState() {
-        if (gsManager != null && questionTimer != null) {
-            gsManager.saveProgress(questionTimer.getRemainingMillis());
+    private void handleSaveCommand(String command) {
+        String[] args = command.trim().split("\\s+");
+        if (args.length != 3 || !"-s".equalsIgnoreCase(args[1])) {
+            terminalOut.append("Usage: save -s <1|2|3>", OutputKind.RESPONSE);
+            return;
+        }
+
+        int slotNumber;
+        try {
+            slotNumber = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            terminalOut.append("Invalid save slot. Choose 1, 2, or 3.", OutputKind.ERROR);
+            return;
+        }
+        if (slotNumber < 1 || slotNumber > GameSaveRepository.SLOT_COUNT) {
+            terminalOut.append("Invalid save slot. Choose 1, 2, or 3.", OutputKind.ERROR);
+            return;
+        }
+
+        if (gsManager.saveProgress(GameSaveRepository.forSlot(slotNumber), questionTimer.getRemainingMillis())) {
+            PlayerSession.setSelectedSaveSlot(slotNumber);
+            terminalOut.append("Progress saved to slot " + slotNumber + ".", OutputKind.CORRECT);
         }
     }
 
@@ -218,9 +259,6 @@ public class TerminalController {
 
     private void updateTimerDisplay(int remainingSeconds) {
         timerLabel.setText("TIME LEFT:\n" + BlockDigitRenderer.render(remainingSeconds));
-        if (gsManager != null && questionTimer != null) {
-            gsManager.saveProgress(questionTimer.getRemainingMillis());
-        }
     }
 
     private void onQuestionTimeout() {
@@ -260,7 +298,6 @@ public class TerminalController {
                 stopPenguReaction();
                 gsManager.restartCurrentStage();
                 timerLabel.setText("TIME: --");
-                gsManager.saveProgress(questionTimer.getRemainingMillis());
             }
             case "n", "no", "exit" -> {
                 awaitingRedoChoice = false;
@@ -395,9 +432,6 @@ public class TerminalController {
                         WindowEvent.WINDOW_HIDDEN,
                         event -> {
                             questionTimer.pause();
-                            if (gsManager != null) {
-                                gsManager.saveProgress(questionTimer.getRemainingMillis());
-                            }
                         }
                     );
                     newWindow.addEventHandler(
@@ -407,5 +441,116 @@ public class TerminalController {
                 }
             });
         });
+    }
+
+    public void handleDesktopCloseRequest(WindowEvent event) {
+        if (exitPending) {
+            event.consume();
+            return;
+        }
+        event.consume();
+        if (gsManager == null) {
+            exitApplicationNow();
+            return;
+        }
+        questionTimer.pause();
+
+        SaveProgressDialogController closePrompt;
+        try {
+            closePrompt = showSaveProgressDialog(SaveDialogMode.CLOSE_PROMPT);
+        } catch (IOException e) {
+            terminalOut.append("Could not open the save dialog.", OutputKind.ERROR);
+            questionTimer.resume();
+            return;
+        }
+        if (closePrompt.getCloseChoice() == SaveProgressDialogController.CloseChoice.CANCEL) {
+            questionTimer.resume();
+            return;
+        }
+        if (closePrompt.getCloseChoice() == SaveProgressDialogController.CloseChoice.EXIT_WITHOUT_SAVING) {
+            exitApplicationNow();
+            return;
+        }
+
+        SaveProgressDialogController slotPicker;
+        try {
+            slotPicker = showSaveProgressDialog(SaveDialogMode.SLOT_PICKER);
+        } catch (IOException e) {
+            terminalOut.append("Could not open the save slot picker.", OutputKind.ERROR);
+            questionTimer.resume();
+            return;
+        }
+        var selectedSlot = slotPicker.getSelectedSlot();
+        if (selectedSlot.isEmpty()) {
+            questionTimer.resume();
+            return;
+        }
+
+        int slotNumber = selectedSlot.get();
+        boolean saved = gsManager.saveProgress(
+            GameSaveRepository.forSlot(slotNumber),
+            questionTimer.getRemainingMillis()
+        );
+        if (saved) {
+            PlayerSession.setSelectedSaveSlot(slotNumber);
+            exitApplicationNow();
+        } else {
+            try {
+                showSaveProgressDialog(SaveDialogMode.SAVE_FAILURE);
+            } catch (IOException e) {
+                terminalOut.append("The save failed, and its error dialog could not be opened.", OutputKind.ERROR);
+            }
+            questionTimer.resume();
+        }
+    }
+
+    private void exitApplicationNow() {
+        if (exitPending) {
+            return;
+        }
+
+        exitPending = true;
+        if (questionTimer != null) questionTimer.stop();
+        // Bypass JavaFX 27's Windows teardown path that raises UI Automation focus
+        // events for an already-closed Glass view when Platform.exit() is called.
+        App.exitImmediately();
+    }
+
+    private SaveProgressDialogController showSaveProgressDialog(SaveDialogMode mode) throws IOException {
+        var fxml = TerminalController.class.getResource("/fxml_files/save-progress-dialog.fxml");
+        if (fxml == null) {
+            throw new IOException("save-progress-dialog.fxml is missing from the application resources.");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxml);
+        Parent root = loader.load();
+        SaveProgressDialogController controller = loader.getController();
+        switch (mode) {
+            case CLOSE_PROMPT -> controller.configureClosePrompt();
+            case SLOT_PICKER -> controller.configureSlotPicker(GameSaveRepository.inspectSlots());
+            case SAVE_FAILURE -> controller.configureSaveFailure();
+        }
+
+        Window owner = SceneManager.get().getPrimaryStage();
+        Stage dialog = new Stage(StageStyle.UNDECORATED);
+        dialog.initOwner(owner);
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.setResizable(false);
+        dialog.setTitle("PARADIGMBREACH // SAVE");
+
+        Scene scene = new Scene(root);
+        scene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                dialog.close();
+            }
+        });
+        dialog.setScene(scene);
+        controller.setStage(dialog);
+        dialog.setOnShown(shownEvent -> {
+            dialog.setX(owner.getX() + (owner.getWidth() - dialog.getWidth()) / 2);
+            dialog.setY(owner.getY() + (owner.getHeight() - dialog.getHeight()) / 2);
+        });
+        dialog.showAndWait();
+        return controller;
     }
 }

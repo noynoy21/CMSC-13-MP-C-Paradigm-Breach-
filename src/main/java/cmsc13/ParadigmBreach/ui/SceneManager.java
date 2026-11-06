@@ -6,10 +6,13 @@ import java.net.URL;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
 
 import cmsc13.ParadigmBreach.model.CutsceneSlide;
+import cmsc13.ParadigmBreach.persistence.GameSaveRepository;
 import cmsc13.ParadigmBreach.view.CutsceneController;
 import cmsc13.ParadigmBreach.view.NameInputController;
+import cmsc13.ParadigmBreach.view.SaveFileSelectionController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -65,6 +68,24 @@ public class SceneManager {
         primaryStage.setScene(new Scene(zipped.root(), screen.getWidth(), screen.getHeight()));
         primaryStage.show();
         // return controller;
+    }
+
+    public void showSaveFileSelection(
+        List<GameSaveRepository.SlotInfo> slots,
+        IntConsumer onLoadSlot,
+        Runnable onNewSession
+    ) {
+        Zip zipped = load(Screen.SAVEFILE_SELECTION);
+        SaveFileSelectionController controller = (SaveFileSelectionController) zipped.controller();
+        controller.initData(slots, onLoadSlot, onNewSession);
+
+        primaryStage.setTitle(Screen.SAVEFILE_SELECTION.getTitle());
+        primaryStage.setScene(new Scene(
+            zipped.root(),
+            Screen.SAVEFILE_SELECTION.getWidth(),
+            Screen.SAVEFILE_SELECTION.getHeight()
+        ));
+        primaryStage.show();
     }
 
     /** Puts the desktop in the main window. Call once from App.start(). */
@@ -141,4 +162,9 @@ public class SceneManager {
     }
 
     public Stage getPrimaryStage() { return primaryStage; }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getSingleController(Screen screen) {
+        return (T) singleControllers.get(screen);
+    }
 }

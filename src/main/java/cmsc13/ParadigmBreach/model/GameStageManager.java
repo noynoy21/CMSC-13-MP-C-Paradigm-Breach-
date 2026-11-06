@@ -59,8 +59,6 @@ public class GameStageManager {
     private String pendingNextStageKey;
     private boolean gameCompleted;
     private boolean restoredFromSave;
-    private boolean savingEnabled = true;
-    private boolean saveErrorReported;
     public static final int QUESTION_TIME_LIMIT_SECONDS = 30;
     private static final long MAX_QUESTION_TIME_MILLIS = QUESTION_TIME_LIMIT_SECONDS * 1_000L;
 
@@ -95,15 +93,19 @@ public class GameStageManager {
     }
 
     private void initializeFromSave() {
+        if (saveRepository == null) {
+            setStage("0", false);
+            return;
+        }
+
         Optional<GameSaveData> savedData;
         String startupWarning = null;
         try {
             savedData = saveRepository.load();
         } catch (GameSaveData.UnsupportedSaveVersionException e) {
-            savingEnabled = false;
             savedData = Optional.empty();
             startupWarning = "This save uses an unsupported version and was left untouched. "
-                + "A fresh session is running without saving over it.";
+                + "A fresh session is running.";
         } catch (Exception e) {
             startupWarning = preserveInvalidSave("The saved game could not be read.");
             savedData = Optional.empty();
@@ -134,7 +136,6 @@ public class GameStageManager {
                     } else if (lifeTracker.getLivesRemaining() > 0) {
                         terminalOut.append("Type 'ask' to continue.", OutputKind.RESPONSE);
                     }
-                    persistProgress(remainingQuestionMillis);
                 }
             } catch (RuntimeException e) {
                 startupWarning = preserveInvalidSave("The saved progress no longer matches the question bank.");
@@ -150,7 +151,6 @@ public class GameStageManager {
         if (startupWarning != null) {
             terminalOut.append(startupWarning, OutputKind.ERROR);
         }
-        persistProgress(remainingQuestionMillis);
     }
 
     private String preserveInvalidSave(String reason) {
@@ -159,11 +159,9 @@ public class GameStageManager {
             if (backupLocation != null) {
                 return reason + " A copy was kept at " + backupLocation + ". Starting a fresh game.";
             }
-            savingEnabled = false;
-            return reason + " The original save could not be backed up; saving is disabled.";
+            return reason + " The original save could not be backed up; starting a fresh game.";
         } catch (Exception backupError) {
-            savingEnabled = false;
-            return reason + " The original save could not be backed up; saving is disabled.";
+            return reason + " The original save could not be backed up; starting a fresh game.";
         }
     }
 
@@ -292,15 +290,11 @@ public class GameStageManager {
         return gameCompleted;
     }
 
-    /** Saves the model snapshot with the timer's latest remaining duration. */
-    public void saveProgress(long timerRemainingMillis) {
-        remainingQuestionMillis = Math.max(0, Math.min(timerRemainingMillis, MAX_QUESTION_TIME_MILLIS));
-        persistProgress(remainingQuestionMillis);
-    }
-
-    private void persistProgress(long timerRemainingMillis) {
-        if (!savingEnabled || activeStageQuestions == null || currStageQuestions == null) {
-            return;
+    /** Writes a snapshot only when the player explicitly chooses a destination slot. */
+    public boolean saveProgress(GameSaveStore destination, long timerRemainingMillis) {
+        if (destination == null) {
+            terminalOut.append("Choose a save slot before saving.", OutputKind.ERROR);
+            return false;
         }
 
         remainingQuestionMillis = Math.max(0, Math.min(timerRemainingMillis, MAX_QUESTION_TIME_MILLIS));
@@ -308,7 +302,8 @@ public class GameStageManager {
         for (Question question : activeStageQuestions) {
             QuestionProgress progress = questionProgressById.get(question.getId());
             if (progress == null) {
-                return;
+                terminalOut.append("Progress could not be saved because the current stage state is incomplete.", OutputKind.ERROR);
+                return false;
             }
             savedQuestions.add(progress);
         }
@@ -330,13 +325,11 @@ public class GameStageManager {
         );
 
         try {
-            saveRepository.save(data);
-            saveErrorReported = false;
+            destination.save(data);
+            return true;
         } catch (Exception e) {
-            if (!saveErrorReported) {
-                terminalOut.append("Progress could not be saved: " + e.getMessage(), OutputKind.ERROR);
-                saveErrorReported = true;
-            }
+            terminalOut.append("Progress could not be saved: " + e.getMessage(), OutputKind.ERROR);
+            return false;
         }
     }
 
@@ -634,7 +627,6 @@ public class GameStageManager {
         // terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'", OutputKind.RESPONSE);
         terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
         beginStageSummary(stageKey, restarting);
-        persistProgress(0);
         return true;
     }
 
@@ -688,15 +680,12 @@ public class GameStageManager {
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
 
         if (lifeTracker.getLivesRemaining() == 0) {
-            persistProgress(0);
             return;
         }
 
         // Check if stage requirement has been met
         if (answeredQuestions >= activeStageQuestions.size()) {
             checkStageCompletion();
-        } else {
-            persistProgress(0);
         }
     }
 
@@ -710,13 +699,11 @@ public class GameStageManager {
         // Check if this was the final stage (Win Condition)
         if (currentIndex == -1 || currentIndex >= STAGE_SEQUENCE.size() - 1) {
             gameCompleted = true;
-            persistProgress(0);
             triggerWinCondition();
         } else {
             String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
             pendingNextStageKey = nextStageKey;
             remainingQuestionMillis = 0;
-            persistProgress(0);
             terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
 
             SceneManager.get().openCutsceneWindow(
@@ -744,7 +731,6 @@ public class GameStageManager {
             winSlides,
             () -> {
                 terminalOut.append("Thanks for playing", OutputKind.CORRECT);
-                persistProgress(0);
             }
         );
     }
@@ -767,8 +753,6 @@ public class GameStageManager {
 
         if (lifeTracker.getLivesRemaining() > 0 && answeredQuestions >= activeStageQuestions.size()) {
             checkStageCompletion();
-        } else {
-            persistProgress(0);
         }
     }
 

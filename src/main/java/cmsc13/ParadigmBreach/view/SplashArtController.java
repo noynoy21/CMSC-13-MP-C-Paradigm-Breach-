@@ -8,6 +8,7 @@ import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.MusicTrack;
 import cmsc13.ParadigmBreach.model.CutsceneSlide;
 import cmsc13.ParadigmBreach.model.PlayerSession;
+import cmsc13.ParadigmBreach.persistence.GameSaveRepository;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.animation.Animation;
@@ -84,20 +85,56 @@ public class SplashArtController {
             stopAll();
             SceneManager.get().showNameInput(
                 Screen.NAME_INPUT,
-                () -> SceneManager.get().openCutsceneWindow(
-                    Screen.CUTSCENE,
-                    List.of(
-                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Hello, %s", PlayerSession.getPlayerName())),
-                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Handa na ba kayo")),
-                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Goodluck"))
-                    ),
-                    () -> SceneManager.get().showDesktop()
-                )
+                this::chooseSaveOrNewSession
             );
         });
         out.play();
 
         AudioManager.get().fadeOutMusic(fadeoutDur);
+    }
+
+    private void chooseSaveOrNewSession() {
+        try {
+            GameSaveRepository.migrateLegacySaves();
+        } catch (Exception e) {
+            System.err.println("Could not migrate the existing save into a slot: " + e.getMessage());
+        }
+
+        var slots = GameSaveRepository.inspectSlots();
+        boolean anyExistingSave = slots.stream().anyMatch(GameSaveRepository.SlotInfo::occupied);
+        if (!anyExistingSave) {
+            PlayerSession.setSelectedSaveSlot(null);
+            beginIntroCutscene();
+            return;
+        }
+
+        SceneManager.get().showSaveFileSelection(
+            slots,
+            slotNumber -> slots.stream()
+                .filter(slot -> slot.slotNumber() == slotNumber && slot.isLoadable())
+                .findFirst()
+                .ifPresent(slot -> {
+                    PlayerSession.setPlayerName(slot.saveData().orElseThrow().getPlayerName());
+                    PlayerSession.setSelectedSaveSlot(slotNumber);
+                    beginIntroCutscene();
+                }),
+            () -> {
+                PlayerSession.setSelectedSaveSlot(null);
+                beginIntroCutscene();
+            }
+        );
+    }
+
+    private void beginIntroCutscene() {
+        SceneManager.get().openCutsceneWindow(
+            Screen.CUTSCENE,
+            List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Hello, %s", PlayerSession.getPlayerName())),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Handa na ba kayo"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Goodluck")
+            ),
+            () -> SceneManager.get().showDesktop()
+        );
     }
 
     private void stopAll() {
