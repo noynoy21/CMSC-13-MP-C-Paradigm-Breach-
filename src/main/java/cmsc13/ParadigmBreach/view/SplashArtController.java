@@ -6,6 +6,8 @@ import java.util.List;
 
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.MusicTrack;
+import cmsc13.ParadigmBreach.model.CutsceneSlide;
+import cmsc13.ParadigmBreach.model.PlayerSession;
 import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.ui.Screen;
 import javafx.animation.Animation;
@@ -84,10 +86,11 @@ public class SplashArtController {
                 Screen.NAME_INPUT,
                 () -> SceneManager.get().openCutsceneWindow(
                     Screen.CUTSCENE,
-                    List.of(new cmsc13.ParadigmBreach.model.CutsceneSlide(
-                        "/images/splash_arts/ascii-art-text.png",
-                        "Good evening, " + cmsc13.ParadigmBreach.model.PlayerSession.getPlayerName() + "!"
-                    )),
+                    List.of(
+                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Hello, %s", PlayerSession.getPlayerName())),
+                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Handa na ba kayo")),
+                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Goodluck"))
+                    ),
                     () -> SceneManager.get().showDesktop()
                 )
             );
