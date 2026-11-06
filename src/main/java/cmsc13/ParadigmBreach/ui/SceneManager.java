@@ -83,6 +83,9 @@ public class SceneManager {
         if (screen.isSingleInstance()) {
             Stage existing = openSingles.get(screen);
             if (existing != null) {                    // already open: just focus it
+                if (!existing.isShowing()) {
+                    existing.show();
+                }
                 existing.toFront();
                 existing.requestFocus();
                 return (T) singleControllers.get(screen);
@@ -100,8 +103,12 @@ public class SceneManager {
             openSingles.put(screen, window);
             singleControllers.put(screen, zippedScreen.controller);
             window.setOnHidden(e -> {                  // fires on any close
-                openSingles.remove(screen);
-                singleControllers.remove(screen);
+                // Keep the terminal's window and controller alive for this app session.
+                // Its controller owns the in-memory game state that should survive a close/reopen.
+                if (screen != Screen.TERMINAL) {
+                    openSingles.remove(screen);
+                    singleControllers.remove(screen);
+                }
             });
         }
 

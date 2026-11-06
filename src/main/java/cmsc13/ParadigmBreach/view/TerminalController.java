@@ -361,7 +361,11 @@ public class TerminalController {
                 if (newWindow != null) {
                     newWindow.addEventHandler(
                         WindowEvent.WINDOW_HIDDEN,
-                        event -> stopQuestionTimer("TIME: --")
+                        event -> questionTimer.pause()
+                    );
+                    newWindow.addEventHandler(
+                        WindowEvent.WINDOW_SHOWN,
+                        event -> questionTimer.resume()
                     );
                 }
             });
