@@ -123,6 +123,12 @@ public class SceneManager {
         window.setAlwaysOnTop(true);                     // Ensures cutscene renders above all windows
         window.setTitle(screen.getTitle());
         window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
+
+        window.setOnCloseRequest(event -> {
+            event.consume();
+            controller.closeCutscene();
+        });
+
         window.show();
         return (T) controller;
     }
