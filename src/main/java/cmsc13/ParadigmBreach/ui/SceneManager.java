@@ -119,6 +119,8 @@ public class SceneManager {
 
         Stage window = new Stage();
         window.initOwner(primaryStage);
+        window.initModality(Modality.APPLICATION_MODAL); // Prevents background windows from overlapping
+        window.setAlwaysOnTop(true);                     // Ensures cutscene renders above all windows
         window.setTitle(screen.getTitle());
         window.setScene(new Scene(zippedScreen.root(), screen.getWidth(), screen.getHeight()));
         window.show();

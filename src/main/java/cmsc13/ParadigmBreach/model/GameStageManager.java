@@ -245,6 +245,26 @@ public class GameStageManager {
         terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
         // terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'", OutputKind.RESPONSE);
         terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
+
+        // PauseTransition delay = new PauseTransition(Duration.seconds(0.4));
+
+        SceneManager.get().openCutsceneWindow(
+            Screen.CUTSCENE,
+            getStageStartSlides(stageKey),
+            () -> {
+                
+            }
+        );
+        // delay.setOnFinished(e -> {
+        //     SceneManager.get().openCutsceneWindow(
+        //         Screen.CUTSCENE,
+        //         getStageStartSlides(stageKey),
+        //         () -> {
+        //             // Optional callback after cutscene closes
+        //         }
+        //     );
+        // });
+        // delay.play();
         return true;
     }
 
@@ -290,17 +310,27 @@ public class GameStageManager {
             triggerWinCondition();
         } else {
             // Automatically advance to the next stage via transition cutscene
+            // String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
+            // terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
+            
+            // List<CutsceneSlide> transitionSlides = List.of(
+            //     new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "Stage " + currentStageKey.toUpperCase() + " cleared"),
+            //     new CutsceneSlide("/images/tutorial_images/desktop.png", "Next stage: STAGE " + nextStageKey.toUpperCase())
+            // );
+
+            // SceneManager.get().openCutsceneWindow(
+            //     Screen.CUTSCENE,
+            //     transitionSlides,
+            //     () -> {
+            //         setStage(nextStageKey);
+            //     }
+            // );
             String nextStageKey = STAGE_SEQUENCE.get(currentIndex + 1);
             terminalOut.append("Stage clear\n", OutputKind.RESPONSE);
-            
-            List<CutsceneSlide> transitionSlides = List.of(
-                new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "Stage " + currentStageKey.toUpperCase() + " cleared"),
-                new CutsceneSlide("/images/tutorial_images/desktop.png", "Next stage: STAGE " + nextStageKey.toUpperCase())
-            );
 
             SceneManager.get().openCutsceneWindow(
                 Screen.CUTSCENE,
-                transitionSlides,
+                getStageClearSlides(currentStageKey, nextStageKey),
                 () -> {
                     setStage(nextStageKey);
                 }
@@ -402,5 +432,89 @@ public class GameStageManager {
         currQuestion.setHasBeenAsked(true);
 
         return sb.toString();
+    }
+
+    private List<CutsceneSlide> getStageStartSlides(String stageKey) {
+        return switch (stageKey) {
+            case "0" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "First, let's do a sanity check."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 0 (Initialization Trial)")
+            );
+            case "1" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stop right there! Where do you think you're going?!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 1 (Introduction to Programming Paradigms)")
+            );
+            case "2" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "You shall not pass!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 2 (Procedural Programming)")
+            );
+            case "3" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "You will be dealt with."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 3 (Functional Programming)")
+            );
+            case "4" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Shall we play a game?"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 4 (Object-oriented Programming)")
+            );
+            case "5" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "ROOOOAAARRR! Time for you to die!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 5 (Imperative vs Declarative Programming)")
+            );
+            case "6" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Congratulations for making it this far. However, your tirade ends here!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 6 (Event-driven Programming)")
+            );
+            case "7" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "It's the end. Will you make it through?"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 7 (Component Mappings between Programming Paradigms)")
+            );
+            default -> List.of(
+                // new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Entering Stage " + stageKey.toUpperCase())
+            );
+        };
+    }
+
+    private List<CutsceneSlide> getStageClearSlides(String currentKey, String nextKey) {
+        // return List.of(
+        //     new CutsceneSlide("/images/tutorial_images/terminal_screenshot.png", "STAGE " + currentKey.toUpperCase() + " BREACHED!\nFirewall integrity compromised."),
+        //     new CutsceneSlide("/images/tutorial_images/desktop.png", "Preparing upload payload for Stage " + nextKey.toUpperCase() + "...")
+        // );
+        return switch (currentKey) {
+            case "0" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Looks like you're ready. Good luck."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "STAGE 0 (Initialization Trial) cleared!")
+            );
+            case "1" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "No!!!! You will pay for this!!!!!!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 1 (Introduction to Programming Paradigms) cleared!")
+            );
+            case "2" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Halt, I say! Halt!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 2 (Procedural Programming) cleared!")
+            );
+            case "3" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "This cannot be!!!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 3 (Functional Programming) cleared!")
+            );
+            case "4" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Well met."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 4 (Object-oriented Programming) cleared!")
+            );
+            case "5" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "ROOOOAAARRR!!!!! You infuriate me!!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 5 (Imperative vs Declarative Programming) cleared!")
+            );
+            case "6" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "No... NOOOOOOO!!!!!!!!"),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 6 (Event-driven Programming) cleared!")
+            );
+            case "7" -> List.of(
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Not bad."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 7 (Component Mappings between Programming Paradigms) cleared!")
+            );
+            default -> List.of(
+                // new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Entering Stage " + stageKey.toUpperCase())
+            );
+        };
     }
 }

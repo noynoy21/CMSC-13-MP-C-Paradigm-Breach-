@@ -87,7 +87,7 @@ public class SplashArtController {
                 () -> SceneManager.get().openCutsceneWindow(
                     Screen.CUTSCENE,
                     List.of(
-                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Helo, %s.", PlayerSession.getPlayerName())),
+                        new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Hello, %s.", PlayerSession.getPlayerName())),
                         new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Are you ready?")),
                         new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Tonight, Fox Silic meets their end.")),
                         new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("All the farmers of our country are counting on you.")),
