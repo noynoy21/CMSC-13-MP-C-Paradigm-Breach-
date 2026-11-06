@@ -174,6 +174,10 @@ public class GameStageManager {
         return penguAssistant.getTokensRemaining();
     }
 
+    public void restartCurrentStage() {
+        setStage(currentStageKey);
+    }
+
     private boolean handleAsk() {
         if (lifeTracker.getLivesRemaining() == 0) {
             terminalOut.append("This stage is over. Switch stages to continue.", OutputKind.ERROR);
@@ -263,6 +267,10 @@ public class GameStageManager {
 
         currQuestion.setAnswered(true);
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
+
+        if (lifeTracker.getLivesRemaining() == 0) {
+            return;
+        }
 
         // Check if stage requirement has been met
         if (answeredQuestions >= activeStageQuestions.size()) {

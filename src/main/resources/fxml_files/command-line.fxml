@@ -30,7 +30,14 @@
                         <StackPane fx:id="outputPane" prefHeight="565.0" prefWidth="673.0">
                            <children>
                               <TextFlow fx:id="outputFlow" prefHeight="565.0" prefWidth="673.0" styleClass="terminal-output" />
-                              <ImageView fx:id="gameOverImageView" fitHeight="520.0" fitWidth="620.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false" />
+                              <BorderPane fx:id="gameOverBorderPane" prefHeight="200.0" prefWidth="200.0" styleClass="terminal-output" StackPane.alignment="CENTER">
+                                 <center>
+                                    <ImageView fx:id="gameOverImageView" fitHeight="520.0" fitWidth="620.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false" BorderPane.alignment="CENTER" />
+                                 </center>
+                                 <bottom>
+                                    <Label fx:id="redoStagePromptLabel" styleClass="err-continue-label" text="Redo stage? (y/n)" BorderPane.alignment="CENTER" />
+                                 </bottom>
+                              </BorderPane>
                            </children>
                         </StackPane>
                      </content>
@@ -46,19 +53,24 @@
                         <TextFlow fx:id="summaryFlow" prefHeight="200.0" prefWidth="200.0" styleClass="terminal-output" />
                      </content>
                   </ScrollPane>
+                  <ScrollPane fx:id="gameOverErrorScroll" fitToWidth="true" managed="false" prefHeight="260.0" styleClass="text-area" visible="false" VBox.vgrow="ALWAYS">
+                     <content>
+                        <TextFlow fx:id="gameOverErrorFlow" styleClass="terminal-output" />
+                     </content>
+                  </ScrollPane>
                </children>
             </VBox>
          </right>
          <left>
             <VBox maxWidth="270.0" prefHeight="600.0" prefWidth="270.0" styleClass="sidebar-left" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="timerLabel" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minHeight="140.0" prefHeight="186.0" prefWidth="272.0" styleClass="timer-label" text="TIME: --" textAlignment="CENTER" />
-                  <Label fx:id="healthLabel" alignment="CENTER" maxWidth="Infinity" prefHeight="116.0" prefWidth="272.0" styleClass="health-label" text="LIFE REMAINING:&#10;&lt;3 &lt;3 &lt;3 &lt;3" VBox.vgrow="ALWAYS" />
                   <VBox maxHeight="160.0" prefHeight="200.0" prefWidth="100.0" styleClass="text-area">
                      <children>
-                        <ImageView fitHeight="117.0" fitWidth="270.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+                        <ImageView fx:id="foxSilicSprite" fitWidth="270.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
+                  <Label fx:id="timerLabel" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minHeight="140.0" prefHeight="186.0" prefWidth="272.0" styleClass="timer-label" text="TIME: --" textAlignment="CENTER" />
+                  <Label fx:id="healthLabel" alignment="CENTER" maxWidth="Infinity" prefHeight="116.0" prefWidth="272.0" styleClass="health-label" text="LIFE REMAINING:&#10;&lt;3 &lt;3 &lt;3 &lt;3" VBox.vgrow="ALWAYS" />
                   <HBox maxHeight="160.0" maxWidth="1.7976931348623157E308" prefHeight="159.0" prefWidth="288.0" styleClass="text-area" VBox.vgrow="ALWAYS">
                      <children>
                         <ImageView fx:id="penguImage" fitHeight="160.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" styleClass="text-area" HBox.hgrow="ALWAYS">
