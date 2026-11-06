@@ -33,7 +33,7 @@ public final class TerminalOutput {
         text.getStyleClass().add(kind.cssClass());
         flow.getChildren().add(text);
 
-        Platform.runLater(() -> mainScroll.setVvalue(1.0));
+        scrollToBottom(mainScroll, flow);
     }
 
     public void clear() {
@@ -51,10 +51,20 @@ public final class TerminalOutput {
         text.getStyleClass().add(kind.cssClass());
         summaryFlow.getChildren().add(text);
 
-        Platform.runLater(() -> summaryScroll.setVvalue(1.0));
+        scrollToBottom(summaryScroll, summaryFlow);
     }
 
     public void clearSummary() {
         summaryFlow.getChildren().clear();
+    }
+
+    private void scrollToBottom(ScrollPane scroll, TextFlow content) {
+        Platform.runLater(() -> {
+            scroll.applyCss();
+            scroll.layout();
+            content.layout();
+            scroll.layout();
+            scroll.setVvalue(scroll.getVmax());
+        });
     }
 }

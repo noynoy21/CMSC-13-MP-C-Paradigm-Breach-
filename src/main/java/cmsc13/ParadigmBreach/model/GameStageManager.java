@@ -175,7 +175,7 @@ public class GameStageManager {
     }
 
     public void restartCurrentStage() {
-        setStage(currentStageKey);
+        setStage(currentStageKey, true);
     }
 
     private boolean handleAsk() {
@@ -212,6 +212,10 @@ public class GameStageManager {
 
     //  cheatcode
     public boolean setStage(String stageKey) {
+        return setStage(stageKey, false);
+    }
+
+    private boolean setStage(String stageKey, boolean restarting) {
         switch (stageKey) {
             case "0" -> currStageQuestions = new Stage0Questions();
             case "1" -> currStageQuestions = new Stage1Questions();
@@ -242,29 +246,17 @@ public class GameStageManager {
         penguAssistant.resetForStage();
         
         terminalOut.clear();
-        terminalOut.append("Successfully switched to stage: " + stageKey.toUpperCase(), OutputKind.CORRECT);
+        String status = restarting ? "Successfully restarted stage: " : "Successfully switched to stage: ";
+        terminalOut.append(status + stageKey.toUpperCase(), OutputKind.CORRECT);
         // terminalOut.append("To switch stages, type \n'stage < 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 >'", OutputKind.RESPONSE);
         terminalOut.append("Type 'ask' to begin questions for this stage.", OutputKind.RESPONSE);
-
-        // PauseTransition delay = new PauseTransition(Duration.seconds(0.4));
-
-        SceneManager.get().openCutsceneWindow(
-            Screen.CUTSCENE,
-            getStageStartSlides(stageKey),
-            () -> {
-                
-            }
-        );
-        // delay.setOnFinished(e -> {
-        //     SceneManager.get().openCutsceneWindow(
-        //         Screen.CUTSCENE,
-        //         getStageStartSlides(stageKey),
-        //         () -> {
-        //             // Optional callback after cutscene closes
-        //         }
-        //     );
-        // });
-        // delay.play();
+        if (restarting) {
+            terminalOut.appendSummary("\n--- Retry: STAGE " + stageKey.toUpperCase() + " ---", OutputKind.RESPONSE);
+        } else {
+            terminalOut.appendSummary(
+                "\n---- STAGE " + stageKey.toUpperCase() + " ----",
+                OutputKind.RESPONSE);
+        }
         return true;
     }
 
@@ -366,6 +358,10 @@ public class GameStageManager {
         terminalOut.append("Time is up. This question was marked as unanswered.", OutputKind.ERROR);
         terminalOut.appendSummary("\nQuestion no." + answeredQuestions + ": timed out.", OutputKind.ERROR);
         loseHealth();
+
+        if (lifeTracker.getLivesRemaining() > 0 && answeredQuestions >= activeStageQuestions.size()) {
+            checkStageCompletion();
+        }
     }
 
     private void loseHealth() {

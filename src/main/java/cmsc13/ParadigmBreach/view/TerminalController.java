@@ -135,10 +135,14 @@ public class TerminalController {
         if (cmd.isEmpty()) return;
 
         terminalOut.append("\n> " + cmd + "\n", OutputKind.COMMAND);
+        boolean redoChoiceWasPending = awaitingRedoChoice;
         expireQuestionTimerIfNeeded();
 
-        if (awaitingRedoChoice) {
+        if (redoChoiceWasPending) {
             handleRedoChoice(cmd);
+            return;
+        }
+        if (awaitingRedoChoice) {
             return;
         }
 
@@ -222,10 +226,14 @@ public class TerminalController {
             case "y", "yes" -> {
                 awaitingRedoChoice = false;
                 questionTimer.stop();
+                stopPenguReaction();
                 gsManager.restartCurrentStage();
+                timerLabel.setText("TIME: --");
             }
             case "n", "no", "exit" -> {
                 awaitingRedoChoice = false;
+                questionTimer.stop();
+                stopPenguReaction();
                 if (gameOverBlink != null) {
                     gameOverBlink.stop();
                     gameOverBlink = null;
@@ -261,6 +269,14 @@ public class TerminalController {
         penguReactionReset = new PauseTransition(Duration.millis(900));
         penguReactionReset.setOnFinished(event -> penguImage.setImage(penguNormalImage));
         penguReactionReset.playFromStart();
+    }
+
+    private void stopPenguReaction() {
+        if (penguReactionReset != null) {
+            penguReactionReset.stop();
+            penguReactionReset = null;
+        }
+        penguImage.setImage(penguNormalImage);
     }
 
     private void startGameOverBlink() {
