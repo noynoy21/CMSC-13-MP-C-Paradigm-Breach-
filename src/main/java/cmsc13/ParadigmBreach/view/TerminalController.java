@@ -6,6 +6,8 @@ import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.model.GameStageManager;
 import cmsc13.ParadigmBreach.model.PenguAssistant;
+import cmsc13.ParadigmBreach.model.PlayerSession;
+import cmsc13.ParadigmBreach.persistence.GameSaveRepository;
 import cmsc13.ParadigmBreach.util.BlockDigitRenderer;
 import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
@@ -29,8 +31,6 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 public class TerminalController {
-    private static final int QUESTION_TIME_LIMIT_SECONDS = 30;
-
     private final String helpCommandOutput = StringsConfig.get().getHelpCommandOutput();
     private final String gameOverError = StringsConfig.get().getGameOverError();
  
@@ -94,9 +94,6 @@ public class TerminalController {
             "ParadigmBreach v1.0\nType 'help' for commands.",
             OutputKind.COMMAND
         );
-        terminalOut.appendSummary("Stage: ", OutputKind.RESPONSE);
-        terminalOut.appendSummary("Progress:", OutputKind.RESPONSE);
-        Platform.runLater(input::requestFocus);   // start with the cursor in the input
 
         foxSilicSprite.setImage(loadImage("/images/gameover_screens/fox.png"));
         foxSilicSprite.setVisible(false);
@@ -104,14 +101,6 @@ public class TerminalController {
         // foxSilicSprite.fitWidthProperty().bind(foxContainer.widthProperty());
         // foxSilicSprite.setFitHeight(0);
 
-        lifeTracker = new LifeTracker(this::updateHealthDisplay);
-        penguAssistant = new PenguAssistant(this::updatePenguTokenDisplay);
-        gsManager = new GameStageManager(terminalOut, lifeTracker, penguAssistant);
-        questionTimer = new QuestionTimer(
-            QUESTION_TIME_LIMIT_SECONDS,
-            this::updateTimerDisplay,
-            this::onQuestionTimeout
-        );
         penguNormalImage = loadImage("/images/pengu/tux_oEyes.png");
         penguHappyImage = loadImage("/images/pengu/tux_happyEyes.png");
         penguFailImage = loadImage("/images/pengu/tux_xEyes.png");
@@ -125,6 +114,36 @@ public class TerminalController {
         penguImage.setImage(penguNormalImage);
         gameOverImageView.setImage(gameOverImage);
         timerLabel.setText("TIME: --");
+
+        questionTimer = new QuestionTimer(
+            GameStageManager.QUESTION_TIME_LIMIT_SECONDS,
+            this::updateTimerDisplay,
+            this::onQuestionTimeout
+        );
+        lifeTracker = new LifeTracker(this::updateHealthDisplay);
+        penguAssistant = new PenguAssistant(this::updatePenguTokenDisplay);
+        gsManager = new GameStageManager(
+            terminalOut,
+            lifeTracker,
+            penguAssistant,
+            GameSaveRepository.forPlayer(PlayerSession.getPlayerName())
+        );
+
+        if (gsManager.isGameCompleted()) {
+            timerLabel.setText("GAME COMPLETE");
+        } else if (lifeTracker.getLivesRemaining() == 0) {
+            timerLabel.setText("GAME OVER");
+        } else if (gsManager.hasActiveQuestion()) {
+            long remainingMillis = gsManager.getRemainingQuestionMillis();
+            if (remainingMillis > 0) {
+                questionTimer.startWithRemainingMillis(remainingMillis);
+            } else {
+                timerLabel.setText("TIME'S UP");
+                gsManager.timeoutCurrentQuestion();
+            }
+        }
+
+        Platform.runLater(input::requestFocus);   // start with the cursor in the input
         installWindowCloseHandler();
     }
 
@@ -140,9 +159,11 @@ public class TerminalController {
 
         if (redoChoiceWasPending) {
             handleRedoChoice(cmd);
+            saveTerminalState();
             return;
         }
         if (awaitingRedoChoice) {
+            saveTerminalState();
             return;
         }
 
@@ -159,7 +180,8 @@ public class TerminalController {
             default -> {
                 terminalOut.append("Unknown command: " + cmd, OutputKind.ERROR);
             }
-        } 
+        }
+        saveTerminalState();
     }
 
     private void handleQuestionCommand(String command) {
@@ -184,12 +206,21 @@ public class TerminalController {
         }
     }
 
+    private void saveTerminalState() {
+        if (gsManager != null && questionTimer != null) {
+            gsManager.saveProgress(questionTimer.getRemainingMillis());
+        }
+    }
+
     private void startQuestionTimer() {
         questionTimer.start();
     }
 
     private void updateTimerDisplay(int remainingSeconds) {
         timerLabel.setText("TIME LEFT:\n" + BlockDigitRenderer.render(remainingSeconds));
+        if (gsManager != null && questionTimer != null) {
+            gsManager.saveProgress(questionTimer.getRemainingMillis());
+        }
     }
 
     private void onQuestionTimeout() {
@@ -229,6 +260,7 @@ public class TerminalController {
                 stopPenguReaction();
                 gsManager.restartCurrentStage();
                 timerLabel.setText("TIME: --");
+                gsManager.saveProgress(questionTimer.getRemainingMillis());
             }
             case "n", "no", "exit" -> {
                 awaitingRedoChoice = false;
@@ -361,7 +393,12 @@ public class TerminalController {
                 if (newWindow != null) {
                     newWindow.addEventHandler(
                         WindowEvent.WINDOW_HIDDEN,
-                        event -> questionTimer.pause()
+                        event -> {
+                            questionTimer.pause();
+                            if (gsManager != null) {
+                                gsManager.saveProgress(questionTimer.getRemainingMillis());
+                            }
+                        }
                     );
                     newWindow.addEventHandler(
                         WindowEvent.WINDOW_SHOWN,

@@ -26,13 +26,7 @@ public final class TerminalOutput {
         Objects.requireNonNull(message);
         Objects.requireNonNull(kind);
 
-        Text text = new Text(message);
-        if (!message.endsWith("\n")) {
-            text.setText(message + "\n");
-        }
-        text.getStyleClass().add(kind.cssClass());
-        flow.getChildren().add(text);
-
+        flow.getChildren().add(createText(message, kind));
         scrollToBottom(mainScroll, flow);
     }
 
@@ -44,14 +38,19 @@ public final class TerminalOutput {
         Objects.requireNonNull(message);
         Objects.requireNonNull(kind);
 
+        Text text = createText(message, kind);
+        summaryFlow.getChildren().add(text);
+
+        scrollToBottom(summaryScroll, summaryFlow);
+    }
+
+    private Text createText(String message, OutputKind kind) {
         Text text = new Text(message);
         if (!message.endsWith("\n")) {
             text.setText(message + "\n");
         }
         text.getStyleClass().add(kind.cssClass());
-        summaryFlow.getChildren().add(text);
-
-        scrollToBottom(summaryScroll, summaryFlow);
+        return text;
     }
 
     public void clearSummary() {

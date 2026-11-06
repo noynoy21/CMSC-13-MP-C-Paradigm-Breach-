@@ -29,6 +29,15 @@ public final class LifeTracker {
         refresh();
     }
 
+    /** Restores a saved life count and republishes it to the UI. */
+    public void restore(int savedLives) {
+        if (savedLives < 0 || savedLives > STARTING_LIVES) {
+            throw new IllegalArgumentException("Saved lives must be between 0 and " + STARTING_LIVES);
+        }
+        livesRemaining = savedLives;
+        refresh();
+    }
+
     /** Republishes the current life count so the UI can redraw its hearts. */
     public void refresh() {
         onLivesChanged.accept(livesRemaining);

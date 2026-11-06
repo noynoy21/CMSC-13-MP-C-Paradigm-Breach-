@@ -40,6 +40,16 @@ public final class QuestionTimer {
         resume();
     }
 
+    /** Starts a timer from persisted time remaining, without applying the full time limit. */
+    public void startWithRemainingMillis(long remainingMillis) {
+        if (remainingMillis <= 0) {
+            throw new IllegalArgumentException("remainingMillis must be greater than zero");
+        }
+        stop();
+        remainingNanos = TimeUnit.MILLISECONDS.toNanos(remainingMillis);
+        resume();
+    }
+
     /** Pauses the countdown while its terminal window is hidden. */
     public void pause() {
         if (!running) {
@@ -77,6 +87,15 @@ public final class QuestionTimer {
 
     public boolean isRunning() {
         return running;
+    }
+
+    /** Returns a rounded-up remaining duration suitable for saving. */
+    public long getRemainingMillis() {
+        long nanos = running ? deadlineNanos - System.nanoTime() : remainingNanos;
+        if (nanos <= 0) {
+            return 0;
+        }
+        return (nanos + TimeUnit.MILLISECONDS.toNanos(1) - 1) / TimeUnit.MILLISECONDS.toNanos(1);
     }
 
     /** Checks the deadline before input is handled, so a late answer cannot win the next UI pulse. */
