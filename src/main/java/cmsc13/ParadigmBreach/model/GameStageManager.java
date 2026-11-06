@@ -56,7 +56,7 @@ public class GameStageManager {
     // To play with the zero-constraints version (all available questions):
     //     Uncomment the Integer.MAX_VALUE line below.
     // =========================================================================
-    private static final int QUESTIONS_PER_STAGE = 10;
+    private static final int QUESTIONS_PER_STAGE = 3;
     // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
@@ -437,35 +437,35 @@ public class GameStageManager {
     private List<CutsceneSlide> getStageStartSlides(String stageKey) {
         return switch (stageKey) {
             case "0" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "First, let's do a sanity check."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "let's do a sanity check"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 0 (Initialization Trial)")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stop right there! Where do you think you're going?!"),
+                new CutsceneSlide("/images/cutscene_images/machop.png", "larooo"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 1 (Introduction to Programming Paradigms)")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "You shall not pass!"),
+                new CutsceneSlide("/images/cutscene_images/alakazam.png", "asdfghjkl"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 2 (Procedural Programming)")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "You will be dealt with."),
+                new CutsceneSlide("/images/cutscene_images/ditto.png", "a"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 3 (Functional Programming)")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Shall we play a game?"),
+                new CutsceneSlide("/images/cutscene_images/jirachi.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 4 (Object-oriented Programming)")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "ROOOOAAARRR! Time for you to die!"),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 5 (Imperative vs Declarative Programming)")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Congratulations for making it this far. However, your tirade ends here!"),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 6 (Event-driven Programming)")
             );
             case "7" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "It's the end. Will you make it through?"),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 7 (Component Mappings between Programming Paradigms)")
             );
             default -> List.of(
@@ -481,35 +481,35 @@ public class GameStageManager {
         // );
         return switch (currentKey) {
             case "0" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Looks like you're ready. Good luck."),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "ready ka na pre"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "STAGE 0 (Initialization Trial) cleared!")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "No!!!! You will pay for this!!!!!!"),
+                new CutsceneSlide("/images/cutscene_images/machop.png", "lah"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 1 (Introduction to Programming Paradigms) cleared!")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Halt, I say! Halt!"),
+                new CutsceneSlide("/images/cutscene_images/alakazam.png", "hage"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 2 (Procedural Programming) cleared!")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "This cannot be!!!"),
+                new CutsceneSlide("/images/cutscene_images/ditto.png", "whatever"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 3 (Functional Programming) cleared!")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Well met."),
+                new CutsceneSlide("/images/cutscene_images/jirachi.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 4 (Object-oriented Programming) cleared!")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "ROOOOAAARRR!!!!! You infuriate me!!"),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 5 (Imperative vs Declarative Programming) cleared!")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "No... NOOOOOOO!!!!!!!!"),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 6 (Event-driven Programming) cleared!")
             );
             case "7" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Not bad."),
+                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 7 (Component Mappings between Programming Paradigms) cleared!")
             );
             default -> List.of(
