@@ -51,6 +51,10 @@ public class CutsceneController {
         initData(List.of(new CutsceneSlide(imagePath, text)), onComplete);
     }
 
+    public void closeCutscene() {
+        finishCutscene();
+    }
+
     private void showSlide(int index) {
         CutsceneSlide slide = slides.get(index);
         if (slide.imagePath() != null && !slide.imagePath().isEmpty()) {
