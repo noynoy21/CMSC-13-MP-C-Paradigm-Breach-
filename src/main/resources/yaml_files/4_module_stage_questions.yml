@@ -1,6 +1,7 @@
 # CONCEPTUAL QUESTIONS
 
-- prompt: |
+- id: "q-00073"
+  prompt: |
     In Java, a child class is unable to inherit a parent class’s variables. What access modifier was used for these variables?
   choices:
     - "Default"
@@ -9,7 +10,8 @@
     - "Protected"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00074"
+  prompt: |
     Which pillar of OOP necessitates the use of accessor (getter) and mutator (setter) methods?
   choices:
     - "Encapsulation"
@@ -18,7 +20,8 @@
     - "Polymorphism"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00075"
+  prompt: |
     This refers to the type conversion of a child object to a parent object.
   choices:
     - "Upcasting"
@@ -27,7 +30,8 @@
     - "Rightcasting"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00076"
+  prompt: |
     Which keyword in Java is essential for accessing a child class’s parent variables?
   choices:
     - "Super"
@@ -36,7 +40,8 @@
     - "Var"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00077"
+  prompt: |
     A flashlight can be both solar powered and battery-backed. Which keyword in Java allows an object to inherit “properties” from multiple “blueprints”?
   choices:
     - "Implements"
@@ -45,7 +50,8 @@
     - "Requires"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00078"
+  prompt: |
     Which type of variable is used to declare the dynamic type of an object during polymorphism, allowing it to point to instances of its own class or any of its subclasses?  
   choices:
     - "Superclass variables"
@@ -54,7 +60,8 @@
     - "Instance variables"
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00079"
+  prompt: |
     Which pillar of OOP necessitates the use of method overloading and method overriding?
   choices:
     - "Encapsulation"
@@ -63,7 +70,8 @@
     - "Polymorphism"
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00080"
+  prompt: |
     Which object-oriented programming concept involves defining multiple methods in the same class with the same name but different parameter lists?
   choices:
     - "Constructor overloading"
@@ -72,7 +80,8 @@
     - "Method overriding"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00081"
+  prompt: |
     The following statements are true about the pillar of OOP ‘Abstraction’ except one.
   choices:
     - "An abstract class can be instantiated."
@@ -81,7 +90,8 @@
     - "Abstract classes can contain both abstract methods and concrete methods with default implementations."
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00082"
+  prompt: |
     The following statements are true about ‘Java constructors’ except one.
   choices:
     - "A constructor must have the exact same name as the class in which it is declared."
@@ -92,7 +102,8 @@
 
 # PROGRAMMING QUESTIONS
 
-- prompt: |
+- id: "q-00083"
+  prompt: |
     public class Main {
         public static void main(String[] args) {
             int x = 5;
@@ -109,7 +120,8 @@
     - "6, 5, 7"
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00084"
+  prompt: |
     public class Main {
         public static void main(String[] args) {
             int[] nums = {2, 4, 6, 8};
@@ -127,7 +139,8 @@
     - "10, 4"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00085"
+  prompt: |
     public class Main {
         static int calculate(int x) {
             x = x * 2;
@@ -148,7 +161,8 @@
     - "11, 11"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00086"
+  prompt: |
     import java.util.Arrays;
 
     public class Main {
@@ -170,7 +184,8 @@
     - "30"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00087"
+  prompt: |
     public class Main {
         public static void main(String[] args) {
             String word = "code";
@@ -186,7 +201,8 @@
     - "Compilation error"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00088"
+  prompt: |
     public class Main {
         static void show(int x) {
             System.out.print("int");
@@ -209,7 +225,8 @@
     - "double, int"
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00089"
+  prompt: |
     public class Main {
         public static void main(String[] args) {
             int x = 0;
@@ -225,7 +242,8 @@
     - "false, 1"
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00090"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -277,7 +295,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00091"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -324,7 +343,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00092"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -386,7 +406,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00093"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -432,7 +453,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00094"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -482,7 +504,8 @@
       }
   correctChoiceIndx: 0
 
-- prompt: |
+- id: "q-00095"
+  prompt: |
     Which of the following code snippets produces the following output?
 
     ```
@@ -543,7 +566,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00096"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -581,7 +605,8 @@
       }
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00097"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -620,7 +645,8 @@
       }
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00098"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -666,7 +692,8 @@
       System.out.println(sum);
   correctChoiceIndx: 3
 
-- prompt: |
+- id: "q-00099"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -701,7 +728,8 @@
       result = calculate(4) - 1;
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00100"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -733,7 +761,8 @@
       copy[2] = 20;
   correctChoiceIndx: 1
 
-- prompt: |
+- id: "q-00101"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
@@ -777,7 +806,8 @@
       System.out.println(result);
   correctChoiceIndx: 2
 
-- prompt: |
+- id: "q-00102"
+  prompt: |
     Which line should replace /* MISSING CODE */ in the snippet to make the output?
 
     *Snippet*
