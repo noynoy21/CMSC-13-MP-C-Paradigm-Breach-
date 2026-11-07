@@ -129,9 +129,12 @@ public class SplashArtController {
         SceneManager.get().openCutsceneWindow(
             Screen.CUTSCENE,
             List.of(
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("Hello, %s", PlayerSession.getPlayerName())),
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Handa na ba kayo"),
-                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Goodluck")
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", String.format("\"Hello, %s!\"", PlayerSession.getPlayerName())),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "\"We are glad you took on this endeavor. We've been waiting for someone like you.\""),
+                new CutsceneSlide("/images/cutscene_images/data_center.jpeg", "\"As you may know, Fox Silic has been relentless as of late.\""),
+                new CutsceneSlide("/images/cutscene_images/farmers.jpg", "\"The future of our country is in your hands.\""),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "\"You know the drill: enter the servers, defeat the wardens, and breach their security.\""),
+                new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "\"Good luck! We're all counting on you.\"")
             ),
             () -> SceneManager.get().showDesktop()
         );
