@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
@@ -59,6 +60,8 @@ public class GameStageManager {
     private String pendingNextStageKey;
     private boolean gameCompleted;
     private boolean restoredFromSave;
+    private Consumer<String> stageChangeListener = stageKey -> { };
+    private Consumer<Boolean> answerResolvedListener = answerWasCorrect -> { };
     public static final int QUESTION_TIME_LIMIT_SECONDS = 30;
     private static final long MAX_QUESTION_TIME_MILLIS = QUESTION_TIME_LIMIT_SECONDS * 1_000L;
 
@@ -275,6 +278,15 @@ public class GameStageManager {
 
     public boolean wasRestoredFromSave() {
         return restoredFromSave;
+    }
+
+    public void setStageChangeListener(Consumer<String> listener) {
+        stageChangeListener = listener == null ? stageKey -> { } : listener;
+        stageChangeListener.accept(currentStageKey);
+    }
+
+    public void setAnswerResolvedListener(Consumer<Boolean> listener) {
+        answerResolvedListener = listener == null ? answerWasCorrect -> { } : listener;
     }
 
     public boolean hasActiveQuestion() {
@@ -620,6 +632,7 @@ public class GameStageManager {
         penguAssistant.resetForStage();
 
         terminalOut.clear();
+        stageChangeListener.accept(stageKey);
 
         // String status = restarting ? "Successfully restarted stage: " : "Successfully switched to stage: ";
         // terminalOut.append(status + stageKey.toUpperCase(), OutputKind.CORRECT);
@@ -687,6 +700,7 @@ public class GameStageManager {
         );
         recordQuestionSummary(result);
         terminalOut.append("Question answered.", OutputKind.RESPONSE);
+        answerResolvedListener.accept(result == QuestionStatus.CORRECT);
 
         if (lifeTracker.getLivesRemaining() == 0) {
             return;
@@ -811,6 +825,8 @@ public class GameStageManager {
     private String buildQuestion(Question q) {
         StringBuilder sb = new StringBuilder();
 
+        q.shuffleDisplayedChoices();
+
         String bar = "=".repeat(20);
         sb.append(bar).append("\n");
         sb.append("Question ").append(q.getId()).append("\n");
@@ -819,10 +835,9 @@ public class GameStageManager {
         sb.append(formatPrompt(q.getPrompt()));
         sb.append("\n----------------------------------------\n");
 
-        List<String> choices = q.getChoices();
-        for (int i = 0; i < choices.size(); i++) {
+        for (int i = 0; i < q.getChoices().size(); i++) {
             String label = "  [" + letterChoices.get(i) + "] ";
-            sb.append(indentHanging(choices.get(i).stripTrailing(), label));
+            sb.append(indentHanging(q.getChoiceAtDisplayIndex(i).stripTrailing(), label));
             sb.append("\n");
             sb.append("\n----------------------------------------\n");
         }

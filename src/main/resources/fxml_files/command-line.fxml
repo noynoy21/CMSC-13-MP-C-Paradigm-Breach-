@@ -77,10 +77,10 @@
          <left>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="270.0" prefHeight="600.0" prefWidth="270.0" styleClass="sidebar-left" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="CENTER" maxHeight="160.0" prefHeight="200.0" prefWidth="100.0" styleClass="text-area" VBox.vgrow="ALWAYS">
+                  <VBox alignment="CENTER" maxHeight="186.0" prefHeight="186.0" prefWidth="272.0" styleClass="text-area" VBox.vgrow="ALWAYS">
                      <children>
-                        <ImageView fx:id="foxSilicSprite" fitHeight="79.0" fitWidth="270.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
-                        <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER" />
+                        <ImageView fx:id="foxSilicSprite" fitHeight="136.0" fitWidth="270.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+                        <Label fx:id="wardenDialogueLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="warden-dialogue-label" text="" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER" />
                      </children>
                   </VBox>
                   <Label fx:id="timerLabel" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minHeight="140.0" prefHeight="186.0" prefWidth="272.0" styleClass="timer-label" text="TIME: --" textAlignment="CENTER" />

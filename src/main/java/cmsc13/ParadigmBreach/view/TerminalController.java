@@ -7,6 +7,7 @@ import cmsc13.ParadigmBreach.App;
 import cmsc13.ParadigmBreach.audio.AudioManager;
 import cmsc13.ParadigmBreach.audio.SoundEffect;
 import cmsc13.ParadigmBreach.model.GameStageManager;
+import cmsc13.ParadigmBreach.model.ParadigmWarden;
 import cmsc13.ParadigmBreach.model.PenguAssistant;
 import cmsc13.ParadigmBreach.model.PlayerSession;
 import cmsc13.ParadigmBreach.persistence.GameSaveRepository;
@@ -89,6 +90,8 @@ public class TerminalController {
 
     @FXML
     private ImageView foxSilicSprite;
+    @FXML
+    private Label wardenDialogueLabel;
 
     @FXML 
     private TextField input;
@@ -103,6 +106,9 @@ public class TerminalController {
     private Image penguFailImage;
     private Image penguGameOverImage;
     private Image gameOverImage;
+    private Image gameOverFoxImage;
+    private Image activeWardenImage;
+    private ParadigmWarden activeWarden;
     // private BorderPane gameOverBorder;
     private PauseTransition penguReactionReset;
     private Timeline gameOverBlink;
@@ -125,8 +131,10 @@ public class TerminalController {
             OutputKind.COMMAND
         );
 
-        foxSilicSprite.setImage(loadImage("/images/gameover_screens/fox.png"));
+        gameOverFoxImage = loadImage("/images/gameover_screens/fox.png");
+        foxSilicSprite.setImage(null);
         foxSilicSprite.setVisible(false);
+        wardenDialogueLabel.setText("");
         // Region foxContainer = (Region) foxSilicSprite.getParent();
         // foxSilicSprite.fitWidthProperty().bind(foxContainer.widthProperty());
         // foxSilicSprite.setFitHeight(0);
@@ -159,6 +167,8 @@ public class TerminalController {
             penguAssistant,
             selectedSlot == null ? null : GameSaveRepository.forSlot(selectedSlot)
         );
+        gsManager.setStageChangeListener(this::showWardenForStage);
+        gsManager.setAnswerResolvedListener(this::showWardenResponse);
 
         if (gsManager.isGameCompleted()) {
             timerLabel.setText("GAME COMPLETE");
@@ -327,6 +337,31 @@ public class TerminalController {
         penguTokensLabel.setText("PENGU TOKENS:\n" + tokensRemaining);
     }
 
+    private void showWardenForStage(String stageKey) {
+        activeWarden = ParadigmWarden.forStage(stageKey).orElse(null);
+        wardenDialogueLabel.setText("");
+
+        if (activeWarden == null) {
+            activeWardenImage = null;
+            foxSilicSprite.setImage(null);
+            foxSilicSprite.setVisible(false);
+            return;
+        }
+
+        activeWardenImage = loadImage(activeWarden.getImagePath());
+        foxSilicSprite.setImage(activeWardenImage);
+        foxSilicSprite.setVisible(true);
+    }
+
+    private void showWardenResponse(boolean answerWasCorrect) {
+        if (activeWarden == null) {
+            wardenDialogueLabel.setText("");
+            return;
+        }
+
+        wardenDialogueLabel.setText(activeWarden.getDialogue(answerWasCorrect));
+    }
+
     private Image loadImage(String path) {
         var imageUrl = TerminalController.class.getResource(path);
         if (imageUrl == null) {
@@ -374,9 +409,14 @@ public class TerminalController {
         redoStagePromptLabel.setText("Redo stage? (y/n)");
         penguImage.setImage(penguGameOverImage);
         penguImage.setVisible(true);
+        foxSilicSprite.setImage(gameOverFoxImage);
 
         outputFlow.setVisible(false);
         outputFlow.setManaged(false);
+        commandSummary.setVisible(false);
+        commandSummary.setManaged(false);
+        commandSummaryScroll.setVisible(false);
+        commandSummaryScroll.setManaged(false);
 
         gameOverImageView.setVisible(true);
         gameOverImageView.setManaged(true);
@@ -412,10 +452,15 @@ public class TerminalController {
         gameOverImageView.setManaged(false);
         gameOverBorderPane.setVisible(false);
         gameOverBorderPane.setManaged(false);
-        foxSilicSprite.setVisible(false);
+        foxSilicSprite.setImage(activeWardenImage);
+        foxSilicSprite.setVisible(activeWardenImage != null);
 
         outputFlow.setVisible(true);
         outputFlow.setManaged(true);
+        commandSummary.setVisible(true);
+        commandSummary.setManaged(true);
+        commandSummaryScroll.setVisible(true);
+        commandSummaryScroll.setManaged(true);
 
         penguImage.setVisible(true);
         penguImage.setImage(penguNormalImage);
