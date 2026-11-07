@@ -125,6 +125,7 @@ public final class GameSaveData {
         return root;
     }
 
+    // Validates the YAML root and dispatches the current format or the supported v1 migration.
     public static GameSaveData fromYamlObject(Object raw) {
         Map<?, ?> map = requireMap(raw, "save root");
         int version = requireInt(map, "version");
@@ -152,6 +153,7 @@ public final class GameSaveData {
         );
     }
 
+    // Upgrades v1 by deriving its stage summary before constructing the current save model.
     private static GameSaveData fromVersionOne(Map<?, ?> map) {
         String stageKey = requireString(map, "stageKey");
         List<QuestionProgress> questions = readQuestions(map);
@@ -179,6 +181,7 @@ public final class GameSaveData {
         );
     }
 
+    // Converts nested YAML question entries into typed progress records and rejects unknown statuses.
     private static List<QuestionProgress> readQuestions(Map<?, ?> map) {
         List<?> rawQuestions = requireList(map.get("questions"), "questions");
         List<QuestionProgress> questions = new ArrayList<>(rawQuestions.size());
@@ -201,6 +204,7 @@ public final class GameSaveData {
         return questions;
     }
 
+    // Parses each saved stage's retry flag and resolved outcomes into the typed history model.
     private static List<StageSummary> readSummaryHistory(Object raw) {
         List<?> entries = requireList(raw, "summaryHistory");
         List<StageSummary> history = new ArrayList<>(entries.size());
@@ -304,6 +308,7 @@ public final class GameSaveData {
         return (int) number;
     }
 
+    // Accepts YAML numbers only when they are exact whole values within the long range.
     private static long exactLong(Object value, String field) {
         if (!(value instanceof Number number)) {
             throw new IllegalArgumentException(field + " must be a number");

@@ -11,12 +11,11 @@ import cmsc13.ParadigmBreach.model.ParadigmWarden;
 import cmsc13.ParadigmBreach.model.PenguAssistant;
 import cmsc13.ParadigmBreach.model.PlayerSession;
 import cmsc13.ParadigmBreach.persistence.GameSaveRepository;
+import cmsc13.ParadigmBreach.ui.SceneManager;
 import cmsc13.ParadigmBreach.util.BlockDigitRenderer;
 import cmsc13.ParadigmBreach.util.LifeTracker;
 import cmsc13.ParadigmBreach.util.OutputKind;
 import cmsc13.ParadigmBreach.util.QuestionTimer;
-import cmsc13.ParadigmBreach.ui.SceneManager;
-import cmsc13.ParadigmBreach.ui.Screen;
 import cmsc13.ParadigmBreach.util.StringsConfig;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -115,6 +114,7 @@ public class TerminalController {
     private boolean awaitingRedoChoice;
     private boolean exitPending;
 
+    // Wires the game services, restores saved state, and restarts its timer when needed.
     @FXML
     private void initialize() {
         terminalOut = new TerminalOutput(
@@ -188,6 +188,7 @@ public class TerminalController {
         installWindowCloseHandler();
     }
 
+    // Expires overdue questions first, then routes save and redo flows before normal commands.
     @FXML
     private void onEnter() {
         String cmd = input.getText().trim();
@@ -223,6 +224,7 @@ public class TerminalController {
         }
     }
 
+    // Applies timer, sound, and Pengu reactions based on the game manager's command outcome.
     private void handleQuestionCommand(String command) {
         GameStageManager.QnaOutcome outcome = gsManager.handleQnaInput(command);
         switch (outcome) {
@@ -287,6 +289,7 @@ public class TerminalController {
         AudioManager.get().playSFX(SoundEffect.WRONG);
     }
 
+    // Switches between the normal terminal and redo/game-over presentation as lives change.
     private void updateHealthDisplay(int livesRemaining) {
         String hearts = LifeTracker.renderHearts(livesRemaining);
         healthLabel.setText("LIFE REMAINING:\n" + hearts);
@@ -473,6 +476,7 @@ public class TerminalController {
         timerLabel.setText(gsManager.getHealth() == 0 ? "GAME OVER" : labelText);
     }
 
+    // Pauses question time while hidden, then resumes the timer or game-over animation when shown.
     private void installWindowCloseHandler() {
         outputFlow.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene == null) {
@@ -505,6 +509,7 @@ public class TerminalController {
         });
     }
 
+    // Guides a close through save choice and slot selection, resuming play on cancellation or failure.
     public void handleDesktopCloseRequest(WindowEvent event) {
         if (exitPending) {
             event.consume();
@@ -578,6 +583,7 @@ public class TerminalController {
         App.exitImmediately();
     }
 
+    // Loads the dialog FXML, configures its mode, and displays it centered over the game window.
     private SaveProgressDialogController showSaveProgressDialog(SaveDialogMode mode) throws IOException {
         var fxml = TerminalController.class.getResource("/fxml_files/save-progress-dialog.fxml");
         if (fxml == null) {

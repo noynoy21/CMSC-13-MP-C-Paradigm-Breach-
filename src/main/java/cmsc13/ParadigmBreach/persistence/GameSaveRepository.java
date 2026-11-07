@@ -141,6 +141,7 @@ public final class GameSaveRepository implements GameSaveStore {
         return savePath;
     }
 
+    // Parses the save with SnakeYAML's safe constructor and reports malformed documents as read errors.
     @Override
     public Optional<GameSaveData> load() throws IOException {
         if (!Files.exists(savePath)) {
@@ -173,6 +174,7 @@ public final class GameSaveRepository implements GameSaveStore {
         return Files.copy(savePath, backupPath, StandardCopyOption.COPY_ATTRIBUTES).toString();
     }
 
+    // Writes beside the destination first, then replaces it atomically where the filesystem allows.
     @Override
     public void save(GameSaveData data) throws IOException {
         Path parent = savePath.getParent();

@@ -59,6 +59,7 @@ public final class SaveProgressDialog {
         return result.get();
     }
 
+    // Lists each slot with its saved profile and progress so overwrites are visible before selection.
     public static Optional<Integer> showSlotPicker(Window owner) {
         AtomicReference<Integer> selectedSlot = new AtomicReference<>();
         DialogShell shell = createShell(owner, "SAVE DESTINATION", 530);
@@ -116,6 +117,7 @@ public final class SaveProgressDialog {
         return prefix + "OVERWRITE " + data.getPlayerName() + "   [" + progress + "]";
     }
 
+    // Builds the shared modal window with Escape handling, dragging, and centering over its owner.
     private static DialogShell createShell(Window owner, String systemTitle, double width) {
         Stage stage = new Stage(StageStyle.UNDECORATED);
         stage.initOwner(owner);

@@ -95,6 +95,7 @@ public class GameStageManager {
         initializeFromSave();
     }
 
+    // Restores a valid save or preserves a bad one before starting a fresh stage.
     private void initializeFromSave() {
         if (saveRepository == null) {
             setStage("0", false);
@@ -168,6 +169,7 @@ public class GameStageManager {
         }
     }
 
+    // Validates terminal command shapes and returns the outcome the view needs for timers and effects.
     public QnaOutcome handleQnaInput(String input) {
         String[] inArray = input.toLowerCase().trim().split("\\s+");
         String command = inArray[0];
@@ -217,6 +219,7 @@ public class GameStageManager {
         return QnaOutcome.NONE;
     }
 
+    // Checks question and token state before Pengu reveals a guess or submits it as the answer.
     private QnaOutcome handlePenguInput(String argument) {
         switch (argument) {
             case "-peek" -> {
@@ -347,6 +350,7 @@ public class GameStageManager {
         }
     }
 
+    // Rebuilds questions by stable IDs and rejects snapshots with inconsistent progress or game state.
     private void restoreFromSave(GameSaveData data) {
         if (!PlayerSession.getPlayerName().equalsIgnoreCase(data.getPlayerName())) {
             throw new IllegalArgumentException("The save belongs to another player profile");
@@ -478,6 +482,7 @@ public class GameStageManager {
         rebuildSummaryFromHistory();
     }
 
+    // Ensures saved stage history ends at this stage and matches its resolved question outcomes.
     private void validateSummaryHistory(GameSaveData data) {
         if (summaryHistory.isEmpty()) {
             throw new IllegalArgumentException("Saved summary history is empty");
@@ -559,6 +564,7 @@ public class GameStageManager {
         appendQuestionSummary(outcomes.size(), status);
     }
 
+    // Advances through the selected stage questions and starts only the next unanswered one.
     private boolean handleAsk() {
         if (lifeTracker.getLivesRemaining() == 0) {
             terminalOut.append("This stage is over. Switch stages to continue.", OutputKind.ERROR);
@@ -600,6 +606,7 @@ public class GameStageManager {
         return setStage(stageKey, false);
     }
 
+    // Resets all per-stage state, notifies the view, and shows the intro unless this is a retry.
     private boolean setStage(String stageKey, boolean restarting) {
         if (!STAGE_SEQUENCE.contains(stageKey)) {
             terminalOut.append("Unknown stage: " + stageKey + ". Defaulting to Stage 0.", OutputKind.ERROR);
@@ -672,6 +679,7 @@ public class GameStageManager {
             && STAGE_SEQUENCE.get(currentIndex + 1).equals(nextKey);
     }
 
+    // Maps the displayed letter to its original choice, records the result, and applies its game effects.
     private void handleAns(char lettChoice) {
         int selectedDisplayIndex = letterChoices.indexOf(lettChoice);
         int selectedChoiceIndex = currQuestion.getOriginalChoiceIndexForDisplay(selectedDisplayIndex);
@@ -712,6 +720,7 @@ public class GameStageManager {
         }
     }
 
+    // Marks the stage clear, then starts the ending or defers the next-stage reset until its cutscene ends.
     private void checkStageCompletion() {
         terminalOut.append("\n========================================", OutputKind.QUESTION);
         terminalOut.append("STAGE " + currentStageKey.toUpperCase() + " CLEARED!", OutputKind.QUESTION);
@@ -756,6 +765,7 @@ public class GameStageManager {
         );
     }
 
+    // Records the active question as timed out and checks for completion if the player still has lives.
     public void timeoutCurrentQuestion() {
         if (currQuestion == null || currQuestion.isAnswered() || !currQuestion.hasBeenAsked()) {
             return;
@@ -822,6 +832,7 @@ public class GameStageManager {
         return true;
     }
 
+    // Shuffles displayed choices and formats them without losing their original answer indices.
     private String buildQuestion(Question q) {
         StringBuilder sb = new StringBuilder();
 
@@ -860,6 +871,7 @@ public class GameStageManager {
         return sb.toString();
     }
 
+    // Removes Markdown code fences and indents fenced lines for terminal display.
     private String formatPrompt(String prompt) {
         StringBuilder sb = new StringBuilder();
         boolean inCode = false;
