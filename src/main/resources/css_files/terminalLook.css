@@ -183,6 +183,11 @@
     -fx-font-size: 13px;
 }
 
+.sidebar-left .warden-dialogue-label {
+    -fx-text-alignment: center;
+    -fx-padding: 4 8 8 8;
+}
+
 .sidebar-left .timer-label,
 .sidebar-left .health-label,
 .sidebar-left .pengu-token-label {
