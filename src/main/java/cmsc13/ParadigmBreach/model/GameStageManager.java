@@ -570,7 +570,7 @@ public class GameStageManager {
                     currQuestion.getId(),
                     new QuestionProgress(currQuestion.getId(), QuestionStatus.ACTIVE, null)
                 );
-                terminalOut.append(questionStr, OutputKind.QUESTION);
+                terminalOut.appendToOutputFlow(questionStr, OutputKind.QUESTION);
                 AudioManager.get().playSFX(SoundEffect.BEEP_COUNTDOWN);
                 return true;
             } else if (!currQuestion.isAnswered()) {
@@ -807,28 +807,6 @@ public class GameStageManager {
 
         return true;
     }
-
-    // private String buildQuestion(Question q) {
-    //     q.shuffleDisplayedChoices();
-    //     StringBuilder sb = new StringBuilder();
-    //     String question = q.getPrompt();
-    //     sb.append("Q: \n").append(question);
-    //     sb.append("\n");
-
-    //     sb.append("Choices:\n");
-    //     String letter;
-    //     String choicePrompts;
-    //     for (int i = 0; i < 4; i++) {
-    //         letter = "[" + letterChoices.get(i) + "]: ";
-    //         choicePrompts = q.getChoiceAtDisplayIndex(i);
-    //         sb.append(letter).append("\n");
-    //         sb.append(choicePrompts);
-    //         sb.append("\n");
-    //     }
-    //     q.setHasBeenAsked(true);
-
-    //     return sb.toString();
-    // }
 
     private String buildQuestion(Question q) {
         StringBuilder sb = new StringBuilder();
