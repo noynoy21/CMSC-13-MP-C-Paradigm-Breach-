@@ -808,25 +808,84 @@ public class GameStageManager {
         return true;
     }
 
-    private String buildQuestion(Question q) {
-        q.shuffleDisplayedChoices();
-        StringBuilder sb = new StringBuilder();
-        String question = q.getPrompt();
-        sb.append("Q: \n").append(question);
-        sb.append("\n");
+    // private String buildQuestion(Question q) {
+    //     q.shuffleDisplayedChoices();
+    //     StringBuilder sb = new StringBuilder();
+    //     String question = q.getPrompt();
+    //     sb.append("Q: \n").append(question);
+    //     sb.append("\n");
 
-        sb.append("Choices:\n");
-        String letter;
-        String choicePrompts;
-        for (int i = 0; i < 4; i++) {
-            letter = "[" + letterChoices.get(i) + "]: ";
-            choicePrompts = q.getChoiceAtDisplayIndex(i);
-            sb.append(letter).append("\n");
-            sb.append(choicePrompts);
+    //     sb.append("Choices:\n");
+    //     String letter;
+    //     String choicePrompts;
+    //     for (int i = 0; i < 4; i++) {
+    //         letter = "[" + letterChoices.get(i) + "]: ";
+    //         choicePrompts = q.getChoiceAtDisplayIndex(i);
+    //         sb.append(letter).append("\n");
+    //         sb.append(choicePrompts);
+    //         sb.append("\n");
+    //     }
+    //     q.setHasBeenAsked(true);
+
+    //     return sb.toString();
+    // }
+
+    private String buildQuestion(Question q) {
+        StringBuilder sb = new StringBuilder();
+
+        String bar = "=".repeat(20);
+        sb.append(bar).append("\n");
+        sb.append("Question ").append(q.getId()).append("\n");
+        sb.append(bar).append("\n\n");
+
+        sb.append(formatPrompt(q.getPrompt()));
+        sb.append("\n----------------------------------------\n");
+
+        List<String> choices = q.getChoices();
+        for (int i = 0; i < choices.size(); i++) {
+            String label = "  [" + letterChoices.get(i) + "] ";
+            sb.append(indentHanging(choices.get(i).stripTrailing(), label));
+            sb.append("\n");
+            sb.append("\n----------------------------------------\n");
+        }
+
+        q.setHasBeenAsked(true);
+        return sb.toString();
+    }
+
+    private String indentHanging(String text, String label) {
+        String pad = " ".repeat(label.length());
+        String[] lines = text.split("\n", -1);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            sb.append(i == 0 ? label : pad).append(lines[i]);
+            if (i < lines.length - 1) {
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    private String formatPrompt(String prompt) {
+        StringBuilder sb = new StringBuilder();
+        boolean inCode = false;
+
+        for (String line : prompt.stripTrailing().split("\n", -1)) {
+            String t = line.trim();
+
+            if (t.startsWith("```")) {
+                inCode = !inCode;
+                continue; // drop the fence line itself
+            }
+
+            if (inCode && !line.isEmpty()) {
+                sb.append("    ").append(line);
+            } else {
+                sb.append(line);
+            }
             sb.append("\n");
         }
-        q.setHasBeenAsked(true);
-
         return sb.toString();
     }
 
