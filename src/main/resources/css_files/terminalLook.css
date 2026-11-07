@@ -15,10 +15,17 @@
     -fx-highlight-text-fill: #0c0c0c;
 }
 
+.bottom-padding {
+    -fx-border-color: rgba(51, 255, 51, 0.55);
+    -fx-border-width: 0 0 2 0;
+    -fx-border-radius: 0;
+    /* -fx-padding: 0 0 16 0; */
+}
+
 .terminal-output {
     -fx-padding: 8;
     -fx-font-family: "Cascadia Mono";
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
 }
 
 .terminal-output .command  { -fx-fill: #ffffff; }

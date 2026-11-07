@@ -67,6 +67,10 @@ public class TerminalController {
     @FXML
     private ScrollPane summaryScroll;
     @FXML
+    private TextFlow commandSummary;
+    @FXML
+    private ScrollPane commandSummaryScroll;
+    @FXML
     private ScrollPane gameOverErrorScroll;
     @FXML
     private TextFlow gameOverErrorFlow;
@@ -107,7 +111,14 @@ public class TerminalController {
 
     @FXML
     private void initialize() {
-        terminalOut = new TerminalOutput(outputFlow, outputScroll, summaryFlow, summaryScroll);
+        terminalOut = new TerminalOutput(
+            outputFlow,
+            outputScroll,
+            commandSummary,
+            commandSummaryScroll,
+            summaryFlow,
+            summaryScroll
+        );
 
         terminalOut.append(
             "ParadigmBreach v1.0\nType 'help' for commands.",
@@ -173,43 +184,42 @@ public class TerminalController {
         input.clear();
         if (cmd.isEmpty()) return;
 
-        terminalOut.append("\n> " + cmd + "\n", OutputKind.COMMAND);
-        boolean redoChoiceWasPending = awaitingRedoChoice;
-        expireQuestionTimerIfNeeded();
+        terminalOut.beginCommand(cmd);
+        try {
+            boolean redoChoiceWasPending = awaitingRedoChoice;
+            expireQuestionTimerIfNeeded();
 
-        if (cmd.toLowerCase(Locale.ROOT).split("\\s+")[0].equals("save")) {
-            handleSaveCommand(cmd);
-            return;
-        }
+            if (cmd.split("\\s+", 2)[0].equalsIgnoreCase("save")) {
+                handleSaveCommand(cmd);
+                return;
+            }
 
-        if (redoChoiceWasPending) {
-            handleRedoChoice(cmd);
-            return;
-        }
-        if (awaitingRedoChoice) {
-            return;
-        }
+            if (redoChoiceWasPending) {
+                handleRedoChoice(cmd);
+                return;
+            }
+            if (awaitingRedoChoice) {
+                return;
+            }
 
-        switch (cmd.toLowerCase().split(" ")[0]) {
-            case "ask", "ans", "stage", "pngu" -> {
-                handleQuestionCommand(cmd);
+            switch (cmd.split("\\s+", 2)[0].toLowerCase(Locale.ROOT)) {
+                case "ask", "ans", "stage", "pngu" -> handleQuestionCommand(cmd);
+                case "help" -> terminalOut.append(helpCommandOutput, OutputKind.RESPONSE);
+                case "exit" -> outputScroll.getScene().getWindow().hide();
+                default -> terminalOut.append("Unknown command: " + cmd, OutputKind.ERROR);
             }
-            case "help" ->  {
-                terminalOut.append(helpCommandOutput, OutputKind.RESPONSE);
-            }
-            case "exit" -> {
-                outputScroll.getScene().getWindow().hide();
-            }
-            default -> {
-                terminalOut.append("Unknown command: " + cmd, OutputKind.ERROR);
-            }
+        } finally {
+            terminalOut.endCommand();
         }
     }
 
     private void handleQuestionCommand(String command) {
         GameStageManager.QnaOutcome outcome = gsManager.handleQnaInput(command);
         switch (outcome) {
-            case QUESTION_STARTED -> startQuestionTimer();
+            case QUESTION_STARTED -> {
+                startQuestionTimer();
+                terminalOut.append("Question successfuly generated and asked.", OutputKind.CORRECT);
+            }
             case ANSWER_ACCEPTED -> stopQuestionTimer("ANSWERED");
             case PENGU_ANSWERED -> {
                 stopQuestionTimer("ANSWERED");
