@@ -320,13 +320,10 @@ public class TerminalController {
                 timerLabel.setText("TIME: --");
             }
             case "n", "no", "exit" -> {
-                awaitingRedoChoice = false;
+                awaitingRedoChoice = true;
                 questionTimer.stop();
                 stopPenguReaction();
-                if (gameOverBlink != null) {
-                    gameOverBlink.stop();
-                    gameOverBlink = null;
-                }
+                stopGameOverBlinkAnimation();
                 outputScroll.getScene().getWindow().hide();
             }
             default -> redoStagePromptLabel.setText("Please enter y or n: redo stage?");
@@ -440,13 +437,7 @@ public class TerminalController {
     }
 
     private void stopGameOverBlink() {
-        if (gameOverBlink != null) {
-            gameOverBlink.stop();
-            gameOverBlink = null;
-        }
-
-        // gameOverBlink.stop();
-        // gameOverBlink = null;
+        stopGameOverBlinkAnimation();
 
         gameOverImageView.setVisible(false);
         gameOverImageView.setManaged(false);
@@ -464,6 +455,13 @@ public class TerminalController {
 
         penguImage.setVisible(true);
         penguImage.setImage(penguNormalImage);
+    }
+
+    private void stopGameOverBlinkAnimation() {
+        if (gameOverBlink != null) {
+            gameOverBlink.stop();
+            gameOverBlink = null;
+        }
     }
 
     private void expireQuestionTimerIfNeeded() {
@@ -487,11 +485,20 @@ public class TerminalController {
                         WindowEvent.WINDOW_HIDDEN,
                         event -> {
                             questionTimer.pause();
+                            if (awaitingRedoChoice) {
+                                stopGameOverBlinkAnimation();
+                            }
                         }
                     );
                     newWindow.addEventHandler(
                         WindowEvent.WINDOW_SHOWN,
-                        event -> questionTimer.resume()
+                        event -> {
+                            if (awaitingRedoChoice) {
+                                startGameOverBlink();
+                            } else {
+                                questionTimer.resume();
+                            }
+                        }
                     );
                 }
             });
