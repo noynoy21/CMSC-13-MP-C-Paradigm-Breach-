@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<VBox alignment="CENTER" prefHeight="350.0" prefWidth="580.0" spacing="8.0" stylesheets="@../../css_files/readmeMdTutorial.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="255.0" fitWidth="560.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+         <image><Image url="@../../images/tutorial_images/commands3.png" /></image>
+      </ImageView>
+      <TextArea editable="false" prefHeight="78.0" prefWidth="560.0" text="Answer with ans a, ans b, ans c, or ans d, using the letter shown beside your selected choice. A wrong answer is recorded and costs one life." wrapText="true" />
+   </children>
+</VBox>

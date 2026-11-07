@@ -20,8 +20,11 @@ import javafx.scene.layout.VBox;
 
 public class TutorialReadmeController {
     private enum NavPage {
-        PAGE_1(2),
-        PAGE_2(3);
+        DESKTOP(2),
+        TERMINAL_SCREENS(3),
+        COMMANDS(6),
+        PENGU(9),
+        TIMER_LIVES_RETRY(12);
 
         private final int pageIdx;
 
@@ -48,7 +51,19 @@ public class TutorialReadmeController {
         "/fxml_files/tutorial_pages/welcome.fxml",
         "/fxml_files/tutorial_pages/homepage-tutorials.fxml",
         "/fxml_files/tutorial_pages/desktop.fxml",
-        "/fxml_files/tutorial_pages/terminal.fxml"
+        "/fxml_files/tutorial_pages/terminal_screen1.fxml",
+        "/fxml_files/tutorial_pages/terminal_screen2.fxml",
+        "/fxml_files/tutorial_pages/terminal_screen3.fxml",
+        "/fxml_files/tutorial_pages/commands1.fxml",
+        "/fxml_files/tutorial_pages/commands2.fxml",
+        "/fxml_files/tutorial_pages/commands3.fxml",
+        "/fxml_files/tutorial_pages/pengu1.fxml",
+        "/fxml_files/tutorial_pages/pengu2.fxml",
+        "/fxml_files/tutorial_pages/pengu3.fxml",
+        "/fxml_files/tutorial_pages/tlr1.fxml",
+        "/fxml_files/tutorial_pages/tlr2.fxml",
+        "/fxml_files/tutorial_pages/tlr3.fxml",
+        "/fxml_files/tutorial_pages/tlr4.fxml"
     );
 
     private final List<Parent> pages = new ArrayList<>();
@@ -61,6 +76,12 @@ public class TutorialReadmeController {
     private Button hpBtn1; // homepage buttons
     @FXML
     private Button hpBtn2;
+    @FXML
+    private Button hpBtn3;
+    @FXML
+    private Button hpBtn4;
+    @FXML
+    private Button hpBtn5;
 
     private final Map<NavPage, Button> buttons = new EnumMap<>(NavPage.class);
 
@@ -72,8 +93,11 @@ public class TutorialReadmeController {
             loadPages();
             showPage(0);
         } else if (homepageBox != null) {
-            buttons.put(NavPage.PAGE_1, hpBtn1);
-            buttons.put(NavPage.PAGE_2, hpBtn2);
+            buttons.put(NavPage.DESKTOP, hpBtn1);
+            buttons.put(NavPage.TERMINAL_SCREENS, hpBtn2);
+            buttons.put(NavPage.COMMANDS, hpBtn3);
+            buttons.put(NavPage.PENGU, hpBtn4);
+            buttons.put(NavPage.TIMER_LIVES_RETRY, hpBtn5);
 
             buttons.forEach((page, button) -> 
                 button.setOnAction(
@@ -117,7 +141,7 @@ public class TutorialReadmeController {
         StackPane.setAlignment(page, Pos.CENTER);
 
         pageLabel.setText(
-            "Page " + (currPageIdx) + " of " + (pages.size()-1)
+            "Page " + (currPageIdx + 1) + " of " + pages.size()
         );
         backButton.setDisable(currPageIdx == 0);
         nextButton.setDisable(currPageIdx == pages.size() - 1);

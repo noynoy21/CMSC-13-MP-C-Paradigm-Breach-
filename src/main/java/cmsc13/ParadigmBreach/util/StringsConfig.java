@@ -119,8 +119,8 @@ public class StringsConfig {
                                              EXIT       Closes the command-line terminal.
                                              ASK        Ask a question; answer within 30 seconds.
                                              ANS        Answer a question; ans _.
-                                             PNGU -wdyt Peek at Pengu's choice (costs one token).
-                                             PNGU -ans  Let Pengu answer for free.
+                                             PNGU -Peek Peek at Pengu's choice (costs one token).
+                                             PNGU -copy Let Pengu answer for free.
                                              SAVE -s 1  Save progress to slot 1 (slots 1-3).
                                              """;
                                              
