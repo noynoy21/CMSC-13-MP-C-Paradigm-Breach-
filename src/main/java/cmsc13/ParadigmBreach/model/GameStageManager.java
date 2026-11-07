@@ -238,7 +238,8 @@ public class GameStageManager {
 
                 int choiceIndex = penguAssistant.getCopyChoiceIndex(currQuestion);
                 appendPenguChoice("Pengu answers", choiceIndex);
-                handleAns(letterChoices.get(choiceIndex));
+                int displayIndex = currQuestion.getDisplayIndexForOriginalChoice(choiceIndex);
+                handleAns(letterChoices.get(displayIndex));
                 return QnaOutcome.PENGU_ANSWERED;
             }
             default -> {
@@ -250,7 +251,8 @@ public class GameStageManager {
     }
 
     private void appendPenguChoice(String prefix, int choiceIndex) {
-        char letter = letterChoices.get(choiceIndex);
+        int displayIndex = currQuestion.getDisplayIndexForOriginalChoice(choiceIndex);
+        char letter = letterChoices.get(displayIndex);
         String answer = currQuestion.getChoices().get(choiceIndex);
         terminalOut.append(prefix + " [" + letter + "]: " + answer, OutputKind.RESPONSE);
     }
@@ -658,10 +660,11 @@ public class GameStageManager {
     }
 
     private void handleAns(char lettChoice) {
-        int selectedChoiceIndex = letterChoices.indexOf(lettChoice);
+        int selectedDisplayIndex = letterChoices.indexOf(lettChoice);
+        int selectedChoiceIndex = currQuestion.getOriginalChoiceIndexForDisplay(selectedDisplayIndex);
         QuestionStatus result;
         remainingQuestionMillis = 0;
-        if (lettChoice == letterChoices.get(currQuestion.getCorrectChoiceIndx())) {
+        if (selectedChoiceIndex == currQuestion.getCorrectChoiceIndx()) {
             result = QuestionStatus.CORRECT;
             answeredQuestions++;
 
@@ -806,6 +809,7 @@ public class GameStageManager {
     }
 
     private String buildQuestion(Question q) {
+        q.shuffleDisplayedChoices();
         StringBuilder sb = new StringBuilder();
         String question = q.getPrompt();
         sb.append("Q: \n").append(question);
@@ -816,12 +820,12 @@ public class GameStageManager {
         String choicePrompts;
         for (int i = 0; i < 4; i++) {
             letter = "[" + letterChoices.get(i) + "]: ";
-            choicePrompts = q.getChoices().get(i);
+            choicePrompts = q.getChoiceAtDisplayIndex(i);
             sb.append(letter).append("\n");
             sb.append(choicePrompts);
             sb.append("\n");
         }
-        currQuestion.setHasBeenAsked(true);
+        q.setHasBeenAsked(true);
 
         return sb.toString();
     }
@@ -833,27 +837,27 @@ public class GameStageManager {
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 0 (Initialization Trial)")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "\"You're not getting through me!\""),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "Answer these security questions to gain surface-level access."),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 1 (Introduction to Programming Paradigms)")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "\"Halt!\""),
+                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "\"Halt!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 2 (Procedural Programming)")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "\"Stop right there!\""),
+                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "\"Stop right there!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 3 (Functional Programming)")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "\"You shall not pass!\""),
+                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "\"You shall not pass!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 4 (Object-oriented Programming)")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "\"You're going down!"),
+                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "\"You're going down!"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 5 (Imperative vs Declarative Programming)")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "?????????"),
+                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "\"You're not getting through me!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 6 (Event-driven Programming)")
             );
             case "7" -> List.of(
@@ -877,31 +881,31 @@ public class GameStageManager {
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "STAGE 0 (Initialization Trial) cleared!")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "\"Noooo! You will pay for this!\""),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii_edited.png", "Surface-level security access granted"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 1 (Introduction to Programming Paradigms) cleared!")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "\"This cannot be!\""),
+                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "\"This cannot be!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 2 (Procedural Programming) cleared!")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "\"This isn't supposed to happen!\""),
+                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "\"This isn't supposed to happen!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 3 (Functional Programming) cleared!")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "\"I have failed...\""),
+                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "\"I have failed...\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 4 (Object-oriented Programming) cleared!")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "\"Whatever.\""),
+                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "\"Whatever.\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 5 (Imperative vs Declarative Programming) cleared!")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", ""),
+                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "\"Noooo! You will pay for this!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 6 (Event-driven Programming) cleared!")
             );
             case "7" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", ""),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "\"YOU WIN!!!!\""),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 7 (Component Mappings between Programming Paradigms) cleared!")
             );
             default -> List.of(
