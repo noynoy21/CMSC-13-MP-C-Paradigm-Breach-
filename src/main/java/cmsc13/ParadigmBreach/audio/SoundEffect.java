@@ -1,7 +1,7 @@
 package cmsc13.ParadigmBreach.audio;
 
 public enum SoundEffect implements AudioAsset {
-    BEEP_COUNTDOWN("/audio/sfx/[TEST]_countdown_beeping.mp3", 1.0), // credit to: https://www.youtube.com/watch?v=OFxvJac1lpQ
+    BEEP_COUNTDOWN("/audio/sfx/TEST_countdown_beeping.mp3", 1.0), // credit to: https://www.youtube.com/watch?v=OFxvJac1lpQ
     CORRECT("/audio/sfx/correct.mp3", 1.0),
     WRONG("/audio/sfx/wrong.mp3", 1.0),
     TOKEN_SUCCESS("/audio/sfx/pengu_token_success.mp3", 1.0),

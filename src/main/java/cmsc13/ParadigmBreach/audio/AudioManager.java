@@ -1,6 +1,13 @@
 package cmsc13.ParadigmBreach.audio;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import javafx.animation.KeyFrame;
@@ -18,6 +25,7 @@ public final class AudioManager {
     // cached audioclips for each sound effect audio files
     private final Map<SoundEffect, AudioClip> soundClips =
         new EnumMap<>(SoundEffect.class);
+    private final Map<AudioAsset, String> playableUrls = new HashMap<>();
 
     private AudioManager() {}
 
@@ -38,14 +46,7 @@ public final class AudioManager {
         AudioClip clip = soundClips.get(sfx);
 
         if (clip == null) {
-            var url = AudioManager.class.getResource(sfx.resourcePath());
-            if (url == null) {
-                throw new IllegalArgumentException(
-                    "Audio resource not found: " + sfx.resourcePath()
-                );
-            }
-
-            clip = new AudioClip(url.toExternalForm());
+            clip = new AudioClip(resolvePlayableUrl(sfx));
             soundClips.put(sfx, clip);
         }
 
@@ -54,20 +55,40 @@ public final class AudioManager {
     }
 
     public void playMusic(MusicTrack music) {
-        String resourcePath = music.resourcePath();
-
         stopMusic();
 
-        var url = AudioManager.class.getResource(resourcePath);
-        if (url == null) {
-            throw new IllegalArgumentException("Audio resource not found: " + resourcePath);
-        }
-
-        musicPlayer = new MediaPlayer(new Media(url.toExternalForm()));
+        musicPlayer = new MediaPlayer(new Media(resolvePlayableUrl(music)));
         musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         musicPlayer.play();
 
         setMusicVolume(music.volume());
+    }
+
+    private String resolvePlayableUrl(AudioAsset asset) {
+        String cachedUrl = playableUrls.get(asset);
+        if (cachedUrl != null) {
+            return cachedUrl;
+        }
+
+        String resourcePath = asset.resourcePath();
+        try (InputStream audio = AudioManager.class.getResourceAsStream(resourcePath)) {
+            if (audio == null) {
+                throw new IllegalArgumentException("Audio resource not found: " + resourcePath);
+            }
+
+            String resourceName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+            int extensionIndex = resourceName.lastIndexOf('.');
+            String suffix = extensionIndex >= 0 ? resourceName.substring(extensionIndex) : ".audio";
+            Path tempFile = Files.createTempFile("paradigm-breach-", suffix);
+            tempFile.toFile().deleteOnExit();
+            Files.copy(audio, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+            String playableUrl = tempFile.toUri().toString();
+            playableUrls.put(asset, playableUrl);
+            return playableUrl;
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to prepare audio resource: " + resourcePath, e);
+        }
     }
 
     public void stopMusic() {
