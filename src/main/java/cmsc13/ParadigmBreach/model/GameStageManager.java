@@ -74,7 +74,7 @@ public class GameStageManager {
     // To play with the zero-constraints version (all available questions):
     //     Uncomment the Integer.MAX_VALUE line below.
     // =========================================================================
-    private static final int QUESTIONS_PER_STAGE = 10;
+    private static final int QUESTIONS_PER_STAGE = 3;
     // private static final int QUESTIONS_PER_STAGE = Integer.MAX_VALUE; // Zero-constraints version
 
     private static final List<Character> letterChoices = List.of('a', 'b', 'c', 'd');
@@ -829,31 +829,31 @@ public class GameStageManager {
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 0 (Initialization Trial)")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/machop.png", "larooo"),
+                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "larooo"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 1 (Introduction to Programming Paradigms)")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/alakazam.png", "asdfghjkl"),
+                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "asdfghjkl"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 2 (Procedural Programming)")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/ditto.png", "a"),
+                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "a"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 3 (Functional Programming)")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/jirachi.png", "asdf"),
+                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 4 (Object-oriented Programming)")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
+                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 5 (Imperative vs Declarative Programming)")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 6 (Event-driven Programming)")
             );
             case "7" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "asdf"),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "asdf"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "GET READY: Stage 7 (Component Mappings between Programming Paradigms)")
             );
             default -> List.of(
@@ -873,31 +873,31 @@ public class GameStageManager {
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "STAGE 0 (Initialization Trial) cleared!")
             );
             case "1" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/machop.png", "lah"),
+                new CutsceneSlide("/images/cutscene_images/machopascii_edited.png", "lah"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 1 (Introduction to Programming Paradigms) cleared!")
             );
             case "2" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/alakazam.png", "hage"),
+                new CutsceneSlide("/images/cutscene_images/alakazamascii_edited.png", "hage"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 2 (Procedural Programming) cleared!")
             );
             case "3" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/ditto.png", "whatever"),
+                new CutsceneSlide("/images/cutscene_images/dittoascii_edited.png", "whatever"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 3 (Functional Programming) cleared!")
             );
             case "4" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/jirachi.png", "bahala ka"),
+                new CutsceneSlide("/images/cutscene_images/jirachiascii_edited.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 4 (Object-oriented Programming) cleared!")
             );
             case "5" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
+                new CutsceneSlide("/images/cutscene_images/nidoranascii_edited.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 5 (Imperative vs Declarative Programming) cleared!")
             );
             case "6" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 6 (Event-driven Programming) cleared!")
             );
             case "7" -> List.of(
-                new CutsceneSlide("/images/cutscene_images/nidoran.png", "bahala ka"),
+                new CutsceneSlide("/images/cutscene_images/Missingnoascii.png", "bahala ka"),
                 new CutsceneSlide("/images/cutscene_images/placeholder.jpeg", "Stage 7 (Component Mappings between Programming Paradigms) cleared!")
             );
             default -> List.of(
