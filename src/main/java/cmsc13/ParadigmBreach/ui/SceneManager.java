@@ -119,6 +119,9 @@ public class SceneManager {
         window.initModality(Modality.NONE);            // desktop stays clickable
         window.setTitle(screen.getTitle());
         window.setScene(new Scene(zippedScreen.root, screen.getWidth(), screen.getHeight()));
+        if (screen == Screen.TERMINAL) {
+            window.setResizable(false);
+        }
 
         if (screen.isSingleInstance()) {
             openSingles.put(screen, window);
